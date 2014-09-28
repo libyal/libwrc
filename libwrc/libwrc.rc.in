@@ -28,7 +28,7 @@ BEGIN
       VALUE "OriginalFilename",		"libwrc.dll\0"
       VALUE "ProductName",		"libwrc\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
-      VALUE "Comments",			"For more information visit http://code.google.com/p/libwrc/\0"
+      VALUE "Comments",			"For more information visit https://github.com/libyal/libwrc/\0"
     END
   END
   BLOCK "VarFileInfo"
