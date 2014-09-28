@@ -1,0 +1,1835 @@
+/*
+ * Python object definition of the libwrc file
+ *
+ * Copyright (c) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
+ *
+ * Refer to AUTHORS for acknowledgements.
+ *
+ * This software is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <common.h>
+#include <types.h>
+
+#if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
+#include <stdlib.h>
+#endif
+
+#include "pywrc_codepage.h"
+#include "pywrc_error.h"
+#include "pywrc_file_object_io_handle.h"
+#include "pywrc_integer.h"
+#include "pywrc_libbfio.h"
+#include "pywrc_libcerror.h"
+#include "pywrc_libclocale.h"
+#include "pywrc_libcstring.h"
+#include "pywrc_libwrc.h"
+#include "pywrc_manifest.h"
+#include "pywrc_message_table.h"
+#include "pywrc_mui.h"
+#include "pywrc_python.h"
+#include "pywrc_resource.h"
+#include "pywrc_resources.h"
+#include "pywrc_stream.h"
+#include "pywrc_string.h"
+#include "pywrc_unused.h"
+#include "pywrc_version.h"
+
+#if !defined( LIBWRC_HAVE_BFIO )
+LIBWRC_EXTERN \
+int libwrc_stream_open_file_io_handle(
+     libwrc_stream_t *stream,
+     libbfio_handle_t *file_io_handle,
+     int access_flags,
+     libwrc_error_t **error );
+#endif
+
+PyMethodDef pywrc_stream_object_methods[] = {
+
+	{ "signal_abort",
+	  (PyCFunction) pywrc_stream_signal_abort,
+	  METH_NOARGS,
+	  "signal_abort() -> None\n"
+	  "\n"
+	  "Signals the stream to abort the current activity." },
+
+	/* Functions to access the stream */
+
+	{ "open",
+	  (PyCFunction) pywrc_stream_open,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "open(filename, mode='r') -> None\n"
+	  "\n"
+	  "Opens a stream." },
+
+	{ "open_file_object",
+	  (PyCFunction) pywrc_stream_open_file_object,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "open_file_object(file_object, mode='r') -> None\n"
+	  "\n"
+	  "Opens a stream using a file-like object." },
+
+	{ "close",
+	  (PyCFunction) pywrc_stream_close,
+	  METH_NOARGS,
+	  "close() -> None\n"
+	  "\n"
+	  "Closes a stream." },
+
+	{ "get_ascii_codepage",
+	  (PyCFunction) pywrc_stream_get_ascii_codepage,
+	  METH_NOARGS,
+	  "get_ascii_codepage() -> String\n"
+	  "\n"
+	  "Returns the codepage used for ASCII strings in the stream." },
+
+	{ "set_ascii_codepage",
+	  (PyCFunction) pywrc_stream_set_ascii_codepage,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "set_ascii_codepage(codepage) -> None\n"
+	  "\n"
+	  "Set the codepage used for ASCII strings in the stream.\n"
+	  "Expects the codepage to be a String containing a Python codec definition." },
+
+	{ "get_virtual_address",
+	  (PyCFunction) pywrc_stream_get_virtual_address,
+	  METH_NOARGS,
+	  "get_virtual_address() -> Integer\n"
+	  "\n"
+	  "Returns the virtual address of the stream." },
+
+	{ "set_virtual_address",
+	  (PyCFunction) pywrc_stream_set_virtual_address,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "set_virtual_address(virtual_address) -> None\n"
+	  "\n"
+	  "Set the virtual address of the stream." },
+
+	/* Functions to access the resources */
+
+	{ "get_number_of_resources",
+	  (PyCFunction) pywrc_stream_get_number_of_resources,
+	  METH_NOARGS,
+	  "get_number_of_resources() -> Integer\n"
+	  "\n"
+	  "Retrieves the number of resources." },
+
+	{ "get_resource",
+	  (PyCFunction) pywrc_stream_get_resource,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "get_resource(resource_index) -> Object or None\n"
+	  "\n"
+	  "Retrieves a specific resource." },
+
+	{ "get_resource_by_identifier",
+	  (PyCFunction) pywrc_stream_get_resource_by_identifier,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "get_resource_by_identifier(resource_identifier) -> Object or None\n"
+	  "\n"
+	  "Retrieves a specific resource by identifier." },
+
+	{ "get_resource_by_name",
+	  (PyCFunction) pywrc_stream_get_resource_by_name,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "get_resource_by_name(resource_name) -> Object or None\n"
+	  "\n"
+	  "Retrieves a specific resource by name." },
+
+	/* Sentinel */
+	{ NULL, NULL, 0, NULL }
+};
+
+PyGetSetDef pywrc_stream_object_get_set_definitions[] = {
+
+	{ "ascii_codepage",
+	  (getter) pywrc_stream_get_ascii_codepage,
+	  (setter) pywrc_stream_set_ascii_codepage_setter,
+	  "The codepage used for ASCII strings in the stream.",
+	  NULL },
+
+	{ "number_of_resources",
+	  (getter) pywrc_stream_get_number_of_resources,
+	  (setter) 0,
+	  "The number of resources.",
+	  NULL },
+
+	{ "resources",
+	  (getter) pywrc_stream_get_resources,
+	  (setter) 0,
+	  "The resources",
+	  NULL },
+
+	/* Sentinel */
+	{ NULL, NULL, NULL, NULL, NULL }
+};
+
+PyTypeObject pywrc_stream_type_object = {
+	PyObject_HEAD_INIT( NULL )
+
+	/* ob_size */
+	0,
+	/* tp_name */
+	"pywrc.stream",
+	/* tp_basicsize */
+	sizeof( pywrc_stream_t ),
+	/* tp_itemsize */
+	0,
+	/* tp_dealloc */
+	(destructor) pywrc_stream_free,
+	/* tp_print */
+	0,
+	/* tp_getattr */
+	0,
+	/* tp_setattr */
+	0,
+	/* tp_compare */
+	0,
+	/* tp_repr */
+	0,
+	/* tp_as_number */
+	0,
+	/* tp_as_sequence */
+	0,
+	/* tp_as_mapping */
+	0,
+	/* tp_hash */
+	0,
+	/* tp_call */
+	0,
+	/* tp_str */
+	0,
+	/* tp_getattro */
+	0,
+	/* tp_setattro */
+	0,
+	/* tp_as_buffer */
+	0,
+	/* tp_flags */
+	Py_TPFLAGS_DEFAULT,
+	/* tp_doc */
+	"pywrc stream object (wraps libwrc_stream_t)",
+	/* tp_traverse */
+	0,
+	/* tp_clear */
+	0,
+	/* tp_richcompare */
+	0,
+	/* tp_weaklistoffset */
+	0,
+	/* tp_iter */
+	0,
+	/* tp_iternext */
+	0,
+	/* tp_methods */
+	pywrc_stream_object_methods,
+	/* tp_members */
+	0,
+	/* tp_getset */
+	pywrc_stream_object_get_set_definitions,
+	/* tp_base */
+	0,
+	/* tp_dict */
+	0,
+	/* tp_descr_get */
+	0,
+	/* tp_descr_set */
+	0,
+	/* tp_dictoffset */
+	0,
+	/* tp_init */
+	(initproc) pywrc_stream_init,
+	/* tp_alloc */
+	0,
+	/* tp_new */
+	0,
+	/* tp_free */
+	0,
+	/* tp_is_gc */
+	0,
+	/* tp_bases */
+	NULL,
+	/* tp_mro */
+	NULL,
+	/* tp_cache */
+	NULL,
+	/* tp_subclasses */
+	NULL,
+	/* tp_weaklist */
+	NULL,
+	/* tp_del */
+	0
+};
+
+/* Creates a new stream object
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_new(
+           void )
+{
+	pywrc_stream_t *pywrc_stream = NULL;
+	static char *function        = "pywrc_stream_new";
+
+	pywrc_stream = PyObject_New(
+	                struct pywrc_stream,
+	                &pywrc_stream_type_object );
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to initialize stream.",
+		 function );
+
+		goto on_error;
+	}
+	if( pywrc_stream_init(
+	     pywrc_stream ) != 0 )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to initialize stream.",
+		 function );
+
+		goto on_error;
+	}
+	return( (PyObject *) pywrc_stream );
+
+on_error:
+	if( pywrc_stream != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pywrc_stream );
+	}
+	return( NULL );
+}
+
+/* Creates a new stream object and opens it
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_new_open(
+           PyObject *self PYWRC_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pywrc_stream = NULL;
+
+	PYWRC_UNREFERENCED_PARAMETER( self )
+
+	pywrc_stream = pywrc_stream_new();
+
+	pywrc_stream_open(
+	 (pywrc_stream_t *) pywrc_stream,
+	 arguments,
+	 keywords );
+
+	return( pywrc_stream );
+}
+
+/* Creates a new stream object and opens it
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_new_open_file_object(
+           PyObject *self PYWRC_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pywrc_stream = NULL;
+
+	PYWRC_UNREFERENCED_PARAMETER( self )
+
+	pywrc_stream = pywrc_stream_new();
+
+	pywrc_stream_open_file_object(
+	 (pywrc_stream_t *) pywrc_stream,
+	 arguments,
+	 keywords );
+
+	return( pywrc_stream );
+}
+
+/* Intializes a stream object
+ * Returns 0 if successful or -1 on error
+ */
+int pywrc_stream_init(
+     pywrc_stream_t *pywrc_stream )
+{
+	static char *function    = "pywrc_stream_init";
+	libcerror_error_t *error = NULL;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( -1 );
+	}
+	pywrc_stream->stream         = NULL;
+	pywrc_stream->file_io_handle = NULL;
+
+	if( libwrc_stream_initialize(
+	     &( pywrc_stream->stream ),
+	     &error ) != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to initialize stream.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( -1 );
+	}
+	return( 0 );
+}
+
+/* Frees a stream object
+ */
+void pywrc_stream_free(
+      pywrc_stream_t *pywrc_stream )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pywrc_stream_free";
+	int result               = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return;
+	}
+	if( pywrc_stream->ob_type == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream - missing ob_type.",
+		 function );
+
+		return;
+	}
+	if( pywrc_stream->ob_type->tp_free == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream - invalid ob_type - missing tp_free.",
+		 function );
+
+		return;
+	}
+	if( pywrc_stream->stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream - missing libwrc stream.",
+		 function );
+
+		return;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_free(
+	          &( pywrc_stream->stream ),
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to free libwrc stream.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+	}
+	pywrc_stream->ob_type->tp_free(
+	 (PyObject*) pywrc_stream );
+}
+
+/* Signals the stream to abort the current activity
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_signal_abort(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pywrc_stream_signal_abort";
+	int result               = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_signal_abort(
+	          pywrc_stream->stream,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to signal abort.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+}
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+
+/* Opens a stream
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_open(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *exception_string    = NULL;
+	PyObject *exception_traceback = NULL;
+	PyObject *exception_type      = NULL;
+	PyObject *exception_value     = NULL;
+	PyObject *string_object       = NULL;
+	libcerror_error_t *error      = NULL;
+	static char *function         = "pywrc_stream_open";
+	static char *keyword_list[]   = { "filename", "mode", NULL };
+	const wchar_t *filename_wide  = NULL;
+	const char *filename_narrow   = NULL;
+	char *error_string            = NULL;
+	int result                    = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	/* Note that PyArg_ParseTupleAndKeywords with "s" will force Unicode strings to be converted to narrow character string.
+	 * On Windows the narrow character strings contains an extended ASCII string with a codepage. Hence we get a conversion
+	 * exception. We cannot use "u" here either since that does not allow us to pass non Unicode string objects and
+	 * Python (at least 2.7) does not seems to automatically upcast them.
+	 */
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "O|s",
+	     keyword_list,
+	     &string_object ) == 0 )
+	{
+		return( NULL );
+	}
+	PyErr_Clear();
+
+	result = PyObject_IsInstance(
+	          string_object,
+	          (PyObject *) &PyUnicode_Type );
+
+	if( result == -1 )
+	{
+		PyErr_Fetch(
+		 &exception_type,
+		 &exception_value,
+		 &exception_traceback );
+
+		exception_string = PyObject_Repr(
+		                    exception_value );
+
+		error_string = PyString_AsString(
+		                exception_string );
+
+		if( error_string != NULL )
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type unicode with error: %s.",
+			 function,
+			 error_string );
+		}
+		else
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type unicode.",
+			 function );
+		}
+		Py_DecRef(
+		 exception_string );
+
+		return( NULL );
+	}
+	else if( result != 0 )
+	{
+		PyErr_Clear();
+
+		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
+		                             string_object );
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libwrc_stream_open_wide(
+		          pywrc_stream->stream,
+	                  filename_wide,
+		          LIBWRC_OPEN_READ,
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pywrc_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to open stream.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	PyErr_Clear();
+
+	result = PyObject_IsInstance(
+		  string_object,
+		  (PyObject *) &PyString_Type );
+
+	if( result == -1 )
+	{
+		PyErr_Fetch(
+		 &exception_type,
+		 &exception_value,
+		 &exception_traceback );
+
+		exception_string = PyObject_Repr(
+				    exception_value );
+
+		error_string = PyString_AsString(
+				exception_string );
+
+		if( error_string != NULL )
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type string with error: %s.",
+			 function,
+			 error_string );
+		}
+		else
+		{
+			PyErr_Format(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if string object is of type string.",
+			 function );
+		}
+		Py_DecRef(
+		 exception_string );
+
+		return( NULL );
+	}
+	else if( result != 0 )
+	{
+		PyErr_Clear();
+
+		filename_narrow = PyString_AsString(
+				   string_object );
+
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libwrc_stream_open(
+		          pywrc_stream->stream,
+	                  filename_narrow,
+		          LIBWRC_OPEN_READ,
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pywrc_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to open stream.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	PyErr_Format(
+	 PyExc_TypeError,
+	 "%s: unsupported string object type",
+	 function );
+
+	return( NULL );
+}
+
+#else
+
+/* Opens a stream
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_open(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	libcerror_error_t *error    = NULL;
+	char *filename              = NULL;
+	char *mode                  = NULL;
+	static char *keyword_list[] = { "filename", "mode", NULL };
+	static char *function       = "pywrc_stream_open";
+	int result                  = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	/* Note that PyArg_ParseTupleAndKeywords with "s" will force Unicode strings to be converted to narrow character string.
+	 * For systems that support UTF-8 this works for Unicode string objects as well.
+	 */
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "s|s",
+	     keyword_list,
+	     &filename,
+	     &mode ) == 0 )
+	{
+		return( NULL );
+	}
+	if( ( mode != NULL )
+	 && ( mode[ 0 ] != 'r' ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: unsupported mode: %s.",
+		 function,
+		 mode );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_open(
+	          pywrc_stream->stream,
+	          filename,
+	          LIBWRC_OPEN_READ,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to open stream.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+}
+
+#endif /* defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER ) */
+
+/* Opens a stream using a file-like object
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_open_file_object(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *file_object       = NULL;
+	libcerror_error_t *error    = NULL;
+	char *mode                  = NULL;
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	static char *function       = "pywrc_stream_open_file_object";
+	int result                  = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "O|s",
+	     keyword_list,
+	     &file_object,
+	     &mode ) == 0 )
+	{
+		return( NULL );
+	}
+	if( ( mode != NULL )
+	 && ( mode[ 0 ] != 'r' ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: unsupported mode: %s.",
+		 function,
+		 mode );
+
+		return( NULL );
+	}
+	if( pywrc_file_object_initialize(
+	     &( pywrc_stream->file_io_handle ),
+	     file_object,
+	     &error ) != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to initialize file IO handle.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_open_file_io_handle(
+	          pywrc_stream->stream,
+	          pywrc_stream->file_io_handle,
+	          LIBWRC_OPEN_READ,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to open stream.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+
+on_error:
+	if( pywrc_stream->file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &( pywrc_stream->file_io_handle ),
+		 NULL );
+	}
+	return( NULL );
+}
+
+/* Closes a stream
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_close(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pywrc_stream_close";
+	int result               = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_close(
+	          pywrc_stream->stream,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 0 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to close stream.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	if( pywrc_stream->file_io_handle != NULL )
+	{
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libbfio_handle_free(
+		          &( pywrc_stream->file_io_handle ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pywrc_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to free libbfio file IO handle.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+}
+
+/* Retrieves the codepage used for ASCII strings in the stream
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_get_ascii_codepage(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error    = NULL;
+	PyObject *string_object     = NULL;
+	const char *codepage_string = NULL;
+	static char *function       = "pywrc_stream_get_ascii_codepage";
+	int ascii_codepage          = 0;
+	int result                  = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_get_ascii_codepage(
+	          pywrc_stream->stream,
+	          &ascii_codepage,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve ASCII codepage.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	codepage_string = pywrc_codepage_to_string(
+	                   ascii_codepage );
+
+	if( codepage_string == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: unsupported ASCII codepage: %d.",
+		 function,
+		 ascii_codepage );
+
+		return( NULL );
+	}
+	string_object = PyString_FromString(
+	                 codepage_string );
+
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert codepage string into string object.",
+		 function );
+
+		return( NULL );
+	}
+	return( string_object );
+}
+
+/* Sets the codepage used for ASCII strings in the stream
+ * Returns 1 if successful or -1 on error
+ */
+int pywrc_stream_set_ascii_codepage_from_string(
+     pywrc_stream_t *pywrc_stream,
+     const char *codepage_string )
+{
+	libcerror_error_t *error      = NULL;
+	static char *function         = "pywrc_stream_set_ascii_codepage_from_string";
+	size_t codepage_string_length = 0;
+	uint32_t feature_flags        = 0;
+	int ascii_codepage            = 0;
+	int result                    = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( -1 );
+	}
+	if( codepage_string == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid codepage string.",
+		 function );
+
+		return( -1 );
+	}
+	codepage_string_length = libcstring_narrow_string_length(
+	                          codepage_string );
+
+	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;
+
+	if( libclocale_codepage_copy_from_string(
+	     &ascii_codepage,
+	     codepage_string,
+	     codepage_string_length,
+	     feature_flags,
+	     &error ) != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_RuntimeError,
+		 "%s: unable to determine ASCII codepage.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( -1 );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_set_ascii_codepage(
+	          pywrc_stream->stream,
+	          ascii_codepage,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to set ASCII codepage.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Sets the codepage used for ASCII strings in the stream
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_set_ascii_codepage(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	static char *keyword_list[] = { "codepage", NULL };
+	char *codepage_string       = NULL;
+	int result                  = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "s",
+	     keyword_list,
+	     &codepage_string ) == 0 )
+	{
+		return( NULL );
+	}
+	result = pywrc_stream_set_ascii_codepage_from_string(
+	          pywrc_stream,
+	          codepage_string );
+
+	if( result != 1 )
+	{
+		return( NULL );
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+}
+
+/* Sets the codepage used for ASCII strings in the stream
+ * Returns a Python object if successful or NULL on error
+ */
+int pywrc_stream_set_ascii_codepage_setter(
+     pywrc_stream_t *pywrc_stream,
+     PyObject *value_object,
+     void *closure PYWRC_ATTRIBUTE_UNUSED )
+{
+	char *codepage_string = NULL;
+	int result            = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( closure )
+
+	codepage_string = PyString_AsString(
+	                   value_object );
+
+	if( codepage_string == NULL )
+	{
+		return( -1 );
+	}
+	result = pywrc_stream_set_ascii_codepage_from_string(
+	          pywrc_stream,
+	          codepage_string );
+
+	if( result != 1 )
+	{
+		return( -1 );
+	}
+	return( 0 );
+}
+
+/* Retrieves the virtual address
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_get_virtual_address(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
+	static char *function    = "pywrc_stream_get_virtual_address";
+	uint32_t virtual_address = 0;
+	int result               = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_get_virtual_address(
+	          pywrc_stream->stream,
+	          &virtual_address,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve virtual address.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	integer_object = pywrc_integer_unsigned_new_from_64bit(
+	                  (uint64_t) virtual_address );
+
+	return( integer_object );
+}
+
+/* Sets the virtual address of the stream
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_set_virtual_address(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	libcerror_error_t *error      = NULL;
+	static char *function         = "pywrc_stream_set_virtual_address";
+	static char *keyword_list[]   = { "virtual_address", NULL };
+	unsigned long virtual_address = 0;
+	int result                    = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "k",
+	     keyword_list,
+	     &virtual_address ) == 0 )
+	{
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_set_virtual_address(
+	          pywrc_stream->stream,
+	          (uint32_t) virtual_address,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to set virtual address.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+}
+
+/* Retrieves the number of resources
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_get_number_of_resources(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pywrc_stream_get_number_of_resources";
+	int number_of_resources  = 0;
+	int result               = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_get_number_of_resources(
+	          pywrc_stream->stream,
+	          &number_of_resources,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of resources.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	return( PyInt_FromLong(
+	         (long) number_of_resources ) );
+}
+
+/* Retrieves a specific resource by index
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_get_resource_by_index(
+           pywrc_stream_t *pywrc_stream,
+           int resource_index )
+{
+	libcerror_error_t *error    = NULL;
+	libwrc_resource_t *resource = NULL;
+	PyObject *resource_object   = NULL;
+	PyTypeObject *type_object   = NULL;
+	static char *function       = "pywrc_stream_get_resource_by_index";
+	int resource_type           = 0;
+	int result                  = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_get_resource(
+	          pywrc_stream->stream,
+	          resource_index,
+	          &resource,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve resource: %d.",
+		 function,
+		 resource_index );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_get_type(
+	          resource,
+	          &resource_type,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve resource: %d type.",
+		 function,
+		 resource_index );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	switch( resource_type )
+	{
+		case LIBWRC_RESOURCE_TYPE_MANIFEST:
+			type_object = &pywrc_manifest_type_object;
+			break;
+
+		case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
+			type_object = &pywrc_message_table_type_object;
+			break;
+
+		case LIBWRC_RESOURCE_TYPE_MUI:
+			type_object = &pywrc_mui_type_object;
+			break;
+
+		case LIBWRC_RESOURCE_TYPE_STRING:
+			type_object = &pywrc_string_type_object;
+			break;
+
+		case LIBWRC_RESOURCE_TYPE_VERSION:
+			type_object = &pywrc_version_type_object;
+			break;
+
+		default:
+			type_object = &pywrc_resource_type_object;
+			break;
+	}
+	resource_object = pywrc_resource_new(
+	                   type_object,
+	                   resource,
+	                   pywrc_stream );
+
+	if( resource_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create resource object.",
+		 function );
+
+		goto on_error;
+	}
+	return( resource_object );
+
+on_error:
+	if( resource != NULL )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	return( NULL );
+}
+
+/* Retrieves a specific resource
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_get_resource(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *resource_object   = NULL;
+	static char *keyword_list[] = { "resource_index", NULL };
+	int resource_index          = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "i",
+	     keyword_list,
+	     &resource_index ) == 0 )
+	{
+		return( NULL );
+	}
+	resource_object = pywrc_stream_get_resource_by_index(
+	                   pywrc_stream,
+	                   resource_index );
+
+	return( resource_object );
+}
+
+/* Retrieves a resources sequence and iterator object for the resources
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_get_resources(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error   = NULL;
+	PyObject *resources_object = NULL;
+	static char *function      = "pywrc_stream_get_resources";
+	int number_of_resources    = 0;
+	int result                 = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_get_number_of_resources(
+	          pywrc_stream->stream,
+	          &number_of_resources,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of resources.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	resources_object = pywrc_resources_new(
+	                    pywrc_stream,
+	                    &pywrc_stream_get_resource_by_index,
+	                    number_of_resources );
+
+	if( resources_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create resources object.",
+		 function );
+
+		return( NULL );
+	}
+	return( resources_object );
+}
+
+/* Retrieves a specific resource by identifier
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_get_resource_by_identifier(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	libcerror_error_t *error     = NULL;
+	libwrc_resource_t *resource  = NULL;
+	PyObject *resource_object    = NULL;
+	PyTypeObject *type_object    = NULL;
+	static char *keyword_list[]  = { "resource_identifier", NULL };
+	static char *function        = "pywrc_stream_get_resource_by_identifier";
+	uint32_t resource_identifier = 0;
+	int resource_type            = 0;
+	int result                   = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "k",
+	     keyword_list,
+	     &resource_identifier ) == 0 )
+	{
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_get_resource_by_identifier(
+	          pywrc_stream->stream,
+	          resource_identifier,
+	          &resource,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve resource: %" PRIu32 ".",
+		 function,
+		 resource_identifier );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_get_type(
+	          resource,
+	          &resource_type,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve resource: %" PRIu32 " type.",
+		 function,
+		 resource_identifier );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	switch( resource_type )
+	{
+		case LIBWRC_RESOURCE_TYPE_MANIFEST:
+			type_object = &pywrc_manifest_type_object;
+			break;
+
+		case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
+			type_object = &pywrc_message_table_type_object;
+			break;
+
+		case LIBWRC_RESOURCE_TYPE_STRING:
+			type_object = &pywrc_string_type_object;
+			break;
+
+		case LIBWRC_RESOURCE_TYPE_VERSION:
+			type_object = &pywrc_version_type_object;
+			break;
+
+		default:
+			type_object = &pywrc_resource_type_object;
+			break;
+	}
+	resource_object = pywrc_resource_new(
+	                   type_object,
+	                   resource,
+	                   pywrc_stream );
+
+	if( resource_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create resource object.",
+		 function );
+
+		goto on_error;
+	}
+	return( resource_object );
+
+on_error:
+	if( resource != NULL )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	return( NULL );
+}
+
+/* Retrieves a specific resource by name
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_stream_get_resource_by_name(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	libcerror_error_t *error     = NULL;
+	libwrc_resource_t *resource  = NULL;
+	PyObject *resource_object    = NULL;
+	PyTypeObject *type_object    = NULL;
+	char *resource_name          = 0;
+	static char *keyword_list[]  = { "resource_name", NULL };
+	static char *function        = "pywrc_stream_get_resource_by_name";
+	size_t resource_name_length  = 0;
+	int resource_type            = 0;
+	int result                   = 0;
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid stream.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "s",
+	     keyword_list,
+	     &resource_name ) == 0 )
+	{
+		return( NULL );
+	}
+	resource_name_length = libcstring_narrow_string_length(
+	                        resource_name );
+
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_stream_get_resource_by_utf8_name(
+	          pywrc_stream->stream,
+	          (uint8_t *) resource_name,
+	          resource_name_length,
+	          &resource,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve resource: %s.",
+		 function,
+		 resource_name );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_get_type(
+	          resource,
+	          &resource_type,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve resource: %s type.",
+		 function,
+		 resource_name );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	switch( resource_type )
+	{
+		case LIBWRC_RESOURCE_TYPE_MUI:
+			type_object = &pywrc_mui_type_object;
+			break;
+
+		default:
+			type_object = &pywrc_resource_type_object;
+			break;
+	}
+	resource_object = pywrc_resource_new(
+	                   type_object,
+	                   resource,
+	                   pywrc_stream );
+
+	if( resource_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create resource object.",
+		 function );
+
+		goto on_error;
+	}
+	return( resource_object );
+
+on_error:
+	if( resource != NULL )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	return( NULL );
+}
+

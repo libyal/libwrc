@@ -1,0 +1,52 @@
+Source: libwrc
+Section: unknown
+Priority: extra
+Maintainer: Joachim Metz <joachim.metz@gmail.com>
+Build-Depends: debhelper (>= 7), autotools-dev, python-dev
+Standards-Version: 3.8.3
+Homepage: http://code.google.com/p/libwrc/
+
+Package: libwrc
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: libwrc-dbg
+Description: Library to access the Windows Resource Compiler (WRC) format
+ libwrc is a library to access the Windows Resource Compiler (WRC) format.
+
+Package: libwrc-dbg
+Architecture: any
+Section: debug
+Depends: libwrc (= ${Source-Version}), ${misc:Depends}
+Description: Debugging symbols for libwrc
+ Debugging symbols for libwrc.
+
+Package: libwrc-dev
+Section: libdevel
+Architecture: any
+Depends: libwrc (= ${Source-Version})
+Description: Header files and libraries for developing applications for libwrc
+ Header files and libraries for developing applications for libwrc.
+
+Package: libwrc-tools
+Section: utils
+Architecture: any
+Depends: libwrc (= ${Source-Version}), ${shlibs:Depends}
+Description: Several tools for reading Windows Resource (RC) files
+ Several tools for reading Windows Resource (RC) files.
+
+Package: libwrc-python
+Section: python
+Architecture: any
+Depends: libwrc (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Suggests: libwrc-python-dbg
+Description: Python bindings for libwrc
+ Python bindings for libwrc.
+
+Package: libwrc-python-dbg
+Section: debug
+Architecture: any
+Depends: libwrc-python (= ${Source-Version})
+Description: Debugging symbols for libwrc-python
+ Debugging symbols for libwrc-python.
+

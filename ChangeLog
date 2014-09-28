@@ -1,0 +1,309 @@
+TODO:
+* pywrc:
+  - MUI check output of pywrc_mui_get_main_name amd pywrc_mui_get_mui_name
+  - add version type support (complete pywrc_version.c)
+  - add WEVT template type support
+  - add iterator objects for a message table of a specific language
+  - add iterator objects for strings of a specific language
+* code clean up:
+  - libwrc_string_get_number_of_strings
+  - libwrc_string_get_index_by_identifier
+  - libwrc_message_table_get_number_of_messages
+  - libwrc_message_table_get_index_by_identifier
+  - refactor wevt template code into libfwevt (+/-)
+* MUI
+  - match muirct output
+* WEVT_TEMPLATE
+  - code clean remove WEVT/wevt in variable names
+  - add maps support
+  - rename event template to provider ?
+  - refactor libfwevt to take relative data (see channel)
+* VERSION
+  - check if libwrc_version_values_read_string works
+  - check if multi language version is now supported
+* MOFDATA ?
+* update man pages
+  - libwrc.3
+  - wrcinfo.1
+* virtual address can be outside .rsrc section (in UPX packed files?)
+  - location of unpacked runtime data ?
+* make sure data types are large enough
+* API:
+  - add get resource name functions
+* create gerenic solution to store resource data ?
+* detect invalid padding
+* use libfcache/libfdata in libwrc ? otherwise remove it
+* language table
+  - cache last language ?
+
+Tools:
+* wrcinfo:
+  - what about PE/COFF files with multiple .rsrc sections?
+* wrcmount
+  - create
+
+20140928
+* removed README.macosx
+
+20140803
+* bug fix in Python-bindings
+
+20140328
+* updated dependencies
+* Worked on Python bindings
+
+20140209
+* worked on format support
+
+20140128
+* worked on stripping trailing 0-byte values from message table strings
+* improved handling of version resource
+
+20140127
+* Worked on Python bindings
+  - clean up and bug fixes
+  - added MUI type support
+
+20140112
+* small fixes for file IO handle opened in library changes
+
+20140105
+* 2014 update
+* updated dependencies
+
+20131230
+* Worked on Python bindings
+
+20131229
+* updated dependencies
+
+20131027
+* Worked on Python bindings
+
+20131017
+* updated dependencies
+
+20130909
+* updated dependencies
+* worked on libcthreads build support
+* updated msvscpp files
+
+20130530
+* Worked on version resource support
+
+20130528
+* Worked on Python bindings
+* Worked on version resource support
+
+20130527
+* Worked on Python bindings
+
+20130526
+* Worked on Python bindings
+
+20130515
+* updated dependencies
+* moved examples to project site wiki
+* added macosx files
+* added Python bindings
+
+20130421
+* updated dependencies
+
+20130413
+* updated dependencies
+
+20130405
+* 2013 update
+* updated dependencies
+* Moved project to separate project site
+
+20120402
+* updated dependencies
+* changes for libfdata update
+
+20120319
+* updated dependencies
+* changes for libfdata update
+
+20130310
+* 2013 update
+* fixed spec file
+* updated dependencies
+* updated msvscpp files
+
+20121214
+* worked on WEVT_TEMPLATE support
+
+20121119
+* worked on WEVT_TEMPLATE support
+
+20121106
+* code clean up
+
+20121031
+* bug fixes and code clean up
+
+20121030
+* bug fixes and code clean up
+
+20121029
+* worked on WEVT_TEMPLATE support
+
+20121028
+* worked on WEVT_TEMPLATE support
+* update wrcinfo.1 man page
+
+20121027
+* worked on WEVT_TEMPLATE support
+* code clean up
+* wrcinfo debug output now skips already parsed resources
+
+20121025
+* updated dependencies
+* worked on WEVT_TEMPLATE support
+
+20121022
+* small changes
+* worked on WEVT_TEMPLATE support
+
+20121021
+* code clean up
+
+20121017
+* code clean up
+
+20121015
+* worked on MUI resource support
+  - changed fallback language identifier to fallback language
+  - added support for language
+  - added support for non-set values
+
+20121014
+* worked on MUI resource support
+* worked on version resource support
+* worked on WEVT_TEMPLATE resource support
+
+20121014
+* added functionality for named resources
+* worked on MUI resource support
+
+20120925
+* fixed bug introduced in libcdata update
+
+20120924
+* updated dependencies
+
+20120912
+* updated dependencies
+* changes for libcdata update
+
+20120627
+* updated dependencies
+* reversed library order in tools for mingw
+* fix for deployment
+
+20120506
+* worked on event template resource support
+
+20120505
+* worked on named resource support
+* worked on MUI resource support
+* worked on event template resource support
+
+20120501
+* updated dependencies
+* added debug dump of unknown resource data
+
+20120422
+* libfdatetime update
+* libfvalue update
+
+20120409
+* updated dependencies
+
+20120408
+* updated dependencies
+
+20120401
+* moved version resource to language specific parsing
+* worked on manifest support
+
+20120322
+* updated libuna
+
+20120321
+* small changes
+* added check to see if language entry already exists and append strings
+
+20120319
+* worked on string resources
+
+20120318
+* worked on string resources
+
+20120313
+* worked on string resources
+
+20120304
+* added libfwnt support
+* worked on multi language messages table
+* fixed memory leak in tools
+
+20120302
+* fixed memory leak in library
+* worked on multi language messages table
+
+20120226
+* worked on tooling
+
+20120225
+* 2012 update
+
+20111124
+* added libfcache
+* updated libfdata, libexe
+
+20111116
+* added free of resource values
+
+20111113
+* worked on adding resources to API
+* updated libexe
+
+20111110
+* worked on adding resources to API
+* added libfvalue
+* updated libexe
+
+20111109
+* worked on adding resources to API
+
+20111108
+* worked on adding resources to API
+
+20111107
+* worked on adding resources to API
+
+20111106
+* renamed libwmui to libwrc
+
+20111101
+* updated libcstring, libsystem, libuna, libbfio, libfdatetime, libexe
+* added windows codepage 932 and 936 support
+
+20111028
+* worked on reading strings
+
+20111027
+* rename file to stream
+* worked on reading MUI stream
+* updated libexe
+
+20111025
+* updated m4 files
+* updated libexe
+
+20111024
+* Initial version based on libexe
+

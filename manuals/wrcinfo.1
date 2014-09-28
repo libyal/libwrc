@@ -1,0 +1,82 @@
+.Dd January 5, 2014
+.Dt wrcinfo
+.Os libwrc
+.Sh NAME
+.Nm wrcinfo
+.Nd determines information about a Windows Resource (RC) stream
+of the .rsrc section of a MZ, PE/COFF executable
+.Sh SYNOPSIS
+.Nm wrcinfo
+.Op Fl ahvV
+.Va Ar source
+.Sh DESCRIPTION
+.Nm wrcinfo
+is a utility to determine information about a Windows Resource (RC) stream
+of the .rsrc section of a MZ, PE/COFF executable
+.Pp
+.Nm wrcinfo
+is part of the
+.Nm libwrc
+package.
+.Nm libwrc
+is a library to access the Windows Resource Compiler (WRC) format
+.Pp
+.Ar source
+is the source file.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl a
+shows allocation information
+.It Fl h
+shows this help
+.It Fl v
+verbose output to stderr
+.It Fl V
+print version
+.El
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh EXAMPLES
+.Bd -literal
+# wrcinfo Windows/System32/ntoskrnl.exe
+wrcinfo 20121027
+
+Windows Resource (RC) information:
+        number of resources     : 4
+
+Version resource:
+        number of languages     : 1
+
+        language identifier     : 0x00000409 (en-US)
+        file version            : 6.1.7601.17592
+        product version         : 6.1.7601.17592
+
+Message-table resource:
+        number of languages     : 1
+
+        language identifier     : 0x00000409 (en-US)
+        number of messages      : 312
+
+        message                 : 0
+        identifier              : 0x00000001
+        data                    : APC_INDEX_MISMATCH
+
+.Dl ...
+
+.Ed
+.Sh DIAGNOSTICS
+Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Verbose and debug output are only printed when enabled at compilation.
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+http://code.google.com/p/libwrc/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright 2011-2014, Joachim Metz <joachim.metz@gmail.com>.
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+.Xr wrcexport 1
