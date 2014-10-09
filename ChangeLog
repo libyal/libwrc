@@ -42,6 +42,9 @@ Tools:
 * wrcmount
   - create
 
+20141009
+* updated dependencies and corresponding changes
+
 20140928
 * removed README.macosx
 * changes for project site move
