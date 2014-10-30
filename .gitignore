@@ -104,6 +104,7 @@ stamp-h1
 /include/libwrc/types.h
 /libwrc/libwrc.rc
 /libwrc/libwrc_definitions.h
+/wrctools/wrcinfo
 /pywrc/setup.py
 /tests/input
 /tests/tmp

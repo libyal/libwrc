@@ -42,6 +42,9 @@ Tools:
 * wrcmount
   - create
 
+20141030
+* bug fix in Python-bindings
+
 20141027
 * changes for deployment
 
