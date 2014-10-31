@@ -1,19 +1,22 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	-I$(top_srcdir)/libcstring \
-	-I$(top_srcdir)/liberror \
-	-I$(top_srcdir)/libsystem \
-	@MEMWATCH_CPPFLAGS@
+	@LIBCSTRING_CPPFLAGS@ \
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCNOTIFY_CPPFLAGS@
 
-TESTS =
+if HAVE_PYTHON
+TESTS_PYWRC =
+endif
 
-check_SCRIPTS =
+TESTS = \
+	$(TESTS_PYWRC)
+
+check_SCRIPTS = \
+	test_runner.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
-
-check_PROGRAMS =
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
