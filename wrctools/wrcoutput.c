@@ -24,15 +24,10 @@
 #include <memory.h>
 #include <types.h>
 
-#if defined( HAVE_LOCAL_LIBBFIO )
-#include <libbfio_definitions.h>
-#elif defined( HAVE_LIBBFIO_H )
-#include <libbfio.h>
-#endif
-
 #include "wrcoutput.h"
-#include "wrctools_libwrc.h"
+#include "wrctools_libbfio.h"
 #include "wrctools_libuna.h"
+#include "wrctools_libwrc.h"
 
 /* Prints the copyright information
  */
