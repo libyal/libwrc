@@ -193,6 +193,7 @@ int libwrc_stream_open(
      libwrc_error_t **error );
 
 #if defined( LIBWRC_HAVE_WIDE_CHARACTER_TYPE )
+
 /* Opens a stream
  * Returns 1 if successful or -1 on error
  */
@@ -202,9 +203,11 @@ int libwrc_stream_open_wide(
      const wchar_t *filename,
      int access_flags,
      libwrc_error_t **error );
-#endif
+
+#endif /* defined( LIBWRC_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBWRC_HAVE_BFIO )
+
 /* Opens a stream using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
@@ -214,7 +217,8 @@ int libwrc_stream_open_file_io_handle(
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libwrc_error_t **error );
-#endif
+
+#endif /* defined( LIBWRC_HAVE_BFIO ) */
 
 /* Closes a stream
  * Returns 0 if successful or -1 on error
