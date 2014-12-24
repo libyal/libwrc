@@ -1,4 +1,4 @@
-.Dd January 5, 2014
+.Dd December 24, 2014
 .Dt wrcinfo
 .Os libwrc
 .Sh NAME
@@ -7,7 +7,8 @@
 of the .rsrc section of a MZ, PE/COFF executable
 .Sh SYNOPSIS
 .Nm wrcinfo
-.Op Fl ahvV
+.Op Fl hvV
+.Op Fl c Ar codepage
 .Va Ar source
 .Sh DESCRIPTION
 .Nm wrcinfo
@@ -26,8 +27,28 @@ is the source file.
 .Pp
 The options are as follows:
 .Bl -tag -width Ds
-.It Fl a
-shows allocation information
+.It Fl c Ar codepage
+specify the codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
+.It Fl h
+shows this help
+.It Fl v
+verbose output to stderr
+.It Fl V
+print version
+.El
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh EXAMPLES
+.Bd -literal
+# wrcinfo WUDFPlatform.dll
+wrcinfo 20130303
+
+Executable (EXE) information:
+	Number of sections	: 5
+
+Section: 0
 .It Fl h
 shows this help
 .It Fl v

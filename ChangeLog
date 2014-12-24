@@ -42,6 +42,11 @@ Tools:
 * wrcmount
   - create
 
+20141224
+* worked on Python 3 support
+* worked on tests
+* added Windows codepage 932, 936 and 1255 support
+
 20141130
 * code clean up
 

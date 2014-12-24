@@ -108,6 +108,7 @@ stamp-h1
 /pywrc/setup.py
 /tests/input
 /tests/tmp
+/tests/wrc_test_set_ascii_codepage
 
 # Local library dependencies specific files
 /libbfio

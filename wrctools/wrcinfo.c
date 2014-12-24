@@ -58,14 +58,15 @@ void usage_fprint(
 	                 "Resource (RC) stream the .rsrc section of a PE/COFF\n"
 	                 "executable.\n\n" );
 
-	fprintf( stream, "Usage: wrcinfo [ -c codepage ]  [ -hvV ] source\n\n" );
+	fprintf( stream, "Usage: wrcinfo [ -c codepage ] [ -hvV ] source\n\n" );
 
 	fprintf( stream, "\tsource: the source file containing the stream\n\n" );
 
 	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-874,\n"
-	                 "\t        windows-932, windows-936, windows-1250, windows-1251,\n"
-	                 "\t        windows-1252 (default), windows-1253, windows-1254,\n"
-	                 "\t        windows-1255, windows-1256, windows-1257 or windows-1258\n" );
+	                 "\t        windows-932, windows-936, windows-949, windows-950,\n"
+	                 "\t        windows-1250, windows-1251, windows-1252 (default),\n"
+	                 "\t        windows-1253, windows-1254, windows-1255, windows-1256\n"
+	                 "\t        windows-1257 or windows-1258\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );

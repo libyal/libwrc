@@ -92,10 +92,8 @@ PyGetSetDef pywrc_resource_object_get_set_definitions[] = {
 };
 
 PyTypeObject pywrc_resource_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pywrc.resource",
 	/* tp_basicsize */
@@ -277,9 +275,10 @@ int pywrc_resource_init(
 void pywrc_resource_free(
       pywrc_resource_t *pywrc_resource )
 {
-	libcerror_error_t *error = NULL;
-	static char *function    = "pywrc_resource_free";
-	int result               = 0;
+	libcerror_error_t *error    = NULL;
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pywrc_resource_free";
+	int result                  = 0;
 
 	if( pywrc_resource == NULL )
 	{
@@ -290,29 +289,32 @@ void pywrc_resource_free(
 
 		return;
 	}
-	if( pywrc_resource->ob_type == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid resource - missing ob_type.",
-		 function );
-
-		return;
-	}
-	if( pywrc_resource->ob_type->tp_free == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid resource - invalid ob_type - missing tp_free.",
-		 function );
-
-		return;
-	}
 	if( pywrc_resource->resource == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
 		 "%s: invalid resource - missing libwrc resource.",
+		 function );
+
+		return;
+	}
+	ob_type = Py_TYPE(
+	           pywrc_resource );
+
+	if( ob_type == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
+		 function );
+
+		return;
+	}
+	if( ob_type->tp_free == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -341,7 +343,7 @@ void pywrc_resource_free(
 		Py_DecRef(
 		 (PyObject *) pywrc_resource->stream_object );
 	}
-	pywrc_resource->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pywrc_resource );
 }
 
@@ -405,6 +407,7 @@ PyObject *pywrc_resource_get_number_of_languages(
            PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pywrc_resource_get_number_of_languages";
 	int number_of_languages  = 0;
 	int result               = 0;
@@ -442,8 +445,14 @@ PyObject *pywrc_resource_get_number_of_languages(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) number_of_languages ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_languages );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_languages );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves a specific language identifier by index

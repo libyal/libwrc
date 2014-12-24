@@ -56,10 +56,8 @@ PySequenceMethods pywrc_language_identifiers_sequence_methods = {
 };
 
 PyTypeObject pywrc_language_identifiers_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pywrc._language_identifiers",
 	/* tp_basicsize */
@@ -258,7 +256,8 @@ int pywrc_language_identifiers_init(
 void pywrc_language_identifiers_free(
       pywrc_language_identifiers_t *pywrc_language_identifiers )
 {
-	static char *function = "pywrc_language_identifiers_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pywrc_language_identifiers_free";
 
 	if( pywrc_language_identifiers == NULL )
 	{
@@ -269,20 +268,23 @@ void pywrc_language_identifiers_free(
 
 		return;
 	}
-	if( pywrc_language_identifiers->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pywrc_language_identifiers );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid language identifiers - missing ob_type.",
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pywrc_language_identifiers->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid language identifiers - invalid ob_type - missing tp_free.",
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -292,7 +294,7 @@ void pywrc_language_identifiers_free(
 		Py_DecRef(
 		 (PyObject *) pywrc_language_identifiers->resource_object );
 	}
-	pywrc_language_identifiers->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pywrc_language_identifiers );
 }
 

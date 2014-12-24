@@ -57,10 +57,8 @@ PySequenceMethods pywrc_resources_sequence_methods = {
 };
 
 PyTypeObject pywrc_resources_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pywrc._resources",
 	/* tp_basicsize */
@@ -259,7 +257,8 @@ int pywrc_resources_init(
 void pywrc_resources_free(
       pywrc_resources_t *pywrc_resources )
 {
-	static char *function = "pywrc_resources_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pywrc_resources_free";
 
 	if( pywrc_resources == NULL )
 	{
@@ -270,20 +269,23 @@ void pywrc_resources_free(
 
 		return;
 	}
-	if( pywrc_resources->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pywrc_resources );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources - missing ob_type.",
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pywrc_resources->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources - invalid ob_type - missing tp_free.",
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -293,7 +295,7 @@ void pywrc_resources_free(
 		Py_DecRef(
 		 (PyObject *) pywrc_resources->stream_object );
 	}
-	pywrc_resources->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pywrc_resources );
 }
 

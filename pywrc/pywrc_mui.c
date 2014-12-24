@@ -86,10 +86,8 @@ PyGetSetDef pywrc_mui_object_get_set_definitions[] = {
 };
 
 PyTypeObject pywrc_mui_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pywrc.mui",
 	/* tp_basicsize */

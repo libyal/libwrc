@@ -1,7 +1,7 @@
 /*
- * Error functions
+ * The internal libclocale header
  *
- * Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,41 +19,31 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYWRC_ERROR_H )
-#define _PYWRC_ERROR_H
+#if !defined( _WRC_TEST_LIBCLOCALE_H )
+#define _WRC_TEST_LIBCLOCALE_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pywrc_libcerror.h"
-#include "pywrc_python.h"
+/* Define HAVE_LOCAL_LIBCLOCALE for local use of libclocale
+ */
+#if defined( HAVE_LOCAL_LIBCLOCALE )
 
-#define PYWRC_ERROR_STRING_SIZE		768
+#include <libclocale_codepage.h>
+#include <libclocale_definitions.h>
+#include <libclocale_locale.h>
+#include <libclocale_support.h>
 
-#if defined( __cplusplus )
-extern "C" {
+#else
+
+/* If libtool DLL support is enabled set LIBCLOCALE_DLL_IMPORT
+ * before including libclocale.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCLOCALE_DLL_IMPORT
 #endif
 
-void pywrc_error_fetch(
-      libcerror_error_t **error,
-      int error_domain,
-      int error_code,
-      const char *format_string,
-      ... );
+#include <libclocale.h>
 
-void pywrc_error_fetch_and_raise(
-      PyObject *exception_object,
-      const char *format_string,
-      ... );
-
-void pywrc_error_raise(
-      libcerror_error_t *error,
-      PyObject *exception_object,
-      const char *format_string,
-      ... );
-
-#if defined( __cplusplus )
-}
 #endif
 
 #endif

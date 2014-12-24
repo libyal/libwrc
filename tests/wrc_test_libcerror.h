@@ -1,7 +1,7 @@
 /*
- * Error functions
+ * The internal libcerror header
  *
- * Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,41 +19,31 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYWRC_ERROR_H )
-#define _PYWRC_ERROR_H
+#if !defined( _WRC_TEST_LIBCERROR_H )
+#define _WRC_TEST_LIBCERROR_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pywrc_libcerror.h"
-#include "pywrc_python.h"
+/* Define HAVE_LOCAL_LIBCERROR for local use of libcerror
+ */
+#if defined( HAVE_LOCAL_LIBCERROR )
 
-#define PYWRC_ERROR_STRING_SIZE		768
+#include <libcerror_definitions.h>
+#include <libcerror_error.h>
+#include <libcerror_system.h>
+#include <libcerror_types.h>
 
-#if defined( __cplusplus )
-extern "C" {
+#else
+
+/* If libtool DLL support is enabled set LIBCERROR_DLL_IMPORT
+ * before including libcerror.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCERROR_DLL_IMPORT
 #endif
 
-void pywrc_error_fetch(
-      libcerror_error_t **error,
-      int error_domain,
-      int error_code,
-      const char *format_string,
-      ... );
+#include <libcerror.h>
 
-void pywrc_error_fetch_and_raise(
-      PyObject *exception_object,
-      const char *format_string,
-      ... );
-
-void pywrc_error_raise(
-      libcerror_error_t *error,
-      PyObject *exception_object,
-      const char *format_string,
-      ... );
-
-#if defined( __cplusplus )
-}
 #endif
 
 #endif

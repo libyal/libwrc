@@ -79,10 +79,8 @@ PyGetSetDef pywrc_string_object_get_set_definitions[] = {
 };
 
 PyTypeObject pywrc_string_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pywrc.string",
 	/* tp_basicsize */
@@ -184,6 +182,7 @@ PyObject *pywrc_string_get_number_of_strings(
            PyObject *keywords )
 {
 	libcerror_error_t *error     = NULL;
+	PyObject *integer_object     = NULL;
 	static char *keyword_list[]  = { "language_identifier", NULL };
 	static char *function        = "pywrc_string_get_number_of_strings";
 	uint32_t language_identifier = 0;
@@ -231,8 +230,14 @@ PyObject *pywrc_string_get_number_of_strings(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) number_of_strings ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_strings );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_strings );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves the string identifier for a specific language identifier and string index

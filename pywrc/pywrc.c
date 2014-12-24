@@ -104,16 +104,42 @@ PyObject *pywrc_get_version(
 	         errors ) );
 }
 
-/* Declarations for DLL import/export
+#if PY_MAJOR_VERSION >= 3
+
+/* The pywrc module definition
  */
-#ifndef PyMODINIT_FUNC
-#define PyMODINIT_FUNC void
-#endif
+PyModuleDef pywrc_module_definition = {
+	PyModuleDef_HEAD_INIT,
+
+	/* m_name */
+	"pywrc",
+	/* m_doc */
+	"Python libwrc module (pywrc).",
+	/* m_size */
+	-1,
+	/* m_methods */
+	pywrc_module_methods,
+	/* m_reload */
+	NULL,
+	/* m_traverse */
+	NULL,
+	/* m_clear */
+	NULL,
+	/* m_free */
+	NULL,
+};
+
+#endif /* PY_MAJOR_VERSION >= 3 */
 
 /* Initializes the pywrc module
  */
+#if PY_MAJOR_VERSION >= 3
+PyMODINIT_FUNC PyInit_pywrc(
+                void )
+#else
 PyMODINIT_FUNC initpywrc(
                 void )
+#endif
 {
 	PyObject *module                               = NULL;
 	PyTypeObject *language_identifiers_type_object = NULL;
@@ -131,11 +157,23 @@ PyMODINIT_FUNC initpywrc(
 	 * This function must be called before grabbing the GIL
 	 * otherwise the module will segfault on a version mismatch
 	 */
+#if PY_MAJOR_VERSION >= 3
+	module = PyModule_Create(
+	          &pywrc_module_definition );
+#else
 	module = Py_InitModule3(
 	          "pywrc",
 	          pywrc_module_methods,
 	          "Python libwrc module (pywrc)." );
-
+#endif
+	if( module == NULL )
+	{
+#if PY_MAJOR_VERSION >= 3
+		return( NULL );
+#else
+		return;
+#endif
+	}
 	PyEval_InitThreads();
 
 	gil_state = PyGILState_Ensure();
@@ -311,8 +349,23 @@ PyMODINIT_FUNC initpywrc(
 	 "version",
 	 (PyObject *) version_type_object );
 
+	PyGILState_Release(
+	 gil_state );
+
+#if PY_MAJOR_VERSION >= 3
+	return( module );
+#else
+	return;
+#endif
+
 on_error:
 	PyGILState_Release(
 	 gil_state );
+
+#if PY_MAJOR_VERSION >= 3
+	return( NULL );
+#else
+	return;
+#endif
 }
 

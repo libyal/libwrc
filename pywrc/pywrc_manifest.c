@@ -57,10 +57,8 @@ PyGetSetDef pywrc_manifest_object_get_set_definitions[] = {
 };
 
 PyTypeObject pywrc_manifest_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pywrc.manifest",
 	/* tp_basicsize */

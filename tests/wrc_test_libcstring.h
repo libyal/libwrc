@@ -1,7 +1,7 @@
 /*
- * Error functions
+ * The internal libcstring header
  *
- * Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,41 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYWRC_ERROR_H )
-#define _PYWRC_ERROR_H
+#if !defined( _WRC_TEST_LIBCSTRING_H )
+#define _WRC_TEST_LIBCSTRING_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pywrc_libcerror.h"
-#include "pywrc_python.h"
+/* Define HAVE_LOCAL_LIBCSTRING for local use of libcstring
+ */
+#if defined( HAVE_LOCAL_LIBCSTRING )
 
-#define PYWRC_ERROR_STRING_SIZE		768
+#include <libcstring_definitions.h>
+#include <libcstring_narrow_string.h>
+#include <libcstring_system_string.h>
+#include <libcstring_types.h>
+#include <libcstring_wide_string.h>
 
-#if defined( __cplusplus )
-extern "C" {
+#else
+
+/* If libtool DLL support is enabled set LIBCSTRING_DLL_IMPORT
+ * before including libcstring.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCSTRING_DLL_IMPORT
 #endif
 
-void pywrc_error_fetch(
-      libcerror_error_t **error,
-      int error_domain,
-      int error_code,
-      const char *format_string,
-      ... );
+#include <libcstring.h>
 
-void pywrc_error_fetch_and_raise(
-      PyObject *exception_object,
-      const char *format_string,
-      ... );
-
-void pywrc_error_raise(
-      libcerror_error_t *error,
-      PyObject *exception_object,
-      const char *format_string,
-      ... );
-
-#if defined( __cplusplus )
-}
 #endif
 
 #endif

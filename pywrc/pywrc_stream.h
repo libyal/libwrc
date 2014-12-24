@@ -105,7 +105,7 @@ PyObject *pywrc_stream_set_ascii_codepage(
 
 int pywrc_stream_set_ascii_codepage_setter(
      pywrc_stream_t *pywrc_stream,
-     PyObject *value_object,
+     PyObject *string_object,
      void *closure );
 
 PyObject *pywrc_stream_get_virtual_address(

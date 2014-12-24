@@ -1,7 +1,7 @@
 /*
- * Error functions
+ * The internal libwrc header
  *
- * Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,42 +19,19 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYWRC_ERROR_H )
-#define _PYWRC_ERROR_H
+#if !defined( _WRC_TEST_LIBWRC_H )
+#define _WRC_TEST_LIBWRC_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pywrc_libcerror.h"
-#include "pywrc_python.h"
-
-#define PYWRC_ERROR_STRING_SIZE		768
-
-#if defined( __cplusplus )
-extern "C" {
+/* If Cygwin libtool DLL support is enabled set LIBWRC_DLL_IMPORT
+ * before including libwrc.h
+ */
+#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#define LIBWRC_DLL_IMPORT
 #endif
 
-void pywrc_error_fetch(
-      libcerror_error_t **error,
-      int error_domain,
-      int error_code,
-      const char *format_string,
-      ... );
-
-void pywrc_error_fetch_and_raise(
-      PyObject *exception_object,
-      const char *format_string,
-      ... );
-
-void pywrc_error_raise(
-      libcerror_error_t *error,
-      PyObject *exception_object,
-      const char *format_string,
-      ... );
-
-#if defined( __cplusplus )
-}
-#endif
+#include <libwrc.h>
 
 #endif
 
