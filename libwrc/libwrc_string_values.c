@@ -209,7 +209,7 @@ int libwrc_string_values_read(
 			     string_value,
 			     (uint8_t *) &string_identifier,
 			     4,
-			     LIBFVALUE_VALUE_FLAG_IDENTIFIER_MANAGED,
+			     LIBFVALUE_VALUE_IDENTIFIER_FLAG_MANAGED,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
