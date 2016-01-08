@@ -1,7 +1,7 @@
 /*
  * Python bindings for libwrc (pywrc)
  *
- * Copyright (C) 2011-2015, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -45,8 +45,13 @@ PyObject *pywrc_check_file_signature_file_object(
            PyObject *arguments,
            PyObject *keywords );
 
+#if PY_MAJOR_VERSION >= 3
+PyMODINIT_FUNC PyInit_pywrc(
+                void );
+#else
 PyMODINIT_FUNC initpywrc(
                 void );
+#endif
 
 #if defined( __cplusplus )
 }

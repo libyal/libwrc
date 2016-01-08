@@ -1,7 +1,7 @@
 /*
  * Error functions
  *
- * Copyright (C) 2011-2015, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -28,7 +28,7 @@
 #include "pywrc_libcerror.h"
 #include "pywrc_python.h"
 
-#define PYWRC_ERROR_STRING_SIZE		768
+#define PYWRC_ERROR_STRING_SIZE		2048
 
 #if defined( __cplusplus )
 extern "C" {
