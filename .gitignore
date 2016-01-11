@@ -112,8 +112,8 @@ stamp-h[1-9]
 /include/libwrc/types.h
 /libwrc/libwrc.rc
 /libwrc/libwrc_definitions.h
+/pywrc-python[23]/*.[ch]
 /wrctools/wrcinfo
-/pywrc/setup.py
 /tests/input
 /tests/tmp*
 /tests/wrc_test_set_ascii_codepage

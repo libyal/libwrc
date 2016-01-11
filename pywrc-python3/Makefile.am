@@ -1,4 +1,10 @@
-if HAVE_PYTHON
+# Note that we cannot use: AUTOMAKE_OPTIONS = subdir-objects
+# subdir-objects will compile the source files to a single version of Python.
+# Since subdir-objects is being deprecated we copy the source files instead.
+am__installdirs = "$(DESTDIR)$(pyexecdir3)"
+pyexecdir = $(pyexecdir3)
+
+if HAVE_PYTHON3
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
@@ -12,9 +18,9 @@ AM_CFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@
 
-pyexec_LTLIBRARIES = pywrc.la
+am_pywrc_la_rpath = -rpath $(pyexecdir3)
 
-pywrc_la_SOURCES = \
+BUILT_SOURCES = \
 	pywrc.c pywrc.h \
 	pywrc_codepage.c pywrc_codepage.h \
 	pywrc_error.c pywrc_error.h \
@@ -37,6 +43,10 @@ pywrc_la_SOURCES = \
 	pywrc_unused.h \
 	pywrc_version.c pywrc_version.h
 
+pyexec_LTLIBRARIES = pywrc.la
+
+nodist_pywrc_la_SOURCES = $(BUILT_SOURCES)
+
 pywrc_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
@@ -49,13 +59,19 @@ pywrc_la_LIBADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@
 
-pywrc_la_CPPFLAGS = $(PYTHON_CPPFLAGS)
-pywrc_la_LDFLAGS  = -module -avoid-version $(PYTHON_LDFLAGS)
+pywrc_la_CPPFLAGS = $(PYTHON3_CPPFLAGS)
+pywrc_la_LDFLAGS  = -module -avoid-version $(PYTHON3_LDFLAGS)
+
+$(BUILT_SOURCES):
+	/bin/cp -f $(top_srcdir)/pywrc/$@ $@
 
 endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+clean-local:
+	/bin/rm -f pywrc*.[ch]
 
 distclean: clean
 	/bin/rm -f Makefile

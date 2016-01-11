@@ -26,6 +26,8 @@ SUBDIRS = \
 	libexe \
 	wrctools \
 	pywrc \
+	pywrc-python2 \
+	pywrc-python3 \
 	po \
 	manuals \
 	tests \
@@ -39,8 +41,10 @@ DPKG_FILES = \
 	dpkg/copyright \
 	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libwrc-dev.docs \
 	dpkg/libwrc.docs \
+	dpkg/libwrc-dev.docs \
+	dpkg/libwrc-python.docs \
+	dpkg/libwrc-python3.docs \
 	dpkg/libwrc-tools.docs \
 	dpkg/source/format
 
@@ -51,6 +55,9 @@ GETTEXT_FILES = \
 PKGCONFIG_FILES = \
 	libwrc.pc.in
 
+SETUP_PY_FILES = \
+	setup.py
+
 SPEC_FILES = \
 	libwrc.spec \
 	libwrc.spec.in
@@ -59,6 +66,7 @@ EXTRA_DIST = \
 	$(DPKG_FILES) \
 	$(GETTEXT_FILES) \
 	$(PKGCONFIG_FILES) \
+	$(SETUP_PY_FILES) \
 	$(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \
