@@ -1,13 +1,13 @@
 include_HEADERS = \
-        libwrc.h
+	libwrc.h
 
 pkginclude_HEADERS = \
-        libwrc/codepage.h \
-        libwrc/definitions.h \
-        libwrc/error.h \
-        libwrc/extern.h \
-        libwrc/features.h \
-        libwrc/types.h
+	libwrc/codepage.h \
+	libwrc/definitions.h \
+	libwrc/error.h \
+	libwrc/extern.h \
+	libwrc/features.h \
+	libwrc/types.h
 
 EXTRA_DIST = \
 	libwrc.h.in \

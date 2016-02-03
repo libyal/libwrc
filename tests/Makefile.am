@@ -12,27 +12,31 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBCSYSTEM_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@ \
 	@LIBWRC_DLL_IMPORT@
 
-if HAVE_PYTHON
+if HAVE_PYTHON_TESTS
 TESTS_PYWRC = \
 	test_pywrc_set_ascii_codepage.sh
 endif
 
 TESTS = \
 	test_set_ascii_codepage.sh \
+	test_wrcinfo.sh \
 	$(TESTS_PYWRC)
 
 check_SCRIPTS = \
 	pywrc_test_set_ascii_codepage.py \
 	test_pywrc_set_ascii_codepage.sh \
 	test_runner.sh \
-	test_set_ascii_codepage.sh
+	test_set_ascii_codepage.sh \
+	test_wrcinfo.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
-check_PROGRAMS =  \
+check_PROGRAMS = \
 	wrc_test_set_ascii_codepage
 
 wrc_test_set_ascii_codepage_SOURCES = \
