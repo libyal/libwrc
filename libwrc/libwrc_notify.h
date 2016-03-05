@@ -23,9 +23,8 @@
 #define _LIBWRC_NOTIFY_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #include "libwrc_extern.h"
 #include "libwrc_libcerror.h"
@@ -54,11 +53,11 @@ LIBWRC_EXTERN \
 int libwrc_notify_stream_close(
      libcerror_error_t **error );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBWRC ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_NOTIFY_H ) */
 

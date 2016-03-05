@@ -28,7 +28,7 @@
 #include "pywrc_libcerror.h"
 #include "pywrc_python.h"
 
-#define PYWRC_ERROR_STRING_SIZE		2048
+#define PYWRC_ERROR_STRING_SIZE	2048
 
 #if defined( __cplusplus )
 extern "C" {
@@ -56,5 +56,5 @@ void pywrc_error_raise(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_ERROR_H ) */
 

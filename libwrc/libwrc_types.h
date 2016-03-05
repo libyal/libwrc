@@ -36,15 +36,15 @@
 #if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
 typedef struct libwrc_resource {}			libwrc_resource_t;
 typedef struct libwrc_stream {}				libwrc_stream_t;
-typedef struct libwrc_wevt_channel_t {}			libwrc_wevt_channel_t;
-typedef struct libwrc_wevt_event_t {}			libwrc_wevt_event_t;
-typedef struct libwrc_wevt_keyword_t {}			libwrc_wevt_keyword_t;
-typedef struct libwrc_wevt_level_t {}			libwrc_wevt_level_t;
-typedef struct libwrc_wevt_map_t {}			libwrc_wevt_map_t;
-typedef struct libwrc_wevt_opcode_t {}			libwrc_wevt_opcode_t;
-typedef struct libwrc_wevt_provider_t {}		libwrc_wevt_provider_t;
-typedef struct libwrc_wevt_task_t {}			libwrc_wevt_task_t;
-typedef struct libwrc_wevt_template_definition_t {}	libwrc_wevt_template_definition_t;
+typedef struct libwrc_wevt_channel {}			libwrc_wevt_channel_t;
+typedef struct libwrc_wevt_event {}			libwrc_wevt_event_t;
+typedef struct libwrc_wevt_keyword {}			libwrc_wevt_keyword_t;
+typedef struct libwrc_wevt_level {}			libwrc_wevt_level_t;
+typedef struct libwrc_wevt_map {}			libwrc_wevt_map_t;
+typedef struct libwrc_wevt_opcode {}			libwrc_wevt_opcode_t;
+typedef struct libwrc_wevt_provider {}			libwrc_wevt_provider_t;
+typedef struct libwrc_wevt_task {}			libwrc_wevt_task_t;
+typedef struct libwrc_wevt_template_definition {}	libwrc_wevt_template_definition_t;
 
 #else
 typedef intptr_t libwrc_resource_t;
@@ -59,9 +59,9 @@ typedef intptr_t libwrc_wevt_provider_t;
 typedef intptr_t libwrc_wevt_task_t;
 typedef intptr_t libwrc_wevt_template_definition_t;
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBWRC ) */
 
-#endif
+#endif /* !defined( _LIBWRC_INTERNAL_TYPES_H ) */
 

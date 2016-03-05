@@ -38,5 +38,5 @@ const char *pywrc_codepage_to_string(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_CODEPAGE_H */
 
