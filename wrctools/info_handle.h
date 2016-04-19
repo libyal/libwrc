@@ -60,7 +60,7 @@ struct info_handle
 	 */
 	int ascii_codepage;
 
-	/* The nofication output stream
+	/* The notification output stream
 	 */
 	FILE *notify_stream;
 

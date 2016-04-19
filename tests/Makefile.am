@@ -22,12 +22,14 @@ TESTS_PYWRC = \
 endif
 
 TESTS = \
+	test_api_functions.sh \
 	test_set_ascii_codepage.sh \
 	test_wrcinfo.sh \
 	$(TESTS_PYWRC)
 
 check_SCRIPTS = \
 	pywrc_test_set_ascii_codepage.py \
+	test_api_functions.sh \
 	test_pywrc_set_ascii_codepage.sh \
 	test_runner.sh \
 	test_set_ascii_codepage.sh \
@@ -37,13 +39,23 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	wrc_test_get_version \
 	wrc_test_set_ascii_codepage
+
+wrc_test_get_version_SOURCES = \
+	wrc_test_libcstring.h \
+	wrc_test_libwrc.h \
+	wrc_test_get_version.c
+
+wrc_test_get_version_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCSTRING_LIBADD@
 
 wrc_test_set_ascii_codepage_SOURCES = \
 	wrc_test_libcerror.h \
 	wrc_test_libclocale.h \
-	wrc_test_libwrc.h \
 	wrc_test_libcstring.h \
+	wrc_test_libwrc.h \
 	wrc_test_set_ascii_codepage.c
 
 wrc_test_set_ascii_codepage_LDADD = \
