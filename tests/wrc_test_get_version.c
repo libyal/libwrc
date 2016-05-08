@@ -26,36 +26,49 @@
 #include <stdlib.h>
 #endif
 
-#include "wrc_test_libwrc.h"
 #include "wrc_test_libcstring.h"
+#include "wrc_test_libwrc.h"
 #include "wrc_test_unused.h"
+
+/* Tests retrieving the library version
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_get_version(
+     void )
+{
+	const char *version_string = NULL;
+	int result                 = 0;
+
+	version_string = libwrc_get_version();
+
+	result = libcstring_narrow_string_compare(
+	          version_string,
+	          LIBWRC_VERSION_STRING,
+	          9 );
+
+	if( result != 0 )
+	{
+		return( 0 );
+	}
+	return( 1 );
+}
 
 /* The main program
  */
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-int wmain( int argc, wchar_t * const argv[] WRC_TEST_ATTRIBUTE_UNUSED )
+int wmain(
+     int argc WRC_TEST_ATTRIBUTE_UNUSED,
+     wchar_t * const argv[] WRC_TEST_ATTRIBUTE_UNUSED )
 #else
-int main( int argc, char * const argv[] WRC_TEST_ATTRIBUTE_UNUSED )
+int main(
+     int argc WRC_TEST_ATTRIBUTE_UNUSED,
+     char * const argv[] WRC_TEST_ATTRIBUTE_UNUSED )
 #endif
 {
-	const char *version_string = NULL;
-
+	WRC_TEST_UNREFERENCED_PARAMETER( argc )
 	WRC_TEST_UNREFERENCED_PARAMETER( argv )
 
-	if( argc != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unsupported number of arguments.\n" );
-
-		return( EXIT_FAILURE );
-	}
-	version_string = libwrc_get_version();
-
-	if( libcstring_narrow_string_compare(
-	     version_string,
-	     LIBWRC_VERSION_STRING,
-	     9 ) != 0 )
+	if( wrc_test_get_version() != 1 )
 	{
 		return( EXIT_FAILURE );
 	}

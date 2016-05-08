@@ -18,6 +18,7 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON_TESTS
 TESTS_PYWRC = \
+	test_python_functions.sh \
 	test_pywrc_set_ascii_codepage.sh
 endif
 
@@ -28,8 +29,10 @@ TESTS = \
 	$(TESTS_PYWRC)
 
 check_SCRIPTS = \
+	pywrc_test_get_version.py \
 	pywrc_test_set_ascii_codepage.py \
 	test_api_functions.sh \
+	test_python_functions.sh \
 	test_pywrc_set_ascii_codepage.sh \
 	test_runner.sh \
 	test_set_ascii_codepage.sh \
