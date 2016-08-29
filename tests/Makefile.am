@@ -42,13 +42,27 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	wrc_test_error \
 	wrc_test_get_version \
 	wrc_test_set_ascii_codepage
 
-wrc_test_get_version_SOURCES = \
+wrc_test_error_SOURCES = \
+	wrc_test_error.c
 	wrc_test_libcstring.h \
 	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_unused.h
+
+wrc_test_error_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCSTRING_LIBADD@
+
+wrc_test_get_version_SOURCES = \
 	wrc_test_get_version.c
+	wrc_test_libcstring.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_unused.h
 
 wrc_test_get_version_LDADD = \
 	../libwrc/libwrc.la \

@@ -21,6 +21,7 @@ MSVSCPP_FILES = \
 	libuna/libuna.vcproj \
 	libwrc/libwrc.vcproj \
 	pywrc/pywrc.vcproj \
+	wrc_test_error/wrc_test_error.vcproj \
 	wrc_test_get_version/wrc_test_get_version.vcproj \
 	wrc_test_set_ascii_codepage/wrc_test_set_ascii_codepage.vcproj \
 	wrcinfo/wrcinfo.vcproj \
