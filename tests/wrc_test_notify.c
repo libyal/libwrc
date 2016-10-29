@@ -1,5 +1,5 @@
 /*
- * Library error functions test program
+ * Library notification functions test program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,78 +30,60 @@
 #include "wrc_test_macros.h"
 #include "wrc_test_unused.h"
 
-/* Tests the libwrc_error_free function
+/* Tests the libwrc_notify_set_verbose function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_error_free(
+int wrc_test_notify_set_verbose(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libwrc_error_free(
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libwrc_error_fprint function
- * Returns 1 if successful or 0 if not
- */
-int wrc_test_error_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libwrc_error_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libwrc_error_sprint function
- * Returns 1 if successful or 0 if not
- */
-int wrc_test_error_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libwrc_error_sprint(
-	 NULL,
-	 NULL,
+	libwrc_notify_set_verbose(
 	 0 );
 
 	return( 1 );
 }
 
-/* Tests the libwrc_error_backtrace_fprint function
+/* Tests the libwrc_notify_set_stream function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_error_backtrace_fprint(
+int wrc_test_notify_set_stream(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libwrc_error_backtrace_fprint(
+	libwrc_notify_set_stream(
 	 NULL,
 	 NULL );
 
 	return( 1 );
 }
 
-/* Tests the libwrc_error_backtrace_sprint function
+/* Tests the libwrc_notify_stream_open function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_error_backtrace_sprint(
+int wrc_test_notify_stream_open(
      void )
 {
 	/* Test invocation of function only
 	 */
-	libwrc_error_backtrace_sprint(
+	libwrc_notify_stream_open(
 	 NULL,
-	 NULL,
-	 0 );
+	 NULL );
+
+	return( 1 );
+}
+
+/* Tests the libwrc_notify_stream_close function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_notify_stream_close(
+     void )
+{
+	/* Test invocation of function only
+	 */
+	libwrc_notify_stream_close(
+	 NULL );
 
 	return( 1 );
 }
@@ -122,24 +104,20 @@ int main(
 	WRC_TEST_UNREFERENCED_PARAMETER( argv )
 
 	WRC_TEST_RUN(
-	 "libwrc_error_free",
-	 wrc_test_error_free );
+	 "libwrc_notify_set_verbose",
+	 wrc_test_notify_set_verbose )
 
 	WRC_TEST_RUN(
-	 "libwrc_error_fprint",
-	 wrc_test_error_fprint );
+	 "libwrc_notify_set_stream",
+	 wrc_test_notify_set_stream )
 
 	WRC_TEST_RUN(
-	 "libwrc_error_sprint",
-	 wrc_test_error_sprint );
+	 "libwrc_notify_stream_open",
+	 wrc_test_notify_stream_open )
 
 	WRC_TEST_RUN(
-	 "libwrc_error_backtrace_fprint",
-	 wrc_test_error_backtrace_fprint );
-
-	WRC_TEST_RUN(
-	 "libwrc_error_backtrace_sprint",
-	 wrc_test_error_backtrace_sprint );
+	 "libwrc_notify_stream_close",
+	 wrc_test_notify_stream_close )
 
 	return( EXIT_SUCCESS );
 

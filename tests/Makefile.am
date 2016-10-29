@@ -43,6 +43,7 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	wrc_test_error \
+	wrc_test_notify \
 	wrc_test_set_ascii_codepage \
 	wrc_test_support
 
@@ -54,6 +55,17 @@ wrc_test_error_SOURCES = \
 	wrc_test_unused.h
 
 wrc_test_error_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCSTRING_LIBADD@
+
+wrc_test_notify_SOURCES = \
+	wrc_test_libcstring.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_notify.c
+	wrc_test_unused.h
+
+wrc_test_notify_LDADD = \
 	../libwrc/libwrc.la \
 	@LIBCSTRING_LIBADD@
 
