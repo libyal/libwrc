@@ -22,8 +22,8 @@ MSVSCPP_FILES = \
 	libwrc/libwrc.vcproj \
 	pywrc/pywrc.vcproj \
 	wrc_test_error/wrc_test_error.vcproj \
-	wrc_test_get_version/wrc_test_get_version.vcproj \
 	wrc_test_set_ascii_codepage/wrc_test_set_ascii_codepage.vcproj \
+	wrc_test_support/wrc_test_support.vcproj \
 	wrcinfo/wrcinfo.vcproj \
 	libwrc.sln
 

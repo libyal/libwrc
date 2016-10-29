@@ -124,8 +124,8 @@ stamp-h[1-9]
 /tests/input
 /tests/tmp*
 /tests/wrc_test_error
-/tests/wrc_test_get_version
 /tests/wrc_test_set_ascii_codepage
+/tests/wrc_test_support
 
 # Local library dependencies specific files
 /libbfio
