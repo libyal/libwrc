@@ -2,7 +2,6 @@ if HAVE_PYTHON
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -24,7 +23,6 @@ pywrc_la_SOURCES = \
 	pywrc_libbfio.h \
 	pywrc_libcerror.h \
 	pywrc_libclocale.h \
-	pywrc_libcstring.h \
 	pywrc_libwrc.h \
 	pywrc_manifest.c pywrc_manifest.h \
 	pywrc_message_table.c pywrc_message_table.h \
@@ -38,7 +36,6 @@ pywrc_la_SOURCES = \
 	pywrc_version.c pywrc_version.h
 
 pywrc_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libwrc/libwrc.la \
 	@LIBCDATA_LIBADD@ \

@@ -26,7 +26,6 @@
 #include <types.h>
 
 #include "libwrc_extern.h"
-#include "libwrc_libbfio.h"
 #include "libwrc_libcerror.h"
 
 #if defined( __cplusplus )
@@ -59,5 +58,5 @@ int libwrc_set_codepage(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_SUPPORT_H ) */
 

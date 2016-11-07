@@ -30,7 +30,6 @@
 #include "pywrc_integer.h"
 #include "pywrc_language_identifiers.h"
 #include "pywrc_libcerror.h"
-#include "pywrc_libcstring.h"
 #include "pywrc_libwrc.h"
 #include "pywrc_python.h"
 #include "pywrc_resource.h"

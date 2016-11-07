@@ -21,7 +21,9 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libwrc_codepage.h"
 #include "libwrc_debug.h"
@@ -31,7 +33,6 @@
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
-#include "libwrc_libcstring.h"
 #include "libwrc_libuna.h"
 #include "libwrc_resource.h"
 #include "libwrc_resource_values.h"
@@ -241,6 +242,7 @@ int libwrc_stream_open(
 	libbfio_handle_t *file_io_handle          = NULL;
 	libwrc_internal_stream_t *internal_stream = NULL;
 	static char *function                     = "libwrc_stream_open";
+	size_t filename_length                    = 0;
 
 	if( stream == NULL )
 	{
@@ -318,11 +320,13 @@ int libwrc_stream_open(
 		goto on_error;
 	}
 #endif
+	filename_length = narrow_string_length(
+	                   filename );
+
 	if( libbfio_file_set_name(
 	     file_io_handle,
 	     filename,
-	     libcstring_narrow_string_length(
-	      filename ) + 1,
+	     filename_length + 1,
 	     error ) != 1 )
 	{
                 libcerror_error_set(
@@ -378,6 +382,7 @@ int libwrc_stream_open_wide(
 	libbfio_handle_t *file_io_handle          = NULL;
 	libwrc_internal_stream_t *internal_stream = NULL;
 	static char *function                     = "libwrc_stream_open_wide";
+	size_t filename_length                    = 0;
 
 	if( stream == NULL )
 	{
@@ -455,11 +460,13 @@ int libwrc_stream_open_wide(
 		goto on_error;
 	}
 #endif
+	filename_length = wide_string_length(
+	                   filename );
+
 	if( libbfio_file_set_name_wide(
 	     file_io_handle,
 	     filename,
-	     libcstring_wide_string_length(
-	      filename ) + 1,
+	     filename_length + 1,
 	     error ) != 1 )
 	{
                 libcerror_error_set(

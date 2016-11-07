@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -33,7 +34,6 @@
 #include "pywrc_libbfio.h"
 #include "pywrc_libcerror.h"
 #include "pywrc_libclocale.h"
-#include "pywrc_libcstring.h"
 #include "pywrc_libwrc.h"
 #include "pywrc_manifest.h"
 #include "pywrc_message_table.h"
@@ -532,7 +532,7 @@ PyObject *pywrc_stream_open(
 	char *mode                   = NULL;
 	int result                   = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	const wchar_t *filename_wide = NULL;
 #else
 	PyObject *utf8_string_object = NULL;
@@ -592,7 +592,7 @@ PyObject *pywrc_stream_open(
 	{
 		PyErr_Clear();
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
 		                             string_object );
 		Py_BEGIN_ALLOW_THREADS
@@ -1005,7 +1005,7 @@ int pywrc_stream_set_ascii_codepage_from_string(
 
 		return( -1 );
 	}
-	codepage_string_length = libcstring_narrow_string_length(
+	codepage_string_length = narrow_string_length(
 	                          codepage_string );
 
 	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;
@@ -1763,7 +1763,7 @@ PyObject *pywrc_stream_get_resource_by_name(
 	{
 		return( NULL );
 	}
-	resource_name_length = libcstring_narrow_string_length(
+	resource_name_length = narrow_string_length(
 	                        resource_name );
 
 	Py_BEGIN_ALLOW_THREADS

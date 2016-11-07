@@ -1,5 +1,5 @@
 /*
- * Library notification functions test program
+ * Library resource type testing program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,64 +30,45 @@
 #include "wrc_test_libcerror.h"
 #include "wrc_test_libwrc.h"
 #include "wrc_test_macros.h"
+#include "wrc_test_memory.h"
 #include "wrc_test_unused.h"
 
-/* Tests the libwrc_notify_set_verbose function
+/* Tests the libwrc_resource_free function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_notify_set_verbose(
+int wrc_test_resource_free(
      void )
 {
-	/* Test invocation of function only
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
 	 */
-	libwrc_notify_set_verbose(
-	 0 );
+	result = libwrc_resource_free(
+	          NULL,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        WRC_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
 
 	return( 1 );
-}
 
-/* Tests the libwrc_notify_set_stream function
- * Returns 1 if successful or 0 if not
- */
-int wrc_test_notify_set_stream(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libwrc_notify_set_stream(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libwrc_notify_stream_open function
- * Returns 1 if successful or 0 if not
- */
-int wrc_test_notify_stream_open(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libwrc_notify_stream_open(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libwrc_notify_stream_close function
- * Returns 1 if successful or 0 if not
- */
-int wrc_test_notify_stream_close(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libwrc_notify_stream_close(
-	 NULL );
-
-	return( 1 );
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
 }
 
 /* The main program
@@ -106,20 +87,8 @@ int main(
 	WRC_TEST_UNREFERENCED_PARAMETER( argv )
 
 	WRC_TEST_RUN(
-	 "libwrc_notify_set_verbose",
-	 wrc_test_notify_set_verbose )
-
-	WRC_TEST_RUN(
-	 "libwrc_notify_set_stream",
-	 wrc_test_notify_set_stream )
-
-	WRC_TEST_RUN(
-	 "libwrc_notify_stream_open",
-	 wrc_test_notify_stream_open )
-
-	WRC_TEST_RUN(
-	 "libwrc_notify_stream_close",
-	 wrc_test_notify_stream_close )
+	 "libwrc_resource_free",
+	 wrc_test_resource_free );
 
 	return( EXIT_SUCCESS );
 

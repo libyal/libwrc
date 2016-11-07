@@ -28,7 +28,6 @@
 #include "pywrc_integer.h"
 #include "pywrc_libbfio.h"
 #include "pywrc_libcerror.h"
-#include "pywrc_libcstring.h"
 #include "pywrc_python.h"
 
 /* Creates a file object IO handle

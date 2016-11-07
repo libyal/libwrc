@@ -29,7 +29,6 @@
 #include "pywrc_error.h"
 #include "pywrc_integer.h"
 #include "pywrc_libcerror.h"
-#include "pywrc_libcstring.h"
 #include "pywrc_libwrc.h"
 #include "pywrc_message_table.h"
 #include "pywrc_python.h"

@@ -28,7 +28,6 @@
 
 #include "wrctools_libbfio.h"
 #include "wrctools_libcerror.h"
-#include "wrctools_libcstring.h"
 #include "wrctools_libexe.h"
 #include "wrctools_libwrc.h"
 
@@ -83,12 +82,12 @@ int info_handle_signal_abort(
 
 int info_handle_set_ascii_codepage(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int info_handle_open_input(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int info_handle_close_input(

@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -37,7 +36,6 @@ libwrc_la_SOURCES = \
 	libwrc_libcerror.h \
 	libwrc_libclocale.h \
 	libwrc_libcnotify.h \
-	libwrc_libcstring.h \
 	libwrc_libfcache.h \
 	libwrc_libfdata.h \
 	libwrc_libfguid.h \
@@ -80,7 +78,6 @@ libwrc_la_SOURCES = \
 	wrc_version_resource.h
 
 libwrc_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \

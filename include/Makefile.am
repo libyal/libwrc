@@ -2,7 +2,6 @@ include_HEADERS = \
 	libwrc.h
 
 pkginclude_HEADERS = \
-	libwrc/codepage.h \
 	libwrc/definitions.h \
 	libwrc/error.h \
 	libwrc/extern.h \

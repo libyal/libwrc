@@ -118,5 +118,5 @@ enum LIBWRC_CODEPAGES
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_CODEPAGE_H ) */
 

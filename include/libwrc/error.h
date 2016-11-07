@@ -39,7 +39,7 @@ enum LIBWRC_ERROR_DOMAINS
 	LIBWRC_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBWRC_ERROR_DOMAIN_MEMORY			= (int) 'm',
 	LIBWRC_ERROR_DOMAIN_OUTPUT			= (int) 'o',
-	LIBWRC_ERROR_DOMAIN_RUNTIME			= (int) 'r',
+	LIBWRC_ERROR_DOMAIN_RUNTIME			= (int) 'r'
 };
 
 /* The argument error codes
@@ -208,6 +208,17 @@ enum LIBWRC_MEMORY_ERROR
 	LIBWRC_MEMORY_ERROR_SET_FAILED			= 3
 };
 
+/* The output error codes
+ */
+enum LIBWRC_OUTPUT_ERROR
+{
+	LIBWRC_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBWRC_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
+};
+
 /* The runtime error codes
  * to signify errors regarding runtime processing
  */
@@ -276,16 +287,5 @@ enum LIBWRC_RUNTIME_ERROR
 	LIBWRC_RUNTIME_ERROR_ABORT_REQUESTED		= 15
 };
 
-/* The output error codes
- */
-enum LIBWRC_OUTPUT_ERROR
-{
-	LIBWRC_OUTPUT_ERROR_GENERIC			= 0,
-
-	/* There is insuficient space to write the output
-	 */
-	LIBWRC_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
-};
-
-#endif
+#endif /* !defined( _LIBWRC_ERROR_H ) */
 

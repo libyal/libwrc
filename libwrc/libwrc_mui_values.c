@@ -22,7 +22,10 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libwrc_data_descriptor.h"
 #include "libwrc_definitions.h"
@@ -36,8 +39,8 @@
 
 #include "wrc_mui_resource.h"
 
-uint8_t libwrc_mui_signature[ 4 ] = \
-	{ 0xcd, 0xfe, 0xcd, 0xfe };
+uint8_t libwrc_mui_signature[ 4 ] = {
+	0xcd, 0xfe, 0xcd, 0xfe };
 
 /* Creates MUI values
  * Make sure the value mui_values is referencing, is set to NULL
@@ -172,24 +175,24 @@ int libwrc_mui_values_read(
      libwrc_data_descriptor_t *data_descriptor,
      libcerror_error_t **error )
 {
-	libwrc_mui_values_t *mui_values             = NULL;
-	uint8_t *resource_data                      = NULL;
-	uint8_t *mui_resource_data                  = NULL;
-	static char *function                       = "libwrc_mui_values_read";
-	off64_t file_offset                         = 0;
-	size_t resource_data_offset                 = 0;
-	size_t resource_data_size                   = 0;
-	ssize_t read_count                          = 0;
-	uint32_t data_size                          = 0;
-	uint32_t value_data_offset                  = 0;
-	uint32_t value_data_size                    = 0;
-	int value_index                             = 0;
+	libwrc_mui_values_t *mui_values  = NULL;
+	uint8_t *resource_data           = NULL;
+	uint8_t *mui_resource_data       = NULL;
+	static char *function            = "libwrc_mui_values_read";
+	off64_t file_offset              = 0;
+	size_t resource_data_offset      = 0;
+	size_t resource_data_size        = 0;
+	ssize_t read_count               = 0;
+	uint32_t data_size               = 0;
+	uint32_t value_data_offset       = 0;
+	uint32_t value_data_size         = 0;
+	int value_index                  = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t *value_string = NULL;
-	size_t value_string_size                    = 0;
-	uint32_t value_32bit                        = 0;
-	int result                                  = 0;
+	system_character_t *value_string = NULL;
+	size_t value_string_size         = 0;
+	uint32_t value_32bit             = 0;
+	int result                       = 0;
 #endif
 
 	if( language_entry == NULL )
@@ -512,7 +515,7 @@ int libwrc_mui_values_read(
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_size_from_utf16_stream(
 				  mui_values->main_name,
 				  mui_values->main_name_size,
@@ -539,7 +542,7 @@ int libwrc_mui_values_read(
 				goto on_error;
 			}
 			if( ( value_string_size > (size_t) SSIZE_MAX )
-			 || ( ( sizeof( libcstring_system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
+			 || ( ( sizeof( system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
 			{
 				libcerror_error_set(
 				 error,
@@ -550,7 +553,7 @@ int libwrc_mui_values_read(
 
 				goto on_error;
 			}
-			value_string = libcstring_system_string_allocate(
+			value_string = system_string_allocate(
 					value_string_size );
 
 			if( value_string == NULL )
@@ -564,7 +567,7 @@ int libwrc_mui_values_read(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_copy_from_utf16_stream(
 				  (libuna_utf16_character_t *) value_string,
 				  value_string_size,
@@ -593,7 +596,7 @@ int libwrc_mui_values_read(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: main name\t\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "%s: main name\t\t\t\t\t: %" PRIs_SYSTEM "\n",
 			 function,
 			 value_string );
 
@@ -760,7 +763,7 @@ int libwrc_mui_values_read(
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_size_from_utf16_stream(
 				  mui_values->mui_name,
 				  mui_values->mui_name_size,
@@ -787,7 +790,7 @@ int libwrc_mui_values_read(
 				goto on_error;
 			}
 			if( ( value_string_size > (size_t) SSIZE_MAX )
-			 || ( ( sizeof( libcstring_system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
+			 || ( ( sizeof( system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
 			{
 				libcerror_error_set(
 				 error,
@@ -798,7 +801,7 @@ int libwrc_mui_values_read(
 
 				goto on_error;
 			}
-			value_string = libcstring_system_string_allocate(
+			value_string = system_string_allocate(
 					value_string_size );
 
 			if( value_string == NULL )
@@ -812,7 +815,7 @@ int libwrc_mui_values_read(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_copy_from_utf16_stream(
 				  (libuna_utf16_character_t *) value_string,
 				  value_string_size,
@@ -841,7 +844,7 @@ int libwrc_mui_values_read(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: MUI name\t\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "%s: MUI name\t\t\t\t\t: %" PRIs_SYSTEM "\n",
 			 function,
 			 value_string );
 
@@ -1016,7 +1019,7 @@ int libwrc_mui_values_read(
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_size_from_utf16_stream(
 				  mui_values->language,
 				  mui_values->language_size,
@@ -1043,7 +1046,7 @@ int libwrc_mui_values_read(
 				goto on_error;
 			}
 			if( ( value_string_size > (size_t) SSIZE_MAX )
-			 || ( ( sizeof( libcstring_system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
+			 || ( ( sizeof( system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
 			{
 				libcerror_error_set(
 				 error,
@@ -1054,7 +1057,7 @@ int libwrc_mui_values_read(
 
 				goto on_error;
 			}
-			value_string = libcstring_system_string_allocate(
+			value_string = system_string_allocate(
 					value_string_size );
 
 			if( value_string == NULL )
@@ -1068,7 +1071,7 @@ int libwrc_mui_values_read(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_copy_from_utf16_stream(
 				  (libuna_utf16_character_t *) value_string,
 				  value_string_size,
@@ -1097,7 +1100,7 @@ int libwrc_mui_values_read(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: language\t\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "%s: language\t\t\t\t\t: %" PRIs_SYSTEM "\n",
 			 function,
 			 value_string );
 
@@ -1192,7 +1195,7 @@ int libwrc_mui_values_read(
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_size_from_utf16_stream(
 				  mui_values->fallback_language,
 				  mui_values->fallback_language_size,
@@ -1219,7 +1222,7 @@ int libwrc_mui_values_read(
 				goto on_error;
 			}
 			if( ( value_string_size > (size_t) SSIZE_MAX )
-			 || ( ( sizeof( libcstring_system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
+			 || ( ( sizeof( system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
 			{
 				libcerror_error_set(
 				 error,
@@ -1230,7 +1233,7 @@ int libwrc_mui_values_read(
 
 				goto on_error;
 			}
-			value_string = libcstring_system_string_allocate(
+			value_string = system_string_allocate(
 					value_string_size );
 
 			if( value_string == NULL )
@@ -1244,7 +1247,7 @@ int libwrc_mui_values_read(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libuna_utf16_string_copy_from_utf16_stream(
 				  (libuna_utf16_character_t *) value_string,
 				  value_string_size,
@@ -1273,7 +1276,7 @@ int libwrc_mui_values_read(
 				goto on_error;
 			}
 			libcnotify_printf(
-			 "%s: fallback language\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "%s: fallback language\t\t\t\t: %" PRIs_SYSTEM "\n",
 			 function,
 			 value_string );
 

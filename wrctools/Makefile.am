@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -32,7 +31,6 @@ wrcinfo_SOURCES = \
 	wrctools_libcerror.h \
 	wrctools_libclocale.h \
 	wrctools_libcnotify.h \
-	wrctools_libcstring.h \
 	wrctools_libcsystem.h \
 	wrctools_libexe.h \
 	wrctools_libfdatetime.h \
@@ -50,7 +48,6 @@ wrcinfo_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 MAINTAINERCLEANFILES = \

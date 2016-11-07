@@ -7,7 +7,6 @@ MSVSCPP_FILES = \
 	libcnotify/libcnotify.vcproj \
 	libcpath/libcpath.vcproj \
 	libcsplit/libcsplit.vcproj \
-	libcstring/libcstring.vcproj \
 	libcsystem/libcsystem.vcproj \
 	libcthreads/libcthreads.vcproj \
 	libexe/libexe.vcproj \
@@ -23,7 +22,8 @@ MSVSCPP_FILES = \
 	pywrc/pywrc.vcproj \
 	wrc_test_error/wrc_test_error.vcproj \
 	wrc_test_notify/wrc_test_notify.vcproj \
-	wrc_test_set_ascii_codepage/wrc_test_set_ascii_codepage.vcproj \
+	wrc_test_resource/wrc_test_resource.vcproj \
+	wrc_test_stream/wrc_test_stream.vcproj \
 	wrc_test_support/wrc_test_support.vcproj \
 	wrcinfo/wrcinfo.vcproj \
 	libwrc.sln

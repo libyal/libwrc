@@ -22,13 +22,15 @@
 #include <common.h>
 #include <file_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "info_handle.h"
 #include "wrctools_libbfio.h"
 #include "wrctools_libcerror.h"
 #include "wrctools_libclocale.h"
-#include "wrctools_libcstring.h"
 #include "wrctools_libexe.h"
 #include "wrctools_libfwnt.h"
 #include "wrctools_libwrc.h"
@@ -319,7 +321,7 @@ int info_handle_signal_abort(
  */
 int info_handle_set_ascii_codepage(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function  = "info_handle_set_ascii_codepage";
@@ -341,10 +343,10 @@ int info_handle_set_ascii_codepage(
 	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_KOI8
 	              | LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;
 
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libclocale_codepage_copy_from_string_wide(
 	          &( info_handle->ascii_codepage ),
 	          string,
@@ -378,7 +380,7 @@ int info_handle_set_ascii_codepage(
  */
 int info_handle_open_input(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function    = "info_handle_open_input";
@@ -396,7 +398,7 @@ int info_handle_open_input(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libexe_file_open_wide(
 	     info_handle->input_exe_file,
 	     filename,
@@ -577,10 +579,10 @@ int info_handle_manifest_string_fprint(
      uint32_t language_identifier,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *value_string = NULL;
-	static char *function                       = "info_handle_manifest_string_fprint";
-	size_t value_string_size                    = 0;
-	int result                                  = 0;
+	system_character_t *value_string = NULL;
+	static char *function            = "info_handle_manifest_string_fprint";
+	size_t value_string_size         = 0;
+	int result                       = 0;
 
 	if( info_handle == NULL )
 	{
@@ -593,7 +595,7 @@ int info_handle_manifest_string_fprint(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libwrc_manifest_get_utf16_string_size(
 	          manifest_resource,
 	          language_identifier,
@@ -619,7 +621,7 @@ int info_handle_manifest_string_fprint(
 	}
 	if( value_string_size > 0 )
 	{
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -633,7 +635,7 @@ int info_handle_manifest_string_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libwrc_manifest_get_utf16_string(
 		          manifest_resource,
 		          language_identifier,
@@ -661,7 +663,7 @@ int info_handle_manifest_string_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tdata\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tdata\t\t\t: %" PRIs_SYSTEM "\n",
 		 value_string );
 
 		memory_free(
@@ -835,11 +837,11 @@ int info_handle_message_table_string_fprint(
      int message_index,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *value_string = NULL;
-	static char *function                       = "info_handle_message_table_string_fprint";
-	size_t value_string_size                    = 0;
-	uint32_t message_identifier                 = 0;
-	int result                                  = 0;
+	system_character_t *value_string = NULL;
+	static char *function            = "info_handle_message_table_string_fprint";
+	size_t value_string_size         = 0;
+	uint32_t message_identifier      = 0;
+	int result                       = 0;
 
 	if( info_handle == NULL )
 	{
@@ -879,7 +881,7 @@ int info_handle_message_table_string_fprint(
 	 "\tidentifier\t\t: 0x%08" PRIx32 "\n",
 	 message_identifier );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libwrc_message_table_get_utf16_string_size(
 	          message_table_resource,
 	          language_identifier,
@@ -908,7 +910,7 @@ int info_handle_message_table_string_fprint(
 	}
 	if( value_string_size > 0 )
 	{
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -922,7 +924,7 @@ int info_handle_message_table_string_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libwrc_message_table_get_utf16_string(
 		          message_table_resource,
 		          language_identifier,
@@ -953,7 +955,7 @@ int info_handle_message_table_string_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tdata\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "",
+		 "\tdata\t\t\t: %" PRIs_SYSTEM "",
 		 value_string );
 
 		memory_free(
@@ -1160,11 +1162,11 @@ int info_handle_mui_values_fprint(
      uint32_t language_identifier,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *value_string = NULL;
-	static char *function                       = "info_handle_mui_values_fprint";
-	size_t value_string_size                    = 0;
-	uint32_t file_type                          = 0;
-	int result                                  = 0;
+	system_character_t *value_string = NULL;
+	static char *function            = "info_handle_mui_values_fprint";
+	size_t value_string_size         = 0;
+	uint32_t file_type               = 0;
+	int result                       = 0;
 
 	if( libwrc_mui_get_file_type(
 	     mui_resource,
@@ -1186,7 +1188,7 @@ int info_handle_mui_values_fprint(
 	 "\tfile type\t\t: 0x%08" PRIx32 "\n",
 	 file_type );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libwrc_mui_get_utf16_main_name_size(
 		  mui_resource,
 		  language_identifier,
@@ -1213,7 +1215,7 @@ int info_handle_mui_values_fprint(
 	if( ( result != 0 )
 	 && ( value_string_size > 0 ) )
 	{
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -1227,7 +1229,7 @@ int info_handle_mui_values_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libwrc_mui_get_utf16_main_name(
 			  mui_resource,
 		          language_identifier,
@@ -1255,7 +1257,7 @@ int info_handle_mui_values_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tmain name\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tmain name\t\t: %" PRIs_SYSTEM "\n",
 		 value_string );
 
 		memory_free(
@@ -1263,7 +1265,7 @@ int info_handle_mui_values_fprint(
 
 		value_string = NULL;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libwrc_mui_get_utf16_mui_name_size(
 		  mui_resource,
 	          language_identifier,
@@ -1290,7 +1292,7 @@ int info_handle_mui_values_fprint(
 	if( ( result != 0 )
 	 && ( value_string_size > 0 ) )
 	{
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -1304,7 +1306,7 @@ int info_handle_mui_values_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libwrc_mui_get_utf16_mui_name(
 			  mui_resource,
 		          language_identifier,
@@ -1332,7 +1334,7 @@ int info_handle_mui_values_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tMUI name\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tMUI name\t\t: %" PRIs_SYSTEM "\n",
 		 value_string );
 
 		memory_free(
@@ -1340,7 +1342,7 @@ int info_handle_mui_values_fprint(
 
 		value_string = NULL;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libwrc_mui_get_utf16_language_size(
 		  mui_resource,
 	          language_identifier,
@@ -1367,7 +1369,7 @@ int info_handle_mui_values_fprint(
 	if( ( result != 0 )
 	 && ( value_string_size > 0 ) )
 	{
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -1381,7 +1383,7 @@ int info_handle_mui_values_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libwrc_mui_get_utf16_language(
 			  mui_resource,
 		          language_identifier,
@@ -1409,7 +1411,7 @@ int info_handle_mui_values_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tlanguage\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tlanguage\t\t: %" PRIs_SYSTEM "\n",
 		 value_string );
 
 		memory_free(
@@ -1417,7 +1419,7 @@ int info_handle_mui_values_fprint(
 
 		value_string = NULL;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libwrc_mui_get_utf16_fallback_language_size(
 		  mui_resource,
 	          language_identifier,
@@ -1444,7 +1446,7 @@ int info_handle_mui_values_fprint(
 	if( ( result != 0 )
 	 && ( value_string_size > 0 ) )
 	{
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -1458,7 +1460,7 @@ int info_handle_mui_values_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libwrc_mui_get_utf16_fallback_language(
 			  mui_resource,
 		          language_identifier,
@@ -1486,7 +1488,7 @@ int info_handle_mui_values_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tfallback language\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tfallback language\t: %" PRIs_SYSTEM "\n",
 		 value_string );
 
 		memory_free(
@@ -1661,11 +1663,11 @@ int info_handle_string_fprint(
      int string_index,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *value_string = NULL;
-	static char *function                       = "info_handle_string_fprint";
-	size_t value_string_size                    = 0;
-	uint32_t string_identifier                  = 0;
-	int result                                  = 0;
+	system_character_t *value_string = NULL;
+	static char *function            = "info_handle_string_fprint";
+	size_t value_string_size         = 0;
+	uint32_t string_identifier       = 0;
+	int result                       = 0;
 
 	if( info_handle == NULL )
 	{
@@ -1705,7 +1707,7 @@ int info_handle_string_fprint(
 	 "\tidentifier\t\t: 0x%08" PRIx32 "\n",
 	 string_identifier );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libwrc_string_get_utf16_string_size(
 	          string_resource,
 	          language_identifier,
@@ -1734,7 +1736,7 @@ int info_handle_string_fprint(
 	}
 	if( value_string_size > 0 )
 	{
-		value_string = libcstring_system_string_allocate(
+		value_string = system_string_allocate(
 		                value_string_size );
 
 		if( value_string == NULL )
@@ -1748,7 +1750,7 @@ int info_handle_string_fprint(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libwrc_string_get_utf16_string(
 		          string_resource,
 		          language_identifier,
@@ -1779,7 +1781,7 @@ int info_handle_string_fprint(
 		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tdata\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tdata\t\t\t: %" PRIs_SYSTEM "\n",
 		 value_string );
 
 		memory_free(

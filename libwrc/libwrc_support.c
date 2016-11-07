@@ -24,11 +24,8 @@
 #include <types.h>
 
 #include "libwrc_definitions.h"
-#include "libwrc_io_handle.h"
-#include "libwrc_libbfio.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_libclocale.h"
-#include "libwrc_libcstring.h"
 #include "libwrc_support.h"
 
 #if !defined( HAVE_LOCAL_LIBWRC )

@@ -20,12 +20,14 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <narrow_string.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include "wrc_test_libcstring.h"
 #include "wrc_test_libwrc.h"
 #include "wrc_test_macros.h"
 #include "wrc_test_unused.h"
@@ -41,7 +43,7 @@ int wrc_test_get_version(
 
 	version_string = libwrc_get_version();
 
-	result = libcstring_narrow_string_compare(
+	result = narrow_string_compare(
 	          version_string,
 	          LIBWRC_VERSION_STRING,
 	          9 );
@@ -57,9 +59,30 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libwrc_get_access_flags_read function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_get_access_flags_read(
+     void )
+{
+	int access_flags = 0;
+
+	access_flags = libwrc_get_access_flags_read();
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "access_flags",
+	 access_flags,
+	 LIBWRC_ACCESS_FLAG_READ );
+
+	return( 1 );
+
+on_error:
+	return( 0 );
+}
+
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc WRC_TEST_ATTRIBUTE_UNUSED,
      wchar_t * const argv[] WRC_TEST_ATTRIBUTE_UNUSED )

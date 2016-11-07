@@ -27,7 +27,6 @@
 
 #include "pywrc_libbfio.h"
 #include "pywrc_libcerror.h"
-#include "pywrc_libcstring.h"
 #include "pywrc_python.h"
 
 #if defined( __cplusplus )

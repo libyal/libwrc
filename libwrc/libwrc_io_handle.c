@@ -22,7 +22,10 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libwrc_codepage.h"
 #include "libwrc_data_descriptor.h"
@@ -33,7 +36,6 @@
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
-#include "libwrc_libcstring.h"
 #include "libwrc_libuna.h"
 #include "libwrc_resource_values.h"
 #include "libwrc_unused.h"
@@ -41,11 +43,11 @@
 #include "wrc_data_descriptor.h"
 #include "wrc_resource_node.h"
 
-uint8_t libwrc_resource_name_mui[ 6 ] = \
-	{ 'M', 0, 'U', 0, 'I', 0 };
+uint8_t libwrc_resource_name_mui[ 6 ] = {
+	'M', 0, 'U', 0, 'I', 0 };
 
-uint8_t libwrc_resource_name_wevt_template[ 26 ] = \
-	{ 'W', 0, 'E', 0, 'V', 0, 'T', 0, '_', 0, 'T', 0, 'E', 0, 'M', 0, 'P', 0, 'L', 0, 'A', 0, 'T', 0, 'E', 0 };
+uint8_t libwrc_resource_name_wevt_template[ 26 ] = {
+	'W', 0, 'E', 0, 'V', 0, 'T', 0, '_', 0, 'T', 0, 'E', 0, 'M', 0, 'P', 0, 'L', 0, 'A', 0, 'T', 0, 'E', 0 };
 
 /* Creates an IO handle
  * Make sure the value io_handle is referencing, is set to NULL
@@ -322,7 +324,7 @@ int libwrc_io_handle_read_resource_node(
 	int sub_node_index                            = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t *value_string   = NULL;
+	system_character_t *value_string              = NULL;
 	size_t value_string_size                      = 0;
 	uint32_t value_32bit                          = 0;
 	uint16_t value_16bit                          = 0;
@@ -753,7 +755,7 @@ int libwrc_io_handle_read_resource_node(
 				resource_values->name_string_size *= 2;
 
 				if( ( resource_values->name_string_size > (size_t) SSIZE_MAX )
-				 || ( ( sizeof( libcstring_system_character_t ) * resource_values->name_string_size )  > (size_t) SSIZE_MAX ) )
+				 || ( ( sizeof( system_character_t ) * resource_values->name_string_size )  > (size_t) SSIZE_MAX ) )
 				{
 					libcerror_error_set(
 					 error,
@@ -798,7 +800,7 @@ int libwrc_io_handle_read_resource_node(
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libcnotify_verbose != 0 )
 				{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 					result = libuna_utf16_string_size_from_utf16_stream(
 						  resource_values->name_string,
 						  resource_values->name_string_size,
@@ -825,7 +827,7 @@ int libwrc_io_handle_read_resource_node(
 						goto on_error;
 					}
 					if( ( value_string_size > (size_t) SSIZE_MAX )
-					 || ( ( sizeof( libcstring_system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
+					 || ( ( sizeof( system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
 					{
 						libcerror_error_set(
 						 error,
@@ -836,7 +838,7 @@ int libwrc_io_handle_read_resource_node(
 
 						goto on_error;
 					}
-					value_string = libcstring_system_string_allocate(
+					value_string = system_string_allocate(
 							value_string_size );
 
 					if( value_string == NULL )
@@ -850,7 +852,7 @@ int libwrc_io_handle_read_resource_node(
 
 						goto on_error;
 					}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 					result = libuna_utf16_string_copy_from_utf16_stream(
 						  (libuna_utf16_character_t *) value_string,
 						  value_string_size,
@@ -879,7 +881,7 @@ int libwrc_io_handle_read_resource_node(
 						goto on_error;
 					}
 					libcnotify_printf(
-					 "%s: resource node entry: %03d name string\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+					 "%s: resource node entry: %03d name string\t: %" PRIs_SYSTEM "\n",
 					 function,
 					 resource_node_entry,
 					 value_string );
