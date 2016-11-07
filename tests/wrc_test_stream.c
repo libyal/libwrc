@@ -1437,11 +1437,6 @@ int main(
 	         error );
 
 		WRC_TEST_RUN_WITH_ARGS(
-		 "libwrc_stream_open",
-		 wrc_test_stream_open,
-		 stream );
-
-		WRC_TEST_RUN_WITH_ARGS(
 		 "libwrc_stream_get_ascii_codepage",
 		 wrc_test_stream_get_ascii_codepage,
 		 stream );
