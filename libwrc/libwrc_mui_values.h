@@ -1,7 +1,7 @@
 /*
  * Multilingual User Interface (MUI) (resource) values functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -102,5 +102,5 @@ int libwrc_mui_values_get_file_type(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_MUI_VALUES_H ) */
 

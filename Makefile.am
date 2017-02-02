@@ -21,7 +21,6 @@ SUBDIRS = \
 	libfwevt \
 	libfwnt \
 	libwrc \
-	libcsystem \
 	libexe \
 	wrctools \
 	pywrc \
@@ -132,7 +131,6 @@ splint:
 	(cd $(srcdir)/libfwevt && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfwnt && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libwrc && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libexe && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/wrctools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))

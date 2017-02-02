@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -94,5 +94,5 @@ int libwrc_io_handle_read_data_descriptor(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_IO_HANDLE_H ) */
 

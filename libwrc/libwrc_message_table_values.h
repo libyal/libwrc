@@ -1,7 +1,7 @@
 /*
  * Message table values functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -47,5 +47,5 @@ int libwrc_message_table_values_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_MESSAGE_TABLE_VALUES_H ) */
 

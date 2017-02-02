@@ -124,11 +124,27 @@ stamp-h[1-9]
 /wrctools/wrcinfo
 /tests/input
 /tests/tmp*
+/tests/wrc_test_data_descriptor
 /tests/wrc_test_error
+/tests/wrc_test_io_handle
+/tests/wrc_test_language_entry
+/tests/wrc_test_language_table
+/tests/wrc_test_mui_values
 /tests/wrc_test_notify
 /tests/wrc_test_resource
+/tests/wrc_test_resource_values
 /tests/wrc_test_stream
 /tests/wrc_test_support
+/tests/wrc_test_version_values
+/tests/wrc_test_wevt_channel
+/tests/wrc_test_wevt_event
+/tests/wrc_test_wevt_keyword
+/tests/wrc_test_wevt_level
+/tests/wrc_test_wevt_map
+/tests/wrc_test_wevt_opcode
+/tests/wrc_test_wevt_provider
+/tests/wrc_test_wevt_task
+/tests/wrc_test_wevt_template_definition
 
 # Local library dependencies specific files
 /libbfio
@@ -139,7 +155,6 @@ stamp-h[1-9]
 /libcnotify
 /libcpath
 /libcsplit
-/libcsystem
 /libcthreads
 /libexe
 /libfcache

@@ -1,7 +1,7 @@
 /*
  * Library notification functions test program
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "wrc_test_libcerror.h"
 #include "wrc_test_libwrc.h"
 #include "wrc_test_macros.h"
 #include "wrc_test_unused.h"

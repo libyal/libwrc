@@ -16,7 +16,6 @@ AM_CPPFLAGS = \
 	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@LIBEXE_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBWRC_DLL_IMPORT@
 
 AM_LDFLAGS = @STATIC_LDFLAGS@
@@ -25,28 +24,30 @@ bin_PROGRAMS = \
 	wrcinfo
 
 wrcinfo_SOURCES = \
+	info_handle.c info_handle.h \
 	wrcinfo.c \
-	wrcoutput.c wrcoutput.h \
+	wrctools_getopt.c wrctools_getopt.h \
+	wrctools_i18n.h \
 	wrctools_libbfio.h \
 	wrctools_libcerror.h \
 	wrctools_libclocale.h \
 	wrctools_libcnotify.h \
-	wrctools_libcsystem.h \
 	wrctools_libexe.h \
 	wrctools_libfdatetime.h \
 	wrctools_libfwnt.h \
 	wrctools_libuna.h \
 	wrctools_libwrc.h \
-	info_handle.c info_handle.h
+	wrctools_output.c wrctools_output.h \
+	wrctools_signal.c wrctools_signal.h \
+	wrctools_unused.h
 
 wrcinfo_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBEXE_LIBADD@ \
 	@LIBFWNT_LIBADD@ \
 	@LIBUNA_LIBADD@ \
-	../libwrc/libwrc.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 

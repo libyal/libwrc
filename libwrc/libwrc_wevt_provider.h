@@ -1,7 +1,7 @@
 /*
  * WEVT provider functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -78,5 +78,5 @@ int libwrc_wevt_provider_get_event_by_identifier(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_INTERNAL_WEVT_PROVIDER_H ) */
 

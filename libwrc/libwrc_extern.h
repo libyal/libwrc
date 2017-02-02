@@ -1,7 +1,7 @@
 /*
  * The internal extern definition
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -38,9 +38,9 @@
 #include <libwrc/extern.h>
 
 #else
-#define LIBWRC_EXTERN	extern
+#define LIBWRC_EXTERN	/* extern */
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBWRC ) */
 
 #endif /* !defined( _LIBWRC_INTERNAL_EXTERN_H ) */
 

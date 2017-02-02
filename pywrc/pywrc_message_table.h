@@ -1,7 +1,7 @@
 /*
  * Python object definition of the libwrc message table resource
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -59,5 +59,5 @@ PyObject *pywrc_message_table_get_string_by_message_identifier(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_MESSAGE_TABLE_H ) */
 

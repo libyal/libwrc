@@ -1,7 +1,7 @@
 /*
  * WEVT template definition functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -76,5 +76,5 @@ int libwrc_wevt_template_definition_get_size(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_INTERNAL_WEVT_TEMPLATE_DEFINITION_H ) */
 

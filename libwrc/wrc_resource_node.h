@@ -1,7 +1,7 @@
 /*
  * The Windows RC resource node
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -69,5 +69,5 @@ struct wrc_resource_node_header
 }
 #endif
 
-#endif
+#endif /* !defined( _WRC_RECORD_NODE_H ) */
 

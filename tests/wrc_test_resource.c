@@ -1,7 +1,7 @@
 /*
- * Library resource type testing program
+ * Library resource type test program
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -32,6 +32,8 @@
 #include "wrc_test_macros.h"
 #include "wrc_test_memory.h"
 #include "wrc_test_unused.h"
+
+#include "../libwrc/libwrc_resource.h"
 
 /* Tests the libwrc_resource_free function
  * Returns 1 if successful or 0 if not
@@ -71,6 +73,10 @@ on_error:
 	return( 0 );
 }
 
+#if defined( __GNUC__ )
+
+#endif /* defined( __GNUC__ ) */
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -86,9 +92,35 @@ int main(
 	WRC_TEST_UNREFERENCED_PARAMETER( argc )
 	WRC_TEST_UNREFERENCED_PARAMETER( argv )
 
+#if defined( __GNUC__ )
+
+	/* TODO: add tests for libwrc_resource_initialize */
+
+#endif /* defined( __GNUC__ ) */
+
 	WRC_TEST_RUN(
 	 "libwrc_resource_free",
 	 wrc_test_resource_free );
+
+#if defined( __GNUC__ )
+
+	/* TODO: add tests for libwrc_resource_get_identifier */
+
+	/* TODO: add tests for libwrc_resource_get_type */
+
+	/* TODO: add tests for libwrc_resource_read */
+
+	/* TODO: add tests for libwrc_resource_read_value */
+
+	/* TODO: add tests for libwrc_resource_read_data_descriptor */
+
+	/* TODO: add tests for libwrc_resource_get_number_of_languages */
+
+	/* TODO: add tests for libwrc_resource_get_language_identifier */
+
+	/* TODO: add tests for libwrc_resource_get_value_by_language_identifier */
+
+#endif /* defined( __GNUC__ ) */
 
 	return( EXIT_SUCCESS );
 

@@ -1,7 +1,7 @@
 /*
  * Resource functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -138,5 +138,5 @@ int libwrc_resource_get_value_by_language_identifier(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_INTERNAL_RESOURCE_H ) */
 

@@ -1,7 +1,7 @@
 /*
  * Python bindings for libwrc (pywrc)
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -57,5 +57,5 @@ PyMODINIT_FUNC initpywrc(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_H ) */
 

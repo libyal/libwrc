@@ -1,7 +1,7 @@
 /*
  * Python object definition of the libwrc manifest resource
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -44,5 +44,5 @@ PyObject *pywrc_manifest_get_string(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_MANIFEST_H ) */
 

@@ -1,7 +1,7 @@
 /*
  * Python object definition of the libwrc MUI resource
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -64,5 +64,5 @@ PyObject *pywrc_mui_get_fallback_language(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_MUI_H ) */
 

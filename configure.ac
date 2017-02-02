@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libwrc],
- [20161107],
+ [20170202],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -111,17 +111,8 @@ AX_LIBWRC_CHECK_LOCAL
 dnl Check for enabling libexe for MZ, PE/COFF executable support
 AX_LIBEXE_CHECK_ENABLE
 
-dnl Check for enabling libcsystem for cross-platform C generic system functions
-AX_LIBCSYSTEM_CHECK_ENABLE
-
-dnl Check if wrctools should be build as static executables
-AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
-
-dnl Check if libwrc should be build with verbose output
-AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
-
-dnl Check if libwrc should be build with debug output
-AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
+dnl Check for wrctools function support
+AX_WRCTOOLS_CHECK_LOCAL
 
 dnl Check if libwrc python bindings (pywrc) should be build
 AX_PYTHON_CHECK_PYPREFIX
@@ -146,29 +137,6 @@ AS_IF(
 dnl Check for test function support
 AX_TESTS_CHECK_LOCAL
 
-dnl Check if DLL support is needed
-AS_IF(
- [test "x$enable_shared" = xyes],
- [AS_CASE(
-  [$host],
-  [*cygwin* | *mingw*],
-  [AC_DEFINE(
-   [HAVE_DLLMAIN],
-   [1],
-   [Define to 1 to enable the DllMain function.])
-  AC_SUBST(
-   [HAVE_DLLMAIN],
-   [1])
-
-  AS_IF(
-   [test "x$ac_cv_enable_static_executables" = xno],
-   [AC_SUBST(
-    [LIBWRC_DLL_IMPORT],
-    ["-DLIBWRC_DLL_IMPORT"])
-   ])
-  ])
- ])
-
 dnl Set additional compiler flags
 CFLAGS="$CFLAGS -Wall";
 
@@ -184,7 +152,7 @@ AS_IF(
  ])
 
 AS_IF(
- [test "x$ac_cv_libexe" = xyes || test "x$ac_cv_libcsystem" = xyes],
+ [test "x$ac_cv_libexe" = xyes],
  [AC_SUBST(
   [libwrc_tools_build_spec_requires],
   [BuildRequires:])
@@ -228,7 +196,6 @@ AC_CONFIG_FILES([libfwevt/Makefile])
 AC_CONFIG_FILES([libfwnt/Makefile])
 AC_CONFIG_FILES([libwrc/Makefile])
 AC_CONFIG_FILES([libexe/Makefile])
-AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([wrctools/Makefile])
 AC_CONFIG_FILES([pywrc/Makefile])
 AC_CONFIG_FILES([pywrc-python2/Makefile])

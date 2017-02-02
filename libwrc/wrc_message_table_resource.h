@@ -1,7 +1,7 @@
 /*
  * The Windows RC message table resource
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -68,5 +68,5 @@ struct wrc_message_table_string
 }
 #endif
 
-#endif
+#endif /* !defined( _WRC_MESSAGE_TABLE_RESOURCE_H ) */
 

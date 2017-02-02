@@ -1,7 +1,7 @@
 /*
  * Language table functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -83,5 +83,5 @@ int libwrc_language_table_get_number_of_values(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWRC_LANGUAGE_TABLE_H ) */
 

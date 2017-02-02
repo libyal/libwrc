@@ -1,7 +1,7 @@
 /*
- * Python object definition of the libwrc file
+ * Python object wrapper of libwrc_stream_t
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *

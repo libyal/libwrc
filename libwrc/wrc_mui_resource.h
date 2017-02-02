@@ -1,7 +1,7 @@
 /*
  * The Windows RC Multilingual User Interface (MUI) resource
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -89,5 +89,5 @@ struct wrc_mui_header
 }
 #endif
 
-#endif
+#endif /* !defined( _WRC_MUI_RESOURCE_H ) */
 

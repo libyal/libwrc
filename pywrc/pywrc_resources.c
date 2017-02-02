@@ -1,7 +1,7 @@
 /*
- * Python object definition of the resources sequence and iterator
+ * Python object definition of the sequence and iterator object of resources
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -31,7 +31,6 @@
 #include "pywrc_python.h"
 #include "pywrc_resource.h"
 #include "pywrc_resources.h"
-#include "pywrc_stream.h"
 
 PySequenceMethods pywrc_resources_sequence_methods = {
 	/* sq_length */
@@ -98,7 +97,7 @@ PyTypeObject pywrc_resources_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
 	/* tp_doc */
-	"internal pywrc resources sequence and iterator object",
+	"pywrc internal sequence and iterator object of resources",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -155,72 +154,72 @@ PyTypeObject pywrc_resources_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pywrc_resources_new(
-           pywrc_stream_t *stream_object,
-           PyObject* (*get_resource_by_index)(
-                        pywrc_stream_t *stream_object,
-                        int resource_index ),
-           int number_of_resources )
+           PyObject *parent_object,
+           PyObject* (*get_item_by_index)(
+                        PyObject *parent_object,
+                        int index ),
+           int number_of_items )
 {
-	pywrc_resources_t *pywrc_resources = NULL;
-	static char *function              = "pywrc_resources_new";
+	pywrc_resources_t *resources_object = NULL;
+	static char *function               = "pywrc_resources_new";
 
-	if( stream_object == NULL )
+	if( parent_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid stream object.",
+		 "%s: invalid parent object.",
 		 function );
 
 		return( NULL );
 	}
-	if( get_resource_by_index == NULL )
+	if( get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid get resource by index function.",
+		 "%s: invalid get item by index function.",
 		 function );
 
 		return( NULL );
 	}
 	/* Make sure the resources values are initialized
 	 */
-	pywrc_resources = PyObject_New(
-	                 struct pywrc_resources,
-	                 &pywrc_resources_type_object );
+	resources_object = PyObject_New(
+	                    struct pywrc_resources,
+	                    &pywrc_resources_type_object );
 
-	if( pywrc_resources == NULL )
+	if( resources_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize resources.",
+		 "%s: unable to create resources object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pywrc_resources_init(
-	     pywrc_resources ) != 0 )
+	     resources_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize resources.",
+		 "%s: unable to initialize resources object.",
 		 function );
 
 		goto on_error;
 	}
-	pywrc_resources->stream_object         = stream_object;
-	pywrc_resources->get_resource_by_index = get_resource_by_index;
-	pywrc_resources->number_of_resources   = number_of_resources;
+	resources_object->parent_object     = parent_object;
+	resources_object->get_item_by_index = get_item_by_index;
+	resources_object->number_of_items   = number_of_items;
 
 	Py_IncRef(
-	 (PyObject *) pywrc_resources->stream_object );
+	 (PyObject *) resources_object->parent_object );
 
-	return( (PyObject *) pywrc_resources );
+	return( (PyObject *) resources_object );
 
 on_error:
-	if( pywrc_resources != NULL )
+	if( resources_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pywrc_resources );
+		 (PyObject *) resources_object );
 	}
 	return( NULL );
 }
@@ -229,25 +228,25 @@ on_error:
  * Returns 0 if successful or -1 on error
  */
 int pywrc_resources_init(
-     pywrc_resources_t *pywrc_resources )
+     pywrc_resources_t *resources_object )
 {
 	static char *function = "pywrc_resources_init";
 
-	if( pywrc_resources == NULL )
+	if( resources_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources.",
+		 "%s: invalid resources object.",
 		 function );
 
 		return( -1 );
 	}
 	/* Make sure the resources values are initialized
 	 */
-	pywrc_resources->stream_object         = NULL;
-	pywrc_resources->get_resource_by_index = NULL;
-	pywrc_resources->resource_index        = 0;
-	pywrc_resources->number_of_resources   = 0;
+	resources_object->parent_object     = NULL;
+	resources_object->get_item_by_index = NULL;
+	resources_object->current_index     = 0;
+	resources_object->number_of_items   = 0;
 
 	return( 0 );
 }
@@ -255,22 +254,22 @@ int pywrc_resources_init(
 /* Frees a resources object
  */
 void pywrc_resources_free(
-      pywrc_resources_t *pywrc_resources )
+      pywrc_resources_t *resources_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pywrc_resources_free";
 
-	if( pywrc_resources == NULL )
+	if( resources_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources.",
+		 "%s: invalid resources object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pywrc_resources );
+	           resources_object );
 
 	if( ob_type == NULL )
 	{
@@ -290,72 +289,72 @@ void pywrc_resources_free(
 
 		return;
 	}
-	if( pywrc_resources->stream_object != NULL )
+	if( resources_object->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pywrc_resources->stream_object );
+		 (PyObject *) resources_object->parent_object );
 	}
 	ob_type->tp_free(
-	 (PyObject*) pywrc_resources );
+	 (PyObject*) resources_object );
 }
 
 /* The resources len() function
  */
 Py_ssize_t pywrc_resources_len(
-            pywrc_resources_t *pywrc_resources )
+            pywrc_resources_t *resources_object )
 {
 	static char *function = "pywrc_resources_len";
 
-	if( pywrc_resources == NULL )
+	if( resources_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources.",
+		 "%s: invalid resources object.",
 		 function );
 
 		return( -1 );
 	}
-	return( (Py_ssize_t) pywrc_resources->number_of_resources );
+	return( (Py_ssize_t) resources_object->number_of_items );
 }
 
 /* The resources getitem() function
  */
 PyObject *pywrc_resources_getitem(
-           pywrc_resources_t *pywrc_resources,
+           pywrc_resources_t *resources_object,
            Py_ssize_t item_index )
 {
 	PyObject *resource_object = NULL;
 	static char *function     = "pywrc_resources_getitem";
 
-	if( pywrc_resources == NULL )
+	if( resources_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources.",
+		 "%s: invalid resources object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pywrc_resources->get_resource_by_index == NULL )
+	if( resources_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources - missing get resource by index function.",
+		 "%s: invalid resources object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pywrc_resources->number_of_resources < 0 )
+	if( resources_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources - invalid number of resources.",
+		 "%s: invalid resources object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
 	if( ( item_index < 0 )
-	 || ( item_index >= (Py_ssize_t) pywrc_resources->number_of_resources ) )
+	 || ( item_index >= (Py_ssize_t) resources_object->number_of_items ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -364,8 +363,8 @@ PyObject *pywrc_resources_getitem(
 
 		return( NULL );
 	}
-	resource_object = pywrc_resources->get_resource_by_index(
-	                   pywrc_resources->stream_object,
+	resource_object = resources_object->get_item_by_index(
+	                   resources_object->parent_object,
 	                   (int) item_index );
 
 	return( resource_object );
@@ -374,83 +373,83 @@ PyObject *pywrc_resources_getitem(
 /* The resources iter() function
  */
 PyObject *pywrc_resources_iter(
-           pywrc_resources_t *pywrc_resources )
+           pywrc_resources_t *resources_object )
 {
 	static char *function = "pywrc_resources_iter";
 
-	if( pywrc_resources == NULL )
+	if( resources_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources.",
+		 "%s: invalid resources object.",
 		 function );
 
 		return( NULL );
 	}
 	Py_IncRef(
-	 (PyObject *) pywrc_resources );
+	 (PyObject *) resources_object );
 
-	return( (PyObject *) pywrc_resources );
+	return( (PyObject *) resources_object );
 }
 
 /* The resources iternext() function
  */
 PyObject *pywrc_resources_iternext(
-           pywrc_resources_t *pywrc_resources )
+           pywrc_resources_t *resources_object )
 {
 	PyObject *resource_object = NULL;
 	static char *function     = "pywrc_resources_iternext";
 
-	if( pywrc_resources == NULL )
+	if( resources_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources.",
+		 "%s: invalid resources object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pywrc_resources->get_resource_by_index == NULL )
+	if( resources_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources - missing get resource by index function.",
+		 "%s: invalid resources object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pywrc_resources->resource_index < 0 )
+	if( resources_object->current_index < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources - invalid resource index.",
+		 "%s: invalid resources object - invalid current index.",
 		 function );
 
 		return( NULL );
 	}
-	if( pywrc_resources->number_of_resources < 0 )
+	if( resources_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources - invalid number of resources.",
+		 "%s: invalid resources object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
-	if( pywrc_resources->resource_index >= pywrc_resources->number_of_resources )
+	if( resources_object->current_index >= resources_object->number_of_items )
 	{
 		PyErr_SetNone(
 		 PyExc_StopIteration );
 
 		return( NULL );
 	}
-	resource_object = pywrc_resources->get_resource_by_index(
-	                   pywrc_resources->stream_object,
-	                   pywrc_resources->resource_index );
+	resource_object = resources_object->get_item_by_index(
+	                   resources_object->parent_object,
+	                   resources_object->current_index );
 
 	if( resource_object != NULL )
 	{
-		pywrc_resources->resource_index++;
+		resources_object->current_index++;
 	}
 	return( resource_object );
 }

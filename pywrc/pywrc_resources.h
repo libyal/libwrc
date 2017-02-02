@@ -1,7 +1,7 @@
 /*
- * Python object definition of the resources sequence and iterator
+ * Python object definition of the sequence and iterator object of resources
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -27,7 +27,6 @@
 
 #include "pywrc_libwrc.h"
 #include "pywrc_python.h"
-#include "pywrc_stream.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -41,56 +40,56 @@ struct pywrc_resources
 	 */
 	PyObject_HEAD
 
-	/* The stream object
+	/* The parent object
 	 */
-	pywrc_stream_t *stream_object;
+	PyObject *parent_object;
 
-	/* The get resource by index callback function
+	/* The get item by index callback function
 	 */
-	PyObject* (*get_resource_by_index)(
-	             pywrc_stream_t *stream_object,
-	             int resource_index );
+	PyObject* (*get_item_by_index)(
+	             PyObject *parent_object,
+	             int index );
 
-	/* The (current) resource index
+	/* The current index
 	 */
-	int resource_index;
+	int current_index;
 
-	/* The number of resources
+	/* The number of items
 	 */
-	int number_of_resources;
+	int number_of_items;
 };
 
 extern PyTypeObject pywrc_resources_type_object;
 
 PyObject *pywrc_resources_new(
-           pywrc_stream_t *stream_object,
-           PyObject* (*get_resource_by_index)(
-                        pywrc_stream_t *stream_object,
-                        int resource_index ),
-           int number_of_resources );
+           PyObject *parent_object,
+           PyObject* (*get_item_by_index)(
+                        PyObject *parent_object,
+                        int index ),
+           int number_of_items );
 
 int pywrc_resources_init(
-     pywrc_resources_t *pywrc_resources );
+     pywrc_resources_t *resources_object );
 
 void pywrc_resources_free(
-      pywrc_resources_t *pywrc_resources );
+      pywrc_resources_t *resources_object );
 
 Py_ssize_t pywrc_resources_len(
-            pywrc_resources_t *pywrc_resources );
+            pywrc_resources_t *resources_object );
 
 PyObject *pywrc_resources_getitem(
-           pywrc_resources_t *pywrc_resources,
+           pywrc_resources_t *resources_object,
            Py_ssize_t item_index );
 
 PyObject *pywrc_resources_iter(
-           pywrc_resources_t *pywrc_resources );
+           pywrc_resources_t *resources_object );
 
 PyObject *pywrc_resources_iternext(
-           pywrc_resources_t *pywrc_resources );
+           pywrc_resources_t *resources_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_RESOURCES_H ) */
 

@@ -1,7 +1,7 @@
 /*
  * Python object definition of the libwrc version resource
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -49,5 +49,5 @@ PyObject *pywrc_version_get_product_version(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_VERSION_H ) */
 

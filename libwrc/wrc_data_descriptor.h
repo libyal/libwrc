@@ -1,7 +1,7 @@
 /*
  * The Windows RC data descriptor
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -48,5 +48,5 @@ struct wrc_data_descriptor
 }
 #endif
 
-#endif
+#endif /* !defined( _WRC_DATA_DESCRIPTOR_H ) */
 
