@@ -483,8 +483,9 @@ int libwrc_io_handle_read_resource_node(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
-		 function );
+		 "%s: unsupported flags: 0x%08" PRIx32 ".",
+		 function,
+		 flags );
 
 		return( -1 );
 	}

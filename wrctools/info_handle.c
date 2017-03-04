@@ -38,21 +38,25 @@
 #define INFO_HANDLE_NOTIFY_STREAM	stdout
 
 #if !defined( LIBEXE_HAVE_BFIO )
+
 LIBEXE_EXTERN \
 int libexe_section_get_data_file_io_handle(
      libexe_section_t *section,
      libbfio_handle_t **file_io_handle,
      libcerror_error_t **error );
-#endif
+
+#endif /* !defined( LIBEXE_HAVE_BFIO ) */
 
 #if !defined( LIBWRC_HAVE_BFIO )
+
 extern \
 int libwrc_stream_open_file_io_handle(
      libwrc_stream_t *stream,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libcerror_error_t **error );
-#endif
+
+#endif /* !defined( LIBWRC_HAVE_BFIO ) */
 
 /* Creates an info handle
  * Make sure the value info_handle is referencing, is set to NULL
