@@ -37,13 +37,12 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libwrc.docs \
-	dpkg/libwrc-dev.docs \
-	dpkg/libwrc-python.docs \
-	dpkg/libwrc-python3.docs \
-	dpkg/libwrc-tools.docs \
+	dpkg/libwrc.install \
+	dpkg/libwrc-dev.install \
+	dpkg/libwrc-python.install \
+	dpkg/libwrc-python3.install \
+	dpkg/libwrc-tools.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \
