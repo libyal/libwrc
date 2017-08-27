@@ -35,7 +35,7 @@
 
 #include "../libwrc/libwrc_language_table.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 /* Tests the libwrc_language_table_initialize function
  * Returns 1 if successful or 0 if not
@@ -393,7 +393,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -410,7 +410,7 @@ int main(
 	WRC_TEST_UNREFERENCED_PARAMETER( argc )
 	WRC_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 	WRC_TEST_RUN(
 	 "libwrc_language_table_initialize",
@@ -432,7 +432,7 @@ int main(
 
 	/* TODO: add tests for libwrc_language_table_get_number_of_values */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

@@ -36,7 +36,7 @@
 
 #include "../libwrc/libwrc_resource_values.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 /* Tests the libwrc_resource_values_initialize function
  * Returns 1 if successful or 0 if not
@@ -675,7 +675,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -692,7 +692,7 @@ int main(
 	WRC_TEST_UNREFERENCED_PARAMETER( argc )
 	WRC_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 	WRC_TEST_RUN(
 	 "libwrc_resource_values_initialize",
@@ -714,7 +714,7 @@ int main(
 	 "libwrc_resource_values_get_type",
 	 wrc_test_resource_values_get_type );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

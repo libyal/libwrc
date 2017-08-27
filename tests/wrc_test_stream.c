@@ -1769,11 +1769,11 @@ int main(
 		 wrc_test_stream_signal_abort,
 		 stream );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 		/* TODO: add tests for libwrc_stream_open_read */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 		WRC_TEST_RUN_WITH_ARGS(
 		 "libwrc_stream_get_ascii_codepage",

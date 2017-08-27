@@ -35,7 +35,7 @@
 
 #include "../libwrc/libwrc_language_entry.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 /* Tests the libwrc_language_entry_free function
  * Returns 1 if successful or 0 if not
@@ -75,7 +75,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -92,7 +92,7 @@ int main(
 	WRC_TEST_UNREFERENCED_PARAMETER( argc )
 	WRC_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 	/* TODO: add tests for libwrc_language_entry_initialize */
 
@@ -106,7 +106,7 @@ int main(
 
 	/* TODO: add tests for libwrc_language_entry_append_value */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

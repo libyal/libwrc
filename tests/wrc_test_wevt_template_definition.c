@@ -73,9 +73,9 @@ on_error:
 	return( 0 );
 }
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -92,17 +92,17 @@ int main(
 	WRC_TEST_UNREFERENCED_PARAMETER( argc )
 	WRC_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 	/* TODO: add tests for libwrc_wevt_template_definition_initialize */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 	WRC_TEST_RUN(
 	 "libwrc_wevt_template_definition_free",
 	 wrc_test_wevt_template_definition_free );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 	/* TODO: add tests for libwrc_wevt_template_definition_get_data */
 
@@ -110,7 +110,7 @@ int main(
 
 	/* TODO: add tests for libwrc_wevt_template_definition_get_size */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
