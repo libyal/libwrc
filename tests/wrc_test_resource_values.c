@@ -65,13 +65,13 @@ int wrc_test_resource_values_initialize(
 	 result,
 	 1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "resource_values",
-         resource_values );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "resource_values",
+	 resource_values );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libwrc_resource_values_free(
 	          &resource_values,
@@ -82,13 +82,13 @@ int wrc_test_resource_values_initialize(
 	 result,
 	 1 );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "resource_values",
-         resource_values );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "resource_values",
+	 resource_values );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -101,9 +101,9 @@ int wrc_test_resource_values_initialize(
 	 result,
 	 -1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -119,9 +119,9 @@ int wrc_test_resource_values_initialize(
 	 result,
 	 -1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -253,9 +253,9 @@ int wrc_test_resource_values_free(
 	 result,
 	 -1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -293,13 +293,13 @@ int wrc_test_resource_values_compare(
 	 result,
 	 1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "first_resource_values",
-         first_resource_values );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "first_resource_values",
+	 first_resource_values );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libwrc_resource_values_initialize(
 	          &second_resource_values,
@@ -310,13 +310,13 @@ int wrc_test_resource_values_compare(
 	 result,
 	 1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "second_resource_values",
-         second_resource_values );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "second_resource_values",
+	 second_resource_values );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -330,9 +330,9 @@ int wrc_test_resource_values_compare(
 	 result,
 	 LIBCDATA_COMPARE_EQUAL );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -346,9 +346,9 @@ int wrc_test_resource_values_compare(
 	 result,
 	 -1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -363,9 +363,9 @@ int wrc_test_resource_values_compare(
 	 result,
 	 -1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -381,13 +381,13 @@ int wrc_test_resource_values_compare(
 	 result,
 	 1 );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "second_resource_values",
-         second_resource_values );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "second_resource_values",
+	 second_resource_values );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libwrc_resource_values_free(
 	          &first_resource_values,
@@ -398,13 +398,13 @@ int wrc_test_resource_values_compare(
 	 result,
 	 1 );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "first_resource_values",
-         first_resource_values );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "first_resource_values",
+	 first_resource_values );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 

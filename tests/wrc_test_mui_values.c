@@ -64,13 +64,13 @@ int wrc_test_mui_values_initialize(
 	 result,
 	 1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "mui_values",
-         mui_values );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "mui_values",
+	 mui_values );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libwrc_mui_values_free(
 	          &mui_values,
@@ -81,13 +81,13 @@ int wrc_test_mui_values_initialize(
 	 result,
 	 1 );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "mui_values",
-         mui_values );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "mui_values",
+	 mui_values );
 
-        WRC_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int wrc_test_mui_values_initialize(
 	 result,
 	 -1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int wrc_test_mui_values_initialize(
 	 result,
 	 -1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -252,9 +252,9 @@ int wrc_test_mui_values_free(
 	 result,
 	 -1 );
 
-        WRC_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
