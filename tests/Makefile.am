@@ -166,7 +166,9 @@ wrc_test_resource_values_LDADD = \
 	@LIBCERROR_LIBADD@
 
 wrc_test_stream_SOURCES = \
+	wrc_test_functions.c wrc_test_functions.h \
 	wrc_test_getopt.c wrc_test_getopt.h \
+	wrc_test_libbfio.h \
 	wrc_test_libcerror.h \
 	wrc_test_libclocale.h \
 	wrc_test_libcnotify.h \
@@ -174,10 +176,15 @@ wrc_test_stream_SOURCES = \
 	wrc_test_libwrc.h \
 	wrc_test_macros.h \
 	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_stream.c
+	wrc_test_stream.c \
+	wrc_test_unused.h
 
 wrc_test_stream_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \

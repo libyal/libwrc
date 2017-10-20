@@ -122,7 +122,7 @@ PyObject *pywrc_stream_get_number_of_resources(
            PyObject *arguments );
 
 PyObject *pywrc_stream_get_resource_by_index(
-           pywrc_stream_t *pywrc_stream,
+           PyObject *pywrc_stream,
            int resource_index );
 
 PyObject *pywrc_stream_get_resource(

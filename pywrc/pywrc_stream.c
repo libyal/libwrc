@@ -1378,7 +1378,7 @@ PyObject *pywrc_stream_get_number_of_resources(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pywrc_stream_get_resource_by_index(
-           pywrc_stream_t *pywrc_stream,
+           PyObject *pywrc_stream,
            int resource_index )
 {
 	libcerror_error_t *error    = NULL;
@@ -1401,7 +1401,7 @@ PyObject *pywrc_stream_get_resource_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libwrc_stream_get_resource(
-	          pywrc_stream->stream,
+	          ( (pywrc_stream_t *) pywrc_stream )->stream,
 	          resource_index,
 	          &resource,
 	          &error );
@@ -1474,7 +1474,7 @@ PyObject *pywrc_stream_get_resource_by_index(
 	resource_object = pywrc_resource_new(
 	                   type_object,
 	                   resource,
-	                   pywrc_stream );
+	                   (pywrc_stream_t *) pywrc_stream );
 
 	if( resource_object == NULL )
 	{
@@ -1519,7 +1519,7 @@ PyObject *pywrc_stream_get_resource(
 		return( NULL );
 	}
 	resource_object = pywrc_stream_get_resource_by_index(
-	                   pywrc_stream,
+	                   (PyObject *) pywrc_stream,
 	                   resource_index );
 
 	return( resource_object );
@@ -1572,7 +1572,7 @@ PyObject *pywrc_stream_get_resources(
 		return( NULL );
 	}
 	resources_object = pywrc_resources_new(
-	                    pywrc_stream,
+	                    (PyObject *) pywrc_stream,
 	                    &pywrc_stream_get_resource_by_index,
 	                    number_of_resources );
 
