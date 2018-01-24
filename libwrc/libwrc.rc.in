@@ -24,7 +24,7 @@ BEGIN
       VALUE "FileDescription",		"Library to access the Windows Resource Compiler (WRC) format\0"
       VALUE "FileVersion",		"@VERSION@" "\0"
       VALUE "InternalName",		"libwrc.dll\0"
-      VALUE "LegalCopyright",		"(C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>\0"
+      VALUE "LegalCopyright",		"(C) 2011-2018, Joachim Metz <joachim.metz@gmail.com>\0"
       VALUE "OriginalFilename",		"libwrc.dll\0"
       VALUE "ProductName",		"libwrc\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
