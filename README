@@ -1,16 +1,20 @@
 libwrc is a library to access the Windows Resource Compiler (WRC) format.
 
 Project information:
+
 * Status: experimental
 * Licence: LGPLv3+
 
 Work in progress:
+
 * Python 3 support
 
 Planned:
+
 * Multi-threading support
 
 For more information see:
+
 * Project documentation: https://github.com/libyal/libwrc/wiki/Home
 * How to build from source: https://github.com/libyal/libwrc/wiki/Building
 

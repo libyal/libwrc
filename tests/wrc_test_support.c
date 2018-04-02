@@ -203,6 +203,18 @@ int main(
 	 "libwrc_get_version",
 	 wrc_test_get_version );
 
+	WRC_TEST_RUN(
+	 "libwrc_get_access_flags_read",
+	 wrc_test_get_access_flags_read );
+
+	WRC_TEST_RUN(
+	 "libwrc_get_codepage",
+	 wrc_test_get_codepage );
+
+	WRC_TEST_RUN(
+	 "libwrc_set_codepage",
+	 wrc_test_set_codepage );
+
 	return( EXIT_SUCCESS );
 
 on_error:

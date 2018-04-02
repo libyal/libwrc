@@ -80,6 +80,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wrc_test_notify", "wrc_test_notify\wrc_test_notify.vcproj", "{38B11068-873D-4918-809C-BF14CB0373D7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FDE5A4F8-E6CC-49B9-A831-653103367387} = {FDE5A4F8-E6CC-49B9-A831-653103367387}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wrc_test_resource", "wrc_test_resource\wrc_test_resource.vcproj", "{34B2419D-4B49-41DB-AF92-F2B7B28CDC74}"

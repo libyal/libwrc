@@ -132,13 +132,15 @@ wrc_test_mui_values_LDADD = \
 	@LIBCERROR_LIBADD@
 
 wrc_test_notify_SOURCES = \
+	wrc_test_libcerror.h \
 	wrc_test_libwrc.h \
 	wrc_test_macros.h \
 	wrc_test_notify.c \
 	wrc_test_unused.h
 
 wrc_test_notify_LDADD = \
-	../libwrc/libwrc.la
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
 
 wrc_test_resource_SOURCES = \
 	wrc_test_libcerror.h \
