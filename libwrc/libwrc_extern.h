@@ -28,17 +28,13 @@
  */
 #if !defined( HAVE_LOCAL_LIBWRC )
 
-/* If libtool DLL support is enabled set LIBWRC_DLL_EXPORT
- * before including libwrc/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBWRC_DLL_EXPORT
-#endif
-
 #include <libwrc/extern.h>
 
+#define LIBWRC_EXTERN_VARIABLE	LIBWRC_EXTERN
+
 #else
-#define LIBWRC_EXTERN	/* extern */
+#define LIBWRC_EXTERN		/* extern */
+#define LIBWRC_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBWRC ) */
 

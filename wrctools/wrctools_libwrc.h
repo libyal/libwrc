@@ -1,5 +1,5 @@
 /*
- * The internal libwrc header
+ * The libwrc header wrapper
  *
  * Copyright (C) 2011-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -23,13 +23,6 @@
 #define _WRCTOOLS_LIBWRC_H
 
 #include <common.h>
-
-/* If Cygwin libtool DLL support is enabled set LIBWRC_DLL_IMPORT
- * before including libwrc.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBWRC_DLL_IMPORT
-#endif
 
 #include <libwrc.h>
 

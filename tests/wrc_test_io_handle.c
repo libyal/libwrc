@@ -113,6 +113,8 @@ int wrc_test_io_handle_initialize(
 	          &io_handle,
 	          &error );
 
+	io_handle = NULL;
+
 	WRC_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int wrc_test_io_handle_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	io_handle = NULL;
 
 #if defined( HAVE_WRC_TEST_MEMORY )
 
@@ -331,6 +331,36 @@ int wrc_test_io_handle_clear(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_WRC_TEST_MEMORY )
+
+	/* Test libwrc_io_handle_clear with memset failing
+	 */
+	wrc_test_memset_attempts_before_fail = 0;
+
+	result = libwrc_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	if( wrc_test_memset_attempts_before_fail != -1 )
+	{
+		wrc_test_memset_attempts_before_fail = -1;
+	}
+	else
+	{
+		WRC_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		WRC_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_WRC_TEST_MEMORY ) */
 
 	/* Clean up
 	 */
