@@ -1604,7 +1604,7 @@ int libwrc_stream_get_resource_by_utf8_name(
 
 				return( -1 );
 			}
-			else if( result != 0 )
+			else if( result == LIBUNA_COMPARE_EQUAL )
 			{
 				if( libwrc_resource_initialize(
 				     resource,
@@ -1780,7 +1780,7 @@ int libwrc_stream_get_resource_by_utf16_name(
 
 				return( -1 );
 			}
-			else if( result != 0 )
+			else if( result == LIBUNA_COMPARE_EQUAL )
 			{
 				if( libwrc_resource_initialize(
 				     resource,
