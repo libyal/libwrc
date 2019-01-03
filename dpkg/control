@@ -9,6 +9,8 @@ Homepage: https://github.com/libyal/libwrc
 Package: libwrc
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libwrc1
+Replaces: libwrc1
 Suggests: libwrc-dbg
 Description: Library to access the Windows Resource Compiler (WRC) format
  libwrc is a library to access the Windows Resource Compiler (WRC) format.
@@ -31,6 +33,8 @@ Package: libwrc-tools
 Section: utils
 Architecture: any
 Depends: libwrc (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libwrc-utils
+Replaces: libwrc-utils
 Description: Several tools for reading Windows Resource (RC) files
  Several tools for reading Windows Resource (RC) files.
 
@@ -45,6 +49,8 @@ Package: libwrc-python
 Section: python
 Architecture: any
 Depends: libwrc (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python-libwrc
+Replaces: python-libwrc
 Suggests: libwrc-python-dbg
 Description: Python 2 bindings for libwrc
  Python 2 bindings for libwrc.
@@ -60,6 +66,8 @@ Package: libwrc-python3
 Section: python
 Architecture: any
 Depends: libwrc (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python3-libwrc
+Replaces: python3-libwrc
 Suggests: libwrc-python3-dbg
 Description: Python 3 bindings for libwrc
  Python 3 bindings for libwrc.
