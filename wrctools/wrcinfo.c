@@ -160,7 +160,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	wrcoutput_version_fprint(
+	wrctools_output_version_fprint(
 	 stdout,
 	 program );
 
@@ -200,7 +200,7 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'V':
-				wrcoutput_copyright_fprint(
+				wrctools_output_copyright_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );

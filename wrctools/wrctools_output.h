@@ -36,14 +36,14 @@ int wrctools_output_initialize(
      int stdio_mode,
      libcerror_error_t **error );
 
-void wrcoutput_copyright_fprint(
+void wrctools_output_copyright_fprint(
       FILE *stream );
 
-void wrcoutput_version_fprint(
+void wrctools_output_version_fprint(
       FILE *stream,
       const char *program );
 
-void wrcoutput_version_detailed_fprint(
+void wrctools_output_version_detailed_fprint(
       FILE *stream,
       const char *program );
 
