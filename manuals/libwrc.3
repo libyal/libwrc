@@ -1,11 +1,9 @@
-.Dd February  2, 2017
+.Dd February 23, 2019
 .Dt libwrc 3
 .Os libwrc
 .Sh NAME
 .Nm libwrc.h
 .Nd Library to access the Windows Resource Compiler (WRC) format
-.Sh LIBRARY
-.Lb libwrc
 .Sh SYNOPSIS
 .In libwrc.h
 .Pp
@@ -15,17 +13,17 @@ Support functions
 .Ft int
 .Fn libwrc_get_access_flags_read "void"
 .Ft int
-.Fn libwrc_get_codepage "int *codepage, libwrc_error_t **error"
+.Fn libwrc_get_codepage "int *codepage" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_set_codepage "int codepage, libwrc_error_t **error"
+.Fn libwrc_set_codepage "int codepage" "libwrc_error_t **error"
 .Pp
 Notify functions
 .Ft void
 .Fn libwrc_notify_set_verbose "int verbose"
 .Ft int
-.Fn libwrc_notify_set_stream "FILE *stream, libwrc_error_t **error"
+.Fn libwrc_notify_set_stream "FILE *stream" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_notify_stream_open "const char *filename, libwrc_error_t **error"
+.Fn libwrc_notify_stream_open "const char *filename" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_notify_stream_close "libwrc_error_t **error"
 .Pp
@@ -33,201 +31,201 @@ Error functions
 .Ft void
 .Fn libwrc_error_free "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_error_fprint "libwrc_error_t *error, FILE *stream"
+.Fn libwrc_error_fprint "libwrc_error_t *error" "FILE *stream"
 .Ft int
-.Fn libwrc_error_sprint "libwrc_error_t *error, char *string, size_t size"
+.Fn libwrc_error_sprint "libwrc_error_t *error" "char *string" "size_t size"
 .Ft int
-.Fn libwrc_error_backtrace_fprint "libwrc_error_t *error, FILE *stream"
+.Fn libwrc_error_backtrace_fprint "libwrc_error_t *error" "FILE *stream"
 .Ft int
-.Fn libwrc_error_backtrace_sprint "libwrc_error_t *error, char *string, size_t size"
+.Fn libwrc_error_backtrace_sprint "libwrc_error_t *error" "char *string" "size_t size"
 .Pp
 Stream functions
 .Ft int
-.Fn libwrc_stream_initialize "libwrc_stream_t **stream, libwrc_error_t **error"
+.Fn libwrc_stream_initialize "libwrc_stream_t **stream" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_free "libwrc_stream_t **stream, libwrc_error_t **error"
+.Fn libwrc_stream_free "libwrc_stream_t **stream" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_signal_abort "libwrc_stream_t *stream, libwrc_error_t **error"
+.Fn libwrc_stream_signal_abort "libwrc_stream_t *stream" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_open "libwrc_stream_t *stream, const char *filename, int access_flags, libwrc_error_t **error"
+.Fn libwrc_stream_open "libwrc_stream_t *stream" "const char *filename" "int access_flags" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_close "libwrc_stream_t *stream, libwrc_error_t **error"
+.Fn libwrc_stream_close "libwrc_stream_t *stream" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_ascii_codepage "libwrc_stream_t *stream, int *ascii_codepage, libwrc_error_t **error"
+.Fn libwrc_stream_get_ascii_codepage "libwrc_stream_t *stream" "int *ascii_codepage" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_set_ascii_codepage "libwrc_stream_t *stream, int ascii_codepage, libwrc_error_t **error"
+.Fn libwrc_stream_set_ascii_codepage "libwrc_stream_t *stream" "int ascii_codepage" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_virtual_address "libwrc_stream_t *stream, uint32_t *virtual_address, libwrc_error_t **error"
+.Fn libwrc_stream_get_virtual_address "libwrc_stream_t *stream" "uint32_t *virtual_address" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_set_virtual_address "libwrc_stream_t *stream, uint32_t virtual_address, libwrc_error_t **error"
+.Fn libwrc_stream_set_virtual_address "libwrc_stream_t *stream" "uint32_t virtual_address" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_number_of_resources "libwrc_stream_t *stream, int *number_of_resources, libwrc_error_t **error"
+.Fn libwrc_stream_get_number_of_resources "libwrc_stream_t *stream" "int *number_of_resources" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_resource "libwrc_stream_t *stream, int resource_index, libwrc_resource_t **resource, libwrc_error_t **error"
+.Fn libwrc_stream_get_resource "libwrc_stream_t *stream" "int resource_index" "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_resource_by_identifier "libwrc_stream_t *stream, uint32_t identifier, libwrc_resource_t **resource, libwrc_error_t **error"
+.Fn libwrc_stream_get_resource_by_identifier "libwrc_stream_t *stream" "uint32_t identifier" "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_resource_by_type "libwrc_stream_t *stream, int type, libwrc_resource_t **resource, libwrc_error_t **error"
+.Fn libwrc_stream_get_resource_by_type "libwrc_stream_t *stream" "int type" "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_resource_by_utf8_name "libwrc_stream_t *stream, const uint8_t *utf8_string, size_t utf8_string_length, libwrc_resource_t **resource, libwrc_error_t **error"
+.Fn libwrc_stream_get_resource_by_utf8_name "libwrc_stream_t *stream" "const uint8_t *utf8_string" "size_t utf8_string_length" "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_resource_by_utf16_name "libwrc_stream_t *stream, const uint16_t *utf16_string, size_t utf16_string_length, libwrc_resource_t **resource, libwrc_error_t **error"
+.Fn libwrc_stream_get_resource_by_utf16_name "libwrc_stream_t *stream" "const uint16_t *utf16_string" "size_t utf16_string_length" "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libwrc_stream_open_wide "libwrc_stream_t *stream, const wchar_t *filename, int access_flags, libwrc_error_t **error"
+.Fn libwrc_stream_open_wide "libwrc_stream_t *stream" "const wchar_t *filename" "int access_flags" "libwrc_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libwrc_stream_open_file_io_handle "libwrc_stream_t *stream, libbfio_handle_t *file_io_handle, int access_flags, libwrc_error_t **error"
+.Fn libwrc_stream_open_file_io_handle "libwrc_stream_t *stream" "libbfio_handle_t *file_io_handle" "int access_flags" "libwrc_error_t **error"
 .Pp
 Resource functions
 .Ft int
-.Fn libwrc_resource_free "libwrc_resource_t **resource, libwrc_error_t **error"
+.Fn libwrc_resource_free "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_resource_get_identifier "libwrc_resource_t *resource, uint32_t *identifier, libwrc_error_t **error"
+.Fn libwrc_resource_get_identifier "libwrc_resource_t *resource" "uint32_t *identifier" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_resource_get_type "libwrc_resource_t *resource, int *type, libwrc_error_t **error"
+.Fn libwrc_resource_get_type "libwrc_resource_t *resource" "int *type" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_resource_read "libwrc_resource_t *resource, libwrc_error_t **error"
+.Fn libwrc_resource_read "libwrc_resource_t *resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_resource_get_number_of_languages "libwrc_resource_t *resource, int *number_of_languages, libwrc_error_t **error"
+.Fn libwrc_resource_get_number_of_languages "libwrc_resource_t *resource" "int *number_of_languages" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_resource_get_language_identifier "libwrc_resource_t *resource, int language_index, uint32_t *language_identifier, libwrc_error_t **error"
+.Fn libwrc_resource_get_language_identifier "libwrc_resource_t *resource" "int language_index" "uint32_t *language_identifier" "libwrc_error_t **error"
 .Pp
 Manifest resource functions
 .Ft int
-.Fn libwrc_manifest_get_utf8_string_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_manifest_get_utf8_string_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_manifest_get_utf8_string "libwrc_resource_t *resource, uint32_t language_identifier, uint8_t *utf8_string, size_t utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_manifest_get_utf8_string "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_manifest_get_utf16_string_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_manifest_get_utf16_string_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_manifest_get_utf16_string "libwrc_resource_t *resource, uint32_t language_identifier, uint16_t *utf16_string, size_t utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_manifest_get_utf16_string "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Pp
 Message-table resource functions
 .Ft int
-.Fn libwrc_message_table_get_number_of_messages "libwrc_resource_t *resource, uint32_t language_identifier, int *number_of_messages, libwrc_error_t **error"
+.Fn libwrc_message_table_get_number_of_messages "libwrc_resource_t *resource" "uint32_t language_identifier" "int *number_of_messages" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_message_table_get_identifier "libwrc_resource_t *resource, uint32_t language_identifier, int message_index, uint32_t *message_identifier, libwrc_error_t **error"
+.Fn libwrc_message_table_get_identifier "libwrc_resource_t *resource" "uint32_t language_identifier" "int message_index" "uint32_t *message_identifier" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_message_table_get_utf8_string_size "libwrc_resource_t *resource, uint32_t language_identifier, int message_index, size_t *utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_message_table_get_utf8_string_size "libwrc_resource_t *resource" "uint32_t language_identifier" "int message_index" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_message_table_get_utf8_string "libwrc_resource_t *resource, uint32_t language_identifier, int message_index, uint8_t *utf8_string, size_t utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_message_table_get_utf8_string "libwrc_resource_t *resource" "uint32_t language_identifier" "int message_index" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_message_table_get_utf16_string_size "libwrc_resource_t *resource, uint32_t language_identifier, int message_index, size_t *utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_message_table_get_utf16_string_size "libwrc_resource_t *resource" "uint32_t language_identifier" "int message_index" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_message_table_get_utf16_string "libwrc_resource_t *resource, uint32_t language_identifier, int message_index, uint16_t *utf16_string, size_t utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_message_table_get_utf16_string "libwrc_resource_t *resource" "uint32_t language_identifier" "int message_index" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Pp
 MUI resource functions
 .Ft int
-.Fn libwrc_mui_get_file_type "libwrc_resource_t *resource, uint32_t language_identifier, uint32_t *file_type, libwrc_error_t **error"
+.Fn libwrc_mui_get_file_type "libwrc_resource_t *resource" "uint32_t language_identifier" "uint32_t *file_type" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_main_name_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf8_main_name_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_main_name "libwrc_resource_t *resource, uint32_t language_identifier, uint8_t *utf8_string, size_t utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf8_main_name "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_main_name_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf16_main_name_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_main_name "libwrc_resource_t *resource, uint32_t language_identifier, uint16_t *utf16_string, size_t utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf16_main_name "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_mui_name_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf8_mui_name_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_mui_name "libwrc_resource_t *resource, uint32_t language_identifier, uint8_t *utf8_string, size_t utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf8_mui_name "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_mui_name_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf16_mui_name_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_mui_name "libwrc_resource_t *resource, uint32_t language_identifier, uint16_t *utf16_string, size_t utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf16_mui_name "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_language_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf8_language_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_language "libwrc_resource_t *resource, uint32_t language_identifier, uint8_t *utf8_string, size_t utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf8_language "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_language_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf16_language_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_language "libwrc_resource_t *resource, uint32_t language_identifier, uint16_t *utf16_string, size_t utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf16_language "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_fallback_language_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf8_fallback_language_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_fallback_language "libwrc_resource_t *resource, uint32_t language_identifier, uint8_t *utf8_string, size_t utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf8_fallback_language "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_fallback_language_size "libwrc_resource_t *resource, uint32_t language_identifier, size_t *utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf16_fallback_language_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_fallback_language "libwrc_resource_t *resource, uint32_t language_identifier, uint16_t *utf16_string, size_t utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_mui_get_utf16_fallback_language "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Pp
 String resource functions
 .Ft int
-.Fn libwrc_string_get_number_of_strings "libwrc_resource_t *resource, uint32_t language_identifier, int *number_of_strings, libwrc_error_t **error"
+.Fn libwrc_string_get_number_of_strings "libwrc_resource_t *resource" "uint32_t language_identifier" "int *number_of_strings" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_string_get_identifier "libwrc_resource_t *resource, uint32_t language_identifier, int string_index, uint32_t *string_identifier, libwrc_error_t **error"
+.Fn libwrc_string_get_identifier "libwrc_resource_t *resource" "uint32_t language_identifier" "int string_index" "uint32_t *string_identifier" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_string_get_utf8_string_size "libwrc_resource_t *resource, uint32_t language_identifier, int string_index, size_t *utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_string_get_utf8_string_size "libwrc_resource_t *resource" "uint32_t language_identifier" "int string_index" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_string_get_utf8_string "libwrc_resource_t *resource, uint32_t language_identifier, int string_index, uint8_t *utf8_string, size_t utf8_string_size, libwrc_error_t **error"
+.Fn libwrc_string_get_utf8_string "libwrc_resource_t *resource" "uint32_t language_identifier" "int string_index" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_string_get_utf16_string_size "libwrc_resource_t *resource, uint32_t language_identifier, int string_index, size_t *utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_string_get_utf16_string_size "libwrc_resource_t *resource" "uint32_t language_identifier" "int string_index" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_string_get_utf16_string "libwrc_resource_t *resource, uint32_t language_identifier, int string_index, uint16_t *utf16_string, size_t utf16_string_size, libwrc_error_t **error"
+.Fn libwrc_string_get_utf16_string "libwrc_resource_t *resource" "uint32_t language_identifier" "int string_index" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Pp
 Version resource functions
 .Ft int
-.Fn libwrc_version_get_file_version "libwrc_resource_t *resource, uint32_t language_identifier, uint64_t *version, libwrc_error_t **error"
+.Fn libwrc_version_get_file_version "libwrc_resource_t *resource" "uint32_t language_identifier" "uint64_t *version" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_version_get_product_version "libwrc_resource_t *resource, uint32_t language_identifier, uint64_t *version, libwrc_error_t **error"
+.Fn libwrc_version_get_product_version "libwrc_resource_t *resource" "uint32_t language_identifier" "uint64_t *version" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE resource functions
 .Ft int
-.Fn libwrc_wevt_template_get_number_of_providers "libwrc_resource_t *resource, uint32_t language_identifier, int *number_of_providers, libwrc_error_t **error"
+.Fn libwrc_wevt_template_get_number_of_providers "libwrc_resource_t *resource" "uint32_t language_identifier" "int *number_of_providers" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_wevt_template_get_provider "libwrc_resource_t *resource, uint32_t language_identifier, int provider_index, libwrc_wevt_provider_t **provider, libwrc_error_t **error"
+.Fn libwrc_wevt_template_get_provider "libwrc_resource_t *resource" "uint32_t language_identifier" "int provider_index" "libwrc_wevt_provider_t **provider" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_wevt_template_get_provider_by_identifier "libwrc_resource_t *resource, uint32_t language_identifier, const uint8_t *provider_identifier, size_t provider_identifier_size, libwrc_wevt_provider_t **provider, libwrc_error_t **error"
+.Fn libwrc_wevt_template_get_provider_by_identifier "libwrc_resource_t *resource" "uint32_t language_identifier" "const uint8_t *provider_identifier" "size_t provider_identifier_size" "libwrc_wevt_provider_t **provider" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE provider functions
 .Ft int
-.Fn libwrc_wevt_provider_free "libwrc_wevt_provider_t **provider, libwrc_error_t **error"
+.Fn libwrc_wevt_provider_free "libwrc_wevt_provider_t **provider" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_wevt_provider_get_number_of_events "libwrc_wevt_provider_t *provider, int *number_of_events, libwrc_error_t **error"
+.Fn libwrc_wevt_provider_get_number_of_events "libwrc_wevt_provider_t *provider" "int *number_of_events" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_wevt_provider_get_event "libwrc_wevt_provider_t *provider, int event_index, libwrc_wevt_event_t **event, libwrc_error_t **error"
+.Fn libwrc_wevt_provider_get_event "libwrc_wevt_provider_t *provider" "int event_index" "libwrc_wevt_event_t **event" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_wevt_provider_get_event_by_identifier "libwrc_wevt_provider_t *provider, uint32_t event_identifier, libwrc_wevt_event_t **event, libwrc_error_t **error"
+.Fn libwrc_wevt_provider_get_event_by_identifier "libwrc_wevt_provider_t *provider" "uint32_t event_identifier" "libwrc_wevt_event_t **event" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE channel functions
 .Ft int
-.Fn libwrc_wevt_channel_free "libwrc_wevt_channel_t **channel, libwrc_error_t **error"
+.Fn libwrc_wevt_channel_free "libwrc_wevt_channel_t **channel" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE event functions
 .Ft int
-.Fn libwrc_wevt_event_free "libwrc_wevt_event_t **event, libwrc_error_t **error"
+.Fn libwrc_wevt_event_free "libwrc_wevt_event_t **event" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_wevt_event_get_identifier "libwrc_wevt_event_t *event, uint32_t *identifier, libwrc_error_t **error"
+.Fn libwrc_wevt_event_get_identifier "libwrc_wevt_event_t *event" "uint32_t *identifier" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_wevt_event_get_message_identifier "libwrc_wevt_event_t *event, uint32_t *message_identifier, libwrc_error_t **error"
+.Fn libwrc_wevt_event_get_message_identifier "libwrc_wevt_event_t *event" "uint32_t *message_identifier" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE keyword functions
 .Ft int
-.Fn libwrc_wevt_keyword_free "libwrc_wevt_keyword_t **keyword, libwrc_error_t **error"
+.Fn libwrc_wevt_keyword_free "libwrc_wevt_keyword_t **keyword" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE level functions
 .Ft int
-.Fn libwrc_wevt_level_free "libwrc_wevt_level_t **level, libwrc_error_t **error"
+.Fn libwrc_wevt_level_free "libwrc_wevt_level_t **level" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE map functions
 .Ft int
-.Fn libwrc_wevt_map_free "libwrc_wevt_map_t **map, libwrc_error_t **error"
+.Fn libwrc_wevt_map_free "libwrc_wevt_map_t **map" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE opcode functions
 .Ft int
-.Fn libwrc_wevt_opcode_free "libwrc_wevt_opcode_t **opcode, libwrc_error_t **error"
+.Fn libwrc_wevt_opcode_free "libwrc_wevt_opcode_t **opcode" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE task functions
 .Ft int
-.Fn libwrc_wevt_task_free "libwrc_wevt_task_t **task, libwrc_error_t **error"
+.Fn libwrc_wevt_task_free "libwrc_wevt_task_t **task" "libwrc_error_t **error"
 .Pp
 WEVT_TEMPLATE template definition functions
 .Ft int
-.Fn libwrc_wevt_template_definition_free "libwrc_wevt_template_definition_t **template_definition, libwrc_error_t **error"
+.Fn libwrc_wevt_template_definition_free "libwrc_wevt_template_definition_t **template_definition" "libwrc_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libwrc_get_version
@@ -240,8 +238,8 @@ None
 .Sh FILES
 None
 .Sh NOTES
-libwrc allows to be compiled with wide character support (wchar_t).
-
+libwrc can be compiled with wide character support (wchar_t).
+.sp
 To compile libwrc with wide character support use:
 .Ar ./configure --enable-wide-character-type=yes
  or define:
@@ -249,7 +247,7 @@ To compile libwrc with wide character support use:
  or
 .Ar UNICODE
  during compilation.
-
+.sp
 .Ar LIBWRC_WIDE_CHARACTER_TYPE
  in libwrc/features.h can be used to determine if libwrc was compiled with wide character support.
 .Sh BUGS
@@ -258,7 +256,7 @@ Please report bugs of any kind on the project issue tracker: https://github.com/
 These man pages are generated from "libwrc.h".
 .Sh COPYRIGHT
 Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>.
-
+.sp
 This is free software; see the source for copying conditions.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
