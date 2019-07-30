@@ -1,4 +1,4 @@
-.Dd December 24, 2014
+.Dd July 30, 2019
 .Dt wrcinfo
 .Os libwrc
 .Sh NAME
@@ -9,7 +9,7 @@ of the .rsrc section of a MZ, PE/COFF executable
 .Nm wrcinfo
 .Op Fl hvV
 .Op Fl c Ar codepage
-.Va Ar source
+.Ar source
 .Sh DESCRIPTION
 .Nm wrcinfo
 is a utility to determine information about a Windows Resource (RC) stream
@@ -42,51 +42,31 @@ None
 None
 .Sh EXAMPLES
 .Bd -literal
-# wrcinfo WUDFPlatform.dll
-wrcinfo 20130303
-
-Executable (EXE) information:
-	Number of sections	: 5
-
-Section: 0
-.It Fl h
-shows this help
-.It Fl v
-verbose output to stderr
-.It Fl V
-print version
-.El
-.Sh ENVIRONMENT
-None
-.Sh FILES
-None
-.Sh EXAMPLES
-.Bd -literal
 # wrcinfo Windows/System32/ntoskrnl.exe
 wrcinfo 20121027
-
+.sp
 Windows Resource (RC) information:
         number of resources     : 4
-
+.sp
 Version resource:
         number of languages     : 1
-
+.sp
         language identifier     : 0x00000409 (en-US)
         file version            : 6.1.7601.17592
         product version         : 6.1.7601.17592
-
+.sp
 Message-table resource:
         number of languages     : 1
-
+.sp
         language identifier     : 0x00000409 (en-US)
         number of messages      : 312
-
+.sp
         message                 : 0
         identifier              : 0x00000001
         data                    : APC_INDEX_MISMATCH
-
+.sp
 .Dl ...
-
+.sp
 .Ed
 .Sh DIAGNOSTICS
 Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
