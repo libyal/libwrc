@@ -42,46 +42,8 @@ Tools:
 * wrcmount
   - create
 
-20160829
-* worked on tests
-* applied updates
-
-20160111
-* worked on Python 3 support
-
-20160108
-* 2016 update
-
-20150118
-* code clean up
-
-20150105
-* 2015 update
-
-20141224
-* worked on Python 3 support
-* worked on tests
-* added Windows codepage 932, 936 and 1255 support
-
-20141130
-* code clean up
-
-20141121
-* code clean up
-
-20141030
-* bug fix in Python-bindings
-
-20141027
-* changes for deployment
-
-20141022
-* changes for deployment
-
-20141009
-* updated dependencies and corresponding changes
-
 20140928
+* see `git log' for more recent change log
 * removed README.macosx
 * changes for project site move
 
