@@ -53,19 +53,6 @@ struct pywrc_stream
 extern PyMethodDef pywrc_stream_object_methods[];
 extern PyTypeObject pywrc_stream_type_object;
 
-PyObject *pywrc_stream_new(
-           void );
-
-PyObject *pywrc_stream_new_open(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pywrc_stream_new_open_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
 int pywrc_stream_init(
      pywrc_stream_t *pywrc_stream );
 

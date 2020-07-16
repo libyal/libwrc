@@ -269,93 +269,6 @@ PyTypeObject pywrc_stream_type_object = {
 	0
 };
 
-/* Creates a new stream object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pywrc_stream_new(
-           void )
-{
-	pywrc_stream_t *pywrc_stream = NULL;
-	static char *function        = "pywrc_stream_new";
-
-	pywrc_stream = PyObject_New(
-	                struct pywrc_stream,
-	                &pywrc_stream_type_object );
-
-	if( pywrc_stream == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize stream.",
-		 function );
-
-		goto on_error;
-	}
-	if( pywrc_stream_init(
-	     pywrc_stream ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize stream.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pywrc_stream );
-
-on_error:
-	if( pywrc_stream != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pywrc_stream );
-	}
-	return( NULL );
-}
-
-/* Creates a new stream object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pywrc_stream_new_open(
-           PyObject *self PYWRC_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pywrc_stream = NULL;
-
-	PYWRC_UNREFERENCED_PARAMETER( self )
-
-	pywrc_stream = pywrc_stream_new();
-
-	pywrc_stream_open(
-	 (pywrc_stream_t *) pywrc_stream,
-	 arguments,
-	 keywords );
-
-	return( pywrc_stream );
-}
-
-/* Creates a new stream object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pywrc_stream_new_open_file_object(
-           PyObject *self PYWRC_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pywrc_stream = NULL;
-
-	PYWRC_UNREFERENCED_PARAMETER( self )
-
-	pywrc_stream = pywrc_stream_new();
-
-	pywrc_stream_open_file_object(
-	 (pywrc_stream_t *) pywrc_stream,
-	 arguments,
-	 keywords );
-
-	return( pywrc_stream );
-}
-
 /* Intializes a stream object
  * Returns 0 if successful or -1 on error
  */
@@ -766,6 +679,46 @@ PyObject *pywrc_stream_open_file_object(
 		 mode );
 
 		return( NULL );
+	}
+	PyErr_Clear();
+
+	result = PyObject_HasAttrString(
+	          file_object,
+	          "read" );
+
+	if( result != 1 )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported file object - missing read attribute.",
+		 function );
+
+		return( NULL );
+	}
+	PyErr_Clear();
+
+	result = PyObject_HasAttrString(
+	          file_object,
+	          "seek" );
+
+	if( result != 1 )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported file object - missing seek attribute.",
+		 function );
+
+		return( NULL );
+	}
+	if( pywrc_stream->file_io_handle != NULL )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: invalid stream - file IO handle already set.",
+		 function );
+
+		goto on_error;
 	}
 	if( pywrc_file_object_initialize(
 	     &( pywrc_stream->file_io_handle ),

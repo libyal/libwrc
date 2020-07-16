@@ -1,5 +1,5 @@
 /*
- * Python bindings for libwrc (pywrc)
+ * Python bindings module for libwrc (pywrc)
  *
  * Copyright (C) 2011-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -35,12 +35,12 @@ PyObject *pywrc_get_version(
            PyObject *self,
            PyObject *arguments );
 
-PyObject *pywrc_check_file_signature(
+PyObject *pywrc_open_new_stream(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pywrc_check_file_signature_file_object(
+PyObject *pywrc_open_new_stream_with_file_object(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );

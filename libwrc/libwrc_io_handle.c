@@ -491,13 +491,14 @@ int libwrc_io_handle_read_resource_node(
 	}
 	resource_node_data_size = ( (size_t) number_of_named_entries + (size_t) number_of_unnamed_entries ) * 8;
 
-	if( resource_node_data_size > (size_t) SSIZE_MAX )
+	if( ( resource_node_data_size == 0 )
+	 || ( resource_node_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid resource node data size value exceeds maximum.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource node data size value out of bounds.",
 		 function );
 
 		goto on_error;
@@ -755,14 +756,14 @@ int libwrc_io_handle_read_resource_node(
 #endif
 				resource_values->name_string_size *= 2;
 
-				if( ( resource_values->name_string_size > (size_t) SSIZE_MAX )
-				 || ( ( sizeof( system_character_t ) * resource_values->name_string_size )  > (size_t) SSIZE_MAX ) )
+				if( ( resource_values->name_string_size == 0 )
+				 || ( resource_values->name_string_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-					 "%s: invalid name string size value exceeds maximum.",
+					 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+					 "%s: invalid name string size value out of bounds.",
 					 function );
 
 					goto on_error;

@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "wrc_test_libcerror.h"
 #include "wrc_test_libwrc.h"
 #include "wrc_test_macros.h"
 #include "wrc_test_unused.h"

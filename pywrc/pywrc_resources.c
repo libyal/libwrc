@@ -59,7 +59,7 @@ PyTypeObject pywrc_resources_type_object = {
 	PyVarObject_HEAD_INIT( NULL, 0 )
 
 	/* tp_name */
-	"pywrc._resources",
+	"pywrc.resources",
 	/* tp_basicsize */
 	sizeof( pywrc_resources_t ),
 	/* tp_itemsize */
@@ -97,7 +97,7 @@ PyTypeObject pywrc_resources_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
 	/* tp_doc */
-	"pywrc internal sequence and iterator object of resources",
+	"pywrc sequence and iterator object of resources",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -150,7 +150,7 @@ PyTypeObject pywrc_resources_type_object = {
 	0
 };
 
-/* Creates a new resources object
+/* Creates a new resources sequence and iterator object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pywrc_resources_new(
@@ -160,8 +160,8 @@ PyObject *pywrc_resources_new(
                         int index ),
            int number_of_items )
 {
-	pywrc_resources_t *resources_object = NULL;
-	static char *function               = "pywrc_resources_new";
+	pywrc_resources_t *sequence_object = NULL;
+	static char *function              = "pywrc_resources_new";
 
 	if( parent_object == NULL )
 	{
@@ -183,93 +183,89 @@ PyObject *pywrc_resources_new(
 	}
 	/* Make sure the resources values are initialized
 	 */
-	resources_object = PyObject_New(
-	                    struct pywrc_resources,
-	                    &pywrc_resources_type_object );
+	sequence_object = PyObject_New(
+	                   struct pywrc_resources,
+	                   &pywrc_resources_type_object );
 
-	if( resources_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to create resources object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		goto on_error;
 	}
-	if( pywrc_resources_init(
-	     resources_object ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize resources object.",
-		 function );
-
-		goto on_error;
-	}
-	resources_object->parent_object     = parent_object;
-	resources_object->get_item_by_index = get_item_by_index;
-	resources_object->number_of_items   = number_of_items;
+	sequence_object->parent_object     = parent_object;
+	sequence_object->get_item_by_index = get_item_by_index;
+	sequence_object->current_index     = 0;
+	sequence_object->number_of_items   = number_of_items;
 
 	Py_IncRef(
-	 (PyObject *) resources_object->parent_object );
+	 (PyObject *) sequence_object->parent_object );
 
-	return( (PyObject *) resources_object );
+	return( (PyObject *) sequence_object );
 
 on_error:
-	if( resources_object != NULL )
+	if( sequence_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) resources_object );
+		 (PyObject *) sequence_object );
 	}
 	return( NULL );
 }
 
-/* Intializes a resources object
+/* Intializes a resources sequence and iterator object
  * Returns 0 if successful or -1 on error
  */
 int pywrc_resources_init(
-     pywrc_resources_t *resources_object )
+     pywrc_resources_t *sequence_object )
 {
 	static char *function = "pywrc_resources_init";
 
-	if( resources_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( -1 );
 	}
 	/* Make sure the resources values are initialized
 	 */
-	resources_object->parent_object     = NULL;
-	resources_object->get_item_by_index = NULL;
-	resources_object->current_index     = 0;
-	resources_object->number_of_items   = 0;
+	sequence_object->parent_object     = NULL;
+	sequence_object->get_item_by_index = NULL;
+	sequence_object->current_index     = 0;
+	sequence_object->number_of_items   = 0;
 
-	return( 0 );
+	PyErr_Format(
+	 PyExc_NotImplementedError,
+	 "%s: initialize of resources not supported.",
+	 function );
+
+	return( -1 );
 }
 
-/* Frees a resources object
+/* Frees a resources sequence object
  */
 void pywrc_resources_free(
-      pywrc_resources_t *resources_object )
+      pywrc_resources_t *sequence_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pywrc_resources_free";
 
-	if( resources_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           resources_object );
+	           sequence_object );
 
 	if( ob_type == NULL )
 	{
@@ -289,72 +285,72 @@ void pywrc_resources_free(
 
 		return;
 	}
-	if( resources_object->parent_object != NULL )
+	if( sequence_object->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) resources_object->parent_object );
+		 (PyObject *) sequence_object->parent_object );
 	}
 	ob_type->tp_free(
-	 (PyObject*) resources_object );
+	 (PyObject*) sequence_object );
 }
 
 /* The resources len() function
  */
 Py_ssize_t pywrc_resources_len(
-            pywrc_resources_t *resources_object )
+            pywrc_resources_t *sequence_object )
 {
 	static char *function = "pywrc_resources_len";
 
-	if( resources_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( -1 );
 	}
-	return( (Py_ssize_t) resources_object->number_of_items );
+	return( (Py_ssize_t) sequence_object->number_of_items );
 }
 
 /* The resources getitem() function
  */
 PyObject *pywrc_resources_getitem(
-           pywrc_resources_t *resources_object,
+           pywrc_resources_t *sequence_object,
            Py_ssize_t item_index )
 {
 	PyObject *resource_object = NULL;
 	static char *function     = "pywrc_resources_getitem";
 
-	if( resources_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	if( resources_object->get_item_by_index == NULL )
+	if( sequence_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object - missing get item by index function.",
+		 "%s: invalid sequence object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( resources_object->number_of_items < 0 )
+	if( sequence_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object - invalid number of items.",
+		 "%s: invalid sequence object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
 	if( ( item_index < 0 )
-	 || ( item_index >= (Py_ssize_t) resources_object->number_of_items ) )
+	 || ( item_index >= (Py_ssize_t) sequence_object->number_of_items ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -363,8 +359,8 @@ PyObject *pywrc_resources_getitem(
 
 		return( NULL );
 	}
-	resource_object = resources_object->get_item_by_index(
-	                   resources_object->parent_object,
+	resource_object = sequence_object->get_item_by_index(
+	                   sequence_object->parent_object,
 	                   (int) item_index );
 
 	return( resource_object );
@@ -373,83 +369,83 @@ PyObject *pywrc_resources_getitem(
 /* The resources iter() function
  */
 PyObject *pywrc_resources_iter(
-           pywrc_resources_t *resources_object )
+           pywrc_resources_t *sequence_object )
 {
 	static char *function = "pywrc_resources_iter";
 
-	if( resources_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
 	Py_IncRef(
-	 (PyObject *) resources_object );
+	 (PyObject *) sequence_object );
 
-	return( (PyObject *) resources_object );
+	return( (PyObject *) sequence_object );
 }
 
 /* The resources iternext() function
  */
 PyObject *pywrc_resources_iternext(
-           pywrc_resources_t *resources_object )
+           pywrc_resources_t *sequence_object )
 {
 	PyObject *resource_object = NULL;
 	static char *function     = "pywrc_resources_iternext";
 
-	if( resources_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	if( resources_object->get_item_by_index == NULL )
+	if( sequence_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object - missing get item by index function.",
+		 "%s: invalid sequence object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( resources_object->current_index < 0 )
+	if( sequence_object->current_index < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object - invalid current index.",
+		 "%s: invalid sequence object - invalid current index.",
 		 function );
 
 		return( NULL );
 	}
-	if( resources_object->number_of_items < 0 )
+	if( sequence_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid resources object - invalid number of items.",
+		 "%s: invalid sequence object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
-	if( resources_object->current_index >= resources_object->number_of_items )
+	if( sequence_object->current_index >= sequence_object->number_of_items )
 	{
 		PyErr_SetNone(
 		 PyExc_StopIteration );
 
 		return( NULL );
 	}
-	resource_object = resources_object->get_item_by_index(
-	                   resources_object->parent_object,
-	                   resources_object->current_index );
+	resource_object = sequence_object->get_item_by_index(
+	                   sequence_object->parent_object,
+	                   sequence_object->current_index );
 
 	if( resource_object != NULL )
 	{
-		resources_object->current_index++;
+		sequence_object->current_index++;
 	}
 	return( resource_object );
 }

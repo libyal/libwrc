@@ -69,23 +69,23 @@ PyObject *pywrc_resources_new(
            int number_of_items );
 
 int pywrc_resources_init(
-     pywrc_resources_t *resources_object );
+     pywrc_resources_t *sequence_object );
 
 void pywrc_resources_free(
-      pywrc_resources_t *resources_object );
+      pywrc_resources_t *sequence_object );
 
 Py_ssize_t pywrc_resources_len(
-            pywrc_resources_t *resources_object );
+            pywrc_resources_t *sequence_object );
 
 PyObject *pywrc_resources_getitem(
-           pywrc_resources_t *resources_object,
+           pywrc_resources_t *sequence_object,
            Py_ssize_t item_index );
 
 PyObject *pywrc_resources_iter(
-           pywrc_resources_t *resources_object );
+           pywrc_resources_t *sequence_object );
 
 PyObject *pywrc_resources_iternext(
-           pywrc_resources_t *resources_object );
+           pywrc_resources_t *sequence_object );
 
 #if defined( __cplusplus )
 }

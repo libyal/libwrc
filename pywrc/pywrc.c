@@ -54,14 +54,14 @@ PyMethodDef pywrc_module_methods[] = {
 	  "Retrieves the version." },
 
 	{ "open",
-	  (PyCFunction) pywrc_stream_new_open,
+	  (PyCFunction) pywrc_open_new_stream,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> Object\n"
 	  "\n"
 	  "Opens a stream." },
 
 	{ "open_file_object",
-	  (PyCFunction) pywrc_stream_new_open_file_object,
+	  (PyCFunction) pywrc_open_new_stream_with_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> Object\n"
 	  "\n"
@@ -102,6 +102,108 @@ PyObject *pywrc_get_version(
 	         version_string,
 	         (Py_ssize_t) version_string_length,
 	         errors ) );
+}
+
+/* Creates a new stream object and opens it
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_open_new_stream(
+           PyObject *self PYWRC_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	pywrc_stream_t *pywrc_stream = NULL;
+	static char *function    = "pywrc_open_new_stream";
+
+	PYWRC_UNREFERENCED_PARAMETER( self )
+
+	/* PyObject_New does not invoke tp_init
+	 */
+	pywrc_stream = PyObject_New(
+	                struct pywrc_stream,
+	                &pywrc_stream_type_object );
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create stream.",
+		 function );
+
+		goto on_error;
+	}
+	if( pywrc_stream_init(
+	     pywrc_stream ) != 0 )
+	{
+		goto on_error;
+	}
+	if( pywrc_stream_open(
+	     pywrc_stream,
+	     arguments,
+	     keywords ) == NULL )
+	{
+		goto on_error;
+	}
+	return( (PyObject *) pywrc_stream );
+
+on_error:
+	if( pywrc_stream != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pywrc_stream );
+	}
+	return( NULL );
+}
+
+/* Creates a new stream object and opens it using a file-like object
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_open_new_stream_with_file_object(
+           PyObject *self PYWRC_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	pywrc_stream_t *pywrc_stream = NULL;
+	static char *function        = "pywrc_open_new_stream_with_file_object";
+
+	PYWRC_UNREFERENCED_PARAMETER( self )
+
+	/* PyObject_New does not invoke tp_init
+	 */
+	pywrc_stream = PyObject_New(
+	                struct pywrc_stream,
+	                &pywrc_stream_type_object );
+
+	if( pywrc_stream == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create stream.",
+		 function );
+
+		goto on_error;
+	}
+	if( pywrc_stream_init(
+	     pywrc_stream ) != 0 )
+	{
+		goto on_error;
+	}
+	if( pywrc_stream_open_file_object(
+	     pywrc_stream,
+	     arguments,
+	     keywords ) == NULL )
+	{
+		goto on_error;
+	}
+	return( (PyObject *) pywrc_stream );
+
+on_error:
+	if( pywrc_stream != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pywrc_stream );
+	}
+	return( NULL );
 }
 
 #if PY_MAJOR_VERSION >= 3
@@ -186,63 +288,6 @@ PyMODINIT_FUNC initpywrc(
 
 	gil_state = PyGILState_Ensure();
 
-	/* Setup the stream type object
-	 */
-	pywrc_stream_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pywrc_stream_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pywrc_stream_type_object );
-
-	stream_type_object = &pywrc_stream_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "stream",
-	 (PyObject *) stream_type_object );
-
-	/* Setup the resources type object
-	 */
-	pywrc_resources_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pywrc_resources_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pywrc_resources_type_object );
-
-	resources_type_object = &pywrc_resources_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "_resources",
-	 (PyObject *) resources_type_object );
-
-	/* Setup the resource type object
-	 */
-	pywrc_resource_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pywrc_resource_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pywrc_resource_type_object );
-
-	resource_type_object = &pywrc_resource_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "resource",
-	 (PyObject *) resource_type_object );
-
 	/* Setup the language identifier type object
 	 */
 	pywrc_language_identifiers_type_object.tp_new = PyType_GenericNew;
@@ -255,12 +300,10 @@ PyMODINIT_FUNC initpywrc(
 	Py_IncRef(
 	 (PyObject *) &pywrc_language_identifiers_type_object );
 
-	language_identifiers_type_object = &pywrc_language_identifiers_type_object;
-
 	PyModule_AddObject(
 	 module,
-	 "_language_identifiers",
-	 (PyObject *) language_identifiers_type_object );
+	 "language_identifiers",
+	 (PyObject *) &pywrc_language_identifiers_type_object );
 
 	/* Setup the manifest type object
 	 */
@@ -274,12 +317,10 @@ PyMODINIT_FUNC initpywrc(
 	Py_IncRef(
 	 (PyObject *) &pywrc_manifest_type_object );
 
-	manifest_type_object = &pywrc_manifest_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "manifest",
-	 (PyObject *) manifest_type_object );
+	 (PyObject *) &pywrc_manifest_type_object );
 
 	/* Setup the message table type object
 	 */
@@ -293,12 +334,10 @@ PyMODINIT_FUNC initpywrc(
 	Py_IncRef(
 	 (PyObject *) &pywrc_message_table_type_object );
 
-	message_table_type_object = &pywrc_message_table_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "message_table",
-	 (PyObject *) message_table_type_object );
+	 (PyObject *) &pywrc_message_table_type_object );
 
 	/* Setup the MUI type object
 	 */
@@ -312,12 +351,61 @@ PyMODINIT_FUNC initpywrc(
 	Py_IncRef(
 	 (PyObject *) &pywrc_mui_type_object );
 
-	mui_type_object = &pywrc_mui_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "mui",
-	 (PyObject *) mui_type_object );
+	 (PyObject *) &pywrc_mui_type_object );
+
+	/* Setup the resource type object
+	 */
+	pywrc_resource_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_resource_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_resource_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "resource",
+	 (PyObject *) &pywrc_resource_type_object );
+
+	/* Setup the resources type object
+	 */
+	pywrc_resources_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_resources_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_resources_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "resources",
+	 (PyObject *) &pywrc_resources_type_object );
+
+	/* Setup the stream type object
+	 */
+	pywrc_stream_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_stream_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_stream_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "stream",
+	 (PyObject *) &pywrc_stream_type_object );
 
 	/* Setup the string type object
 	 */
@@ -331,12 +419,10 @@ PyMODINIT_FUNC initpywrc(
 	Py_IncRef(
 	 (PyObject *) &pywrc_string_type_object );
 
-	string_type_object = &pywrc_string_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "string",
-	 (PyObject *) string_type_object );
+	 (PyObject *) &pywrc_string_type_object );
 
 	/* Setup the version type object
 	 */
@@ -350,12 +436,10 @@ PyMODINIT_FUNC initpywrc(
 	Py_IncRef(
 	 (PyObject *) &pywrc_version_type_object );
 
-	version_type_object = &pywrc_version_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "version",
-	 (PyObject *) version_type_object );
+	 (PyObject *) &pywrc_version_type_object );
 
 	PyGILState_Release(
 	 gil_state );

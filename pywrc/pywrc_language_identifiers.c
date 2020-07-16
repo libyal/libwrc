@@ -59,7 +59,7 @@ PyTypeObject pywrc_language_identifiers_type_object = {
 	PyVarObject_HEAD_INIT( NULL, 0 )
 
 	/* tp_name */
-	"pywrc._language_identifiers",
+	"pywrc.language_identifiers",
 	/* tp_basicsize */
 	sizeof( pywrc_language_identifiers_t ),
 	/* tp_itemsize */

@@ -262,6 +262,18 @@ int libwrc_mui_values_read(
 	}
 	resource_data_size = (size_t) data_descriptor->size;
 
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource data size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
 	resource_data = (uint8_t *) memory_allocate(
 	                             sizeof( uint8_t ) * resource_data_size );
 
@@ -459,13 +471,15 @@ int libwrc_mui_values_read(
 
 			goto on_error;
 		}
-		if( (size_t) ( value_data_offset + value_data_size ) > resource_data_size )
+		if( ( value_data_size == 0 )
+		 || ( value_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		 || ( value_data_size > ( resource_data_size - value_data_offset ) ) )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: value data size value out of bounds.",
+			 "%s: invalid value data size value out of bounds.",
 			 function );
 
 			goto on_error;
@@ -707,13 +721,15 @@ int libwrc_mui_values_read(
 
 			goto on_error;
 		}
-		if( (size_t) ( value_data_offset + value_data_size ) > resource_data_size )
+		if( ( value_data_size == 0 )
+		 || ( value_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		 || ( value_data_size > ( resource_data_size - value_data_offset ) ) )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: value data size value out of bounds.",
+			 "%s: invalid value data size value out of bounds.",
 			 function );
 
 			goto on_error;
@@ -963,13 +979,15 @@ int libwrc_mui_values_read(
 
 			goto on_error;
 		}
-		if( (size_t) ( value_data_offset + value_data_size ) > resource_data_size )
+		if( ( value_data_size == 0 )
+		 || ( value_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		 || ( value_data_size > ( resource_data_size - value_data_offset ) ) )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: value data size value out of bounds.",
+			 "%s: invalid value data size value out of bounds.",
 			 function );
 
 			goto on_error;
@@ -1139,13 +1157,15 @@ int libwrc_mui_values_read(
 
 			goto on_error;
 		}
-		if( (size_t) ( value_data_offset + value_data_size ) > resource_data_size )
+		if( ( value_data_size == 0 )
+		 || ( value_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		 || ( value_data_size > ( resource_data_size - value_data_offset ) ) )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: value data size value out of bounds.",
+			 "%s: invalid value data size value out of bounds.",
 			 function );
 
 			goto on_error;
