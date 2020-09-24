@@ -245,7 +245,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes an resource object
+/* Initializes an resource object
  * Returns 0 if successful or -1 on error
  */
 int pywrc_resource_init(

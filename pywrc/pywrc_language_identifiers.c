@@ -224,7 +224,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a language identifiers object
+/* Initializes a language identifiers object
  * Returns 0 if successful or -1 on error
  */
 int pywrc_language_identifiers_init(

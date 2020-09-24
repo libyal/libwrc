@@ -269,7 +269,7 @@ PyTypeObject pywrc_stream_type_object = {
 	0
 };
 
-/* Intializes a stream object
+/* Initializes a stream object
  * Returns 0 if successful or -1 on error
  */
 int pywrc_stream_init(
