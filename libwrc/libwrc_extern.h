@@ -30,7 +30,11 @@
 
 #include <libwrc/extern.h>
 
+#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
+#define LIBWRC_EXTERN_VARIABLE	extern
+#else
 #define LIBWRC_EXTERN_VARIABLE	LIBWRC_EXTERN
+#endif
 
 #else
 #define LIBWRC_EXTERN		/* extern */
