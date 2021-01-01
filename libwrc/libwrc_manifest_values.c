@@ -1,7 +1,7 @@
 /*
  * Manifest values functions
  *
- * Copyright (C) 2011-2020, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2021, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -84,25 +84,6 @@ int libwrc_manifest_values_read(
 
 		return( -1 );
 	}
-	file_offset = data_descriptor->virtual_address
-	            - io_handle->virtual_address;
-
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     file_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek resource data offset: %" PRIi64 ".",
-		 function,
-		 file_offset );
-
-		goto on_error;
-	}
 	resource_data_size = (size_t) data_descriptor->size;
 
 	if( ( resource_data_size == 0 )
@@ -131,10 +112,13 @@ int libwrc_manifest_values_read(
 
 		goto on_error;
 	}
-	read_count = libbfio_handle_read_buffer(
+	file_offset = data_descriptor->virtual_address - io_handle->virtual_address;
+
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              resource_data,
 	              resource_data_size,
+	              file_offset,
 	              error );
 
 	if( read_count != (ssize_t) resource_data_size )
@@ -143,8 +127,10 @@ int libwrc_manifest_values_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read resource data.",
-		 function );
+		 "%s: unable to read resource data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_offset,
+		 file_offset );
 
 		goto on_error;
 	}

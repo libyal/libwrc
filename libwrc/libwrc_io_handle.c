@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle functions
  *
- * Copyright (C) 2011-2020, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2021, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -374,26 +374,11 @@ int libwrc_io_handle_read_resource_node(
 		 file_offset );
 	}
 #endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     file_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek resource node header offset: %" PRIi64 ".",
-		 function,
-		 file_offset );
-
-		goto on_error;
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              (uint8_t *) &resource_node_header,
 	              sizeof( wrc_resource_node_header_t ),
+	              file_offset,
 	              error );
 
 	if( read_count != (ssize_t) sizeof( wrc_resource_node_header_t ) )
@@ -402,8 +387,10 @@ int libwrc_io_handle_read_resource_node(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read resource node header.",
-		 function );
+		 "%s: unable to read resource node header at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_offset,
+		 file_offset );
 
 		goto on_error;
 	}
@@ -706,26 +693,11 @@ int libwrc_io_handle_read_resource_node(
 			}
 			else
 			{
-				if( libbfio_handle_seek_offset(
-				     file_io_handle,
-				     (off64_t) ( resource_values->identifier & 0x7fffffffUL ),
-				     SEEK_SET,
-				     error ) == -1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_SEEK_FAILED,
-					 "%s: unable to seek resource name string offset: %" PRIi64 ".",
-					 function,
-					 file_offset );
-
-					goto on_error;
-				}
-				read_count = libbfio_handle_read_buffer(
+				read_count = libbfio_handle_read_buffer_at_offset(
 					      file_io_handle,
 					      resource_name_size_data,
 					      2,
+					      (off64_t) ( resource_values->identifier & 0x7fffffffUL ),
 					      error );
 
 				if( read_count != (ssize_t) 2 )
@@ -734,8 +706,10 @@ int libwrc_io_handle_read_resource_node(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_IO,
 					 LIBCERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read resource name string size.",
-					 function );
+					 "%s: unable to read resource name string size at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+					 function,
+					 (off64_t) ( resource_values->identifier & 0x7fffffffUL ),
+					 (off64_t) ( resource_values->identifier & 0x7fffffffUL ) );
 
 					goto on_error;
 				}
@@ -1154,26 +1128,11 @@ int libwrc_io_handle_read_data_descriptor(
 		 file_offset );
 	}
 #endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     file_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek data descriptor offset: %" PRIi64 ".",
-		 function,
-		 file_offset );
-
-		return( -1 );
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              (uint8_t *) &data_descriptor_data,
 	              sizeof( wrc_data_descriptor_t ),
+	              file_offset,
 	              error );
 
 	if( read_count != (ssize_t) sizeof( wrc_data_descriptor_t ) )
@@ -1182,8 +1141,10 @@ int libwrc_io_handle_read_data_descriptor(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read data descriptor.",
-		 function );
+		 "%s: unable to read data descriptor at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_offset,
+		 file_offset );
 
 		return( -1 );
 	}
