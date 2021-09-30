@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libwrc],
- [20210805],
+ [20210930],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(

@@ -357,24 +357,36 @@ void pywrc_stream_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libwrc_stream_free(
-	          &( pywrc_stream->stream ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pywrc_stream->file_io_handle != NULL )
 	{
-		pywrc_error_raise(
-		 error,
-		 PyExc_MemoryError,
-		 "%s: unable to free libwrc stream.",
-		 function );
+		if( pywrc_stream_close(
+		     pywrc_stream,
+		     NULL ) == NULL )
+		{
+			return;
+		}
+	}
+	if( pywrc_stream->stream != NULL )
+	{
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libwrc_stream_free(
+		          &( pywrc_stream->stream ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pywrc_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libwrc stream.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	ob_type->tp_free(
 	 (PyObject*) pywrc_stream );
