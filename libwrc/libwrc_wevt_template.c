@@ -110,7 +110,7 @@ int libwrc_wevt_template_get_provider(
 
 		return( -1 );
 	}
-	if( libfwevt_manifest_get_provider(
+	if( libfwevt_manifest_get_provider_by_index(
 	     manifest,
 	     provider_index,
 	     &provider_descriptor,

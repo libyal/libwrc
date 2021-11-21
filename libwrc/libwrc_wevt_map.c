@@ -126,6 +126,7 @@ int libwrc_wevt_map_free(
 {
 	libwrc_internal_wevt_map_t *internal_map = NULL;
 	static char *function                    = "libwrc_wevt_map_free";
+	int result                               = 1;
 
 	if( map == NULL )
 	{
@@ -143,9 +144,22 @@ int libwrc_wevt_map_free(
 		internal_map = (libwrc_internal_wevt_map_t *) *map;
 		*map         = NULL;
 
+		if( libfwevt_map_free(
+		     &( internal_map->map_descriptor ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free map descriptor.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 internal_map );
 	}
-	return( 1 );
+	return( result );
 }
 

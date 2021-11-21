@@ -129,6 +129,7 @@ int libwrc_wevt_event_free(
 {
 	libwrc_internal_wevt_event_t *internal_event = NULL;
 	static char *function                        = "libwrc_wevt_event_free";
+	int result                                   = 1;
 
 	if( event == NULL )
 	{
@@ -146,10 +147,23 @@ int libwrc_wevt_event_free(
 		internal_event = (libwrc_internal_wevt_event_t *) *event;
 		*event         = NULL;
 
+		if( libfwevt_event_free(
+		     &( internal_event->event_descriptor ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free event descriptor.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 internal_event );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the identifier

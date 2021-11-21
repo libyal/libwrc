@@ -126,6 +126,7 @@ int libwrc_wevt_level_free(
 {
 	libwrc_internal_wevt_level_t *internal_level = NULL;
 	static char *function                        = "libwrc_wevt_level_free";
+	int result                                   = 1;
 
 	if( level == NULL )
 	{
@@ -143,9 +144,22 @@ int libwrc_wevt_level_free(
 		internal_level = (libwrc_internal_wevt_level_t *) *level;
 		*level         = NULL;
 
+		if( libfwevt_level_free(
+		     &( internal_level->level_descriptor ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free level descriptor.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 internal_level );
 	}
-	return( 1 );
+	return( result );
 }
 

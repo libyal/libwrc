@@ -126,6 +126,7 @@ int libwrc_wevt_opcode_free(
 {
 	libwrc_internal_wevt_opcode_t *internal_opcode = NULL;
 	static char *function                          = "libwrc_wevt_opcode_free";
+	int result                                     = 1;
 
 	if( opcode == NULL )
 	{
@@ -143,9 +144,22 @@ int libwrc_wevt_opcode_free(
 		internal_opcode = (libwrc_internal_wevt_opcode_t *) *opcode;
 		*opcode         = NULL;
 
+		if( libfwevt_opcode_free(
+		     &( internal_opcode->opcode_descriptor ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free opcode descriptor.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 internal_opcode );
 	}
-	return( 1 );
+	return( result );
 }
 

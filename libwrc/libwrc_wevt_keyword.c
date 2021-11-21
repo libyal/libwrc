@@ -126,6 +126,7 @@ int libwrc_wevt_keyword_free(
 {
 	libwrc_internal_wevt_keyword_t *internal_keyword = NULL;
 	static char *function                            = "libwrc_wevt_keyword_free";
+	int result                                       = 1;
 
 	if( keyword == NULL )
 	{
@@ -143,9 +144,22 @@ int libwrc_wevt_keyword_free(
 		internal_keyword = (libwrc_internal_wevt_keyword_t *) *keyword;
 		*keyword         = NULL;
 
+		if( libfwevt_keyword_free(
+		     &( internal_keyword->keyword_descriptor ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free keyword descriptor.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 internal_keyword );
 	}
-	return( 1 );
+	return( result );
 }
 

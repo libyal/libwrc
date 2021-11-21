@@ -126,6 +126,7 @@ int libwrc_wevt_task_free(
 {
 	libwrc_internal_wevt_task_t *internal_task = NULL;
 	static char *function                      = "libwrc_wevt_task_free";
+	int result                                 = 1;
 
 	if( task == NULL )
 	{
@@ -143,9 +144,22 @@ int libwrc_wevt_task_free(
 		internal_task = (libwrc_internal_wevt_task_t *) *task;
 		*task         = NULL;
 
+		if( libfwevt_task_free(
+		     &( internal_task->task_descriptor ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free task descriptor.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 internal_task );
 	}
-	return( 1 );
+	return( result );
 }
 

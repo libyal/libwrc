@@ -129,6 +129,7 @@ int libwrc_wevt_provider_free(
 {
 	libwrc_internal_wevt_provider_t *internal_provider = NULL;
 	static char *function                              = "libwrc_wevt_provider_free";
+	int result                                         = 1;
 
 	if( provider == NULL )
 	{
@@ -146,10 +147,23 @@ int libwrc_wevt_provider_free(
 		internal_provider = (libwrc_internal_wevt_provider_t *) *provider;
 		*provider         = NULL;
 
+		if( libfwevt_provider_free(
+		     &( internal_provider->provider_descriptor ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free provider descriptor.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 internal_provider );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the number of events

@@ -126,6 +126,7 @@ int libwrc_wevt_channel_free(
 {
 	libwrc_internal_wevt_channel_t *internal_channel = NULL;
 	static char *function                            = "libwrc_wevt_channel_free";
+	int result                                       = 1;
 
 	if( channel == NULL )
 	{
@@ -143,9 +144,22 @@ int libwrc_wevt_channel_free(
 		internal_channel = (libwrc_internal_wevt_channel_t *) *channel;
 		*channel         = NULL;
 
+		if( libfwevt_channel_free(
+		     &( internal_channel->channel_descriptor ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free channel descriptor.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 internal_channel );
 	}
-	return( 1 );
+	return( result );
 }
 
