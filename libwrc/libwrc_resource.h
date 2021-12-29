@@ -86,18 +86,6 @@ int libwrc_resource_free(
      libcerror_error_t **error );
 
 LIBWRC_EXTERN \
-int libwrc_resource_get_identifier(
-     libwrc_resource_t *resource,
-     uint32_t *identifier,
-     libcerror_error_t **error );
-
-LIBWRC_EXTERN \
-int libwrc_resource_get_type(
-     libwrc_resource_t *resource,
-     int *type,
-     libcerror_error_t **error );
-
-LIBWRC_EXTERN \
 int libwrc_resource_read(
      libwrc_resource_t *resource,
      libcerror_error_t **error );
@@ -111,6 +99,44 @@ int libwrc_resource_read_data_descriptor(
      libwrc_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libwrc_data_descriptor_t *data_descriptor,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_get_identifier(
+     libwrc_resource_t *resource,
+     uint32_t *identifier,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_get_type(
+     libwrc_resource_t *resource,
+     int *type,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_get_utf8_name_size(
+     libwrc_resource_t *resource,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_get_utf8_name(
+     libwrc_resource_t *resource,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_get_utf16_name_size(
+     libwrc_resource_t *resource,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_get_utf16_name(
+     libwrc_resource_t *resource,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
      libcerror_error_t **error );
 
 LIBWRC_EXTERN \

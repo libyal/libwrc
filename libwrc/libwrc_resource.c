@@ -308,88 +308,6 @@ int libwrc_resource_free(
 	return( result );
 }
 
-/* Retrieves the resource identifier
- * Returns 1 if successful or -1 on error
- */
-int libwrc_resource_get_identifier(
-     libwrc_resource_t *resource,
-     uint32_t *identifier,
-     libcerror_error_t **error )
-{
-	libwrc_internal_resource_t *internal_resource = NULL;
-	static char *function                         = "libwrc_resource_get_identifier";
-
-	if( resource == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid resource.",
-		 function );
-
-		return( -1 );
-	}
-	internal_resource = (libwrc_internal_resource_t *) resource;
-
-	if( libwrc_resource_values_get_identifier(
-	     internal_resource->resource_values,
-	     identifier,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve identifier.",
-		 function );
-
-		return( -1 );
-	}
-	return( 1 );
-}
-
-/* Retrieves the resource type
- * Returns 1 if successful or -1 on error
- */
-int libwrc_resource_get_type(
-     libwrc_resource_t *resource,
-     int *type,
-     libcerror_error_t **error )
-{
-	libwrc_internal_resource_t *internal_resource = NULL;
-	static char *function                         = "libwrc_resource_get_type";
-
-	if( resource == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid resource.",
-		 function );
-
-		return( -1 );
-	}
-	internal_resource = (libwrc_internal_resource_t *) resource;
-
-	if( libwrc_resource_values_get_type(
-	     internal_resource->resource_values,
-	     type,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve type.",
-		 function );
-
-		return( -1 );
-	}
-	return( 1 );
-}
-
 /* Reads the resource
  * Returns 1 if successful or -1 on error
  */
@@ -916,7 +834,8 @@ int libwrc_resource_read_value(
 					}
 					break;
 			}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 			switch( internal_resource->resource_values->type )
 			{
 				case LIBWRC_RESOURCE_TYPE_STRING:
@@ -993,7 +912,7 @@ int libwrc_resource_read_value(
 						goto on_error;
 					}
 					break;
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 			}
 			switch( internal_resource->resource_values->type )
 			{
@@ -1222,6 +1141,272 @@ on_error:
 		 resource_data );
 	}
 	return( -1 );
+}
+
+/* Retrieves the resource identifier
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_resource_get_identifier(
+     libwrc_resource_t *resource,
+     uint32_t *identifier,
+     libcerror_error_t **error )
+{
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_identifier";
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	if( libwrc_resource_values_get_identifier(
+	     internal_resource->resource_values,
+	     identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve identifier.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the resource type
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_resource_get_type(
+     libwrc_resource_t *resource,
+     int *type,
+     libcerror_error_t **error )
+{
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_type";
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	if( libwrc_resource_values_get_type(
+	     internal_resource->resource_values,
+	     type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve type.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-8 encoded name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libwrc_resource_get_utf8_name_size(
+     libwrc_resource_t *resource,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_utf8_name_size";
+	int result                                    = 0;
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	result = libwrc_resource_values_get_utf8_name_size(
+	          internal_resource->resource_values,
+	          utf8_string_size,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve size of UTF-8 name.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
+/* Retrieves the UTF-8 encoded name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libwrc_resource_get_utf8_name(
+     libwrc_resource_t *resource,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_utf8_name";
+	int result                                    = 0;
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	result = libwrc_resource_values_get_utf8_name(
+	          internal_resource->resource_values,
+	          utf8_string,
+	          utf8_string_size,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve size of UTF-8 name.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
+/* Retrieves the size of the UTF-16 encoded name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libwrc_resource_get_utf16_name_size(
+     libwrc_resource_t *resource,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_utf16_name_size";
+	int result                                    = 0;
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	result = libwrc_resource_values_get_utf16_name_size(
+	          internal_resource->resource_values,
+	          utf16_string_size,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve size of UTF-16 name.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
+/* Retrieves the UTF-16 encoded name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libwrc_resource_get_utf16_name(
+     libwrc_resource_t *resource,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_utf16_name";
+	int result                                    = 0;
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	result = libwrc_resource_values_get_utf16_name(
+	          internal_resource->resource_values,
+	          utf16_string,
+	          utf16_string_size,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve size of UTF-16 name.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
 }
 
 /* Retrieves the number of languages

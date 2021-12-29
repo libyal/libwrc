@@ -802,8 +802,7 @@ int libwrc_io_handle_read_resource_node(
 
 						goto on_error;
 					}
-					if( ( value_string_size > (size_t) SSIZE_MAX )
-					 || ( ( sizeof( system_character_t ) * value_string_size )  > (size_t) SSIZE_MAX ) )
+					if( value_string_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) )
 					{
 						libcerror_error_set(
 						 error,
@@ -867,7 +866,7 @@ int libwrc_io_handle_read_resource_node(
 
 					value_string = NULL;
 				}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 			}
 			if( resource_values->name_string_size == 6 )
 			{

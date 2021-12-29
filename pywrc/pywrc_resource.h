@@ -68,6 +68,10 @@ PyObject *pywrc_resource_get_identifier(
            pywrc_resource_t *pywrc_resource,
            PyObject *arguments );
 
+PyObject *pywrc_resource_get_name(
+           pywrc_resource_t *pywrc_resource,
+           PyObject *arguments );
+
 PyObject *pywrc_resource_get_number_of_languages(
            pywrc_resource_t *pywrc_resource,
            PyObject *arguments );

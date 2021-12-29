@@ -37,6 +37,14 @@ extern "C" {
 const char *libwrc_debug_get_resource_identifier(
              uint32_t resource_identifier );
 
+int libwrc_debug_print_utf16_string_value(
+     const char *function_name,
+     const char *value_name,
+     const uint8_t *byte_stream,
+     size_t byte_stream_size,
+     int byte_order,
+     libcerror_error_t **error );
+
 int libwrc_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );

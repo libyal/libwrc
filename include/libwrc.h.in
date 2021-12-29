@@ -346,6 +346,48 @@ int libwrc_resource_get_identifier(
      uint32_t *identifier,
      libwrc_error_t **error );
 
+/* Retrieves the size of the UTF-8 encoded name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_get_utf8_name_size(
+     libwrc_resource_t *resource,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-8 encoded name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_get_utf8_name(
+     libwrc_resource_t *resource,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-16 encoded name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_get_utf16_name_size(
+     libwrc_resource_t *resource,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-16 encoded name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_get_utf16_name(
+     libwrc_resource_t *resource,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
 /* Retrieves the resource type
  * Returns 1 if successful or -1 on error
  */

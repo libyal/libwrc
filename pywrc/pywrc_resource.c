@@ -46,6 +46,13 @@ PyMethodDef pywrc_resource_object_methods[] = {
 	  "\n"
 	  "Retrieves the identifier (number)." },
 
+	{ "get_name",
+	  (PyCFunction) pywrc_resource_get_name,
+	  METH_NOARGS,
+	  "get_name() -> Unicode string or None\n"
+	  "\n"
+	  "Retrieves the name." },
+
 	/* Functions to access the language identifiers */
 
 	{ "get_number_of_languages",
@@ -72,6 +79,12 @@ PyGetSetDef pywrc_resource_object_get_set_definitions[] = {
 	  (getter) pywrc_resource_get_identifier,
 	  (setter) 0,
 	  "The identifier (number).",
+	  NULL },
+
+	{ "name",
+	  (getter) pywrc_resource_get_name,
+	  (setter) 0,
+	  "The name.",
 	  NULL },
 
 	{ "number_of_languages",
@@ -396,6 +409,128 @@ PyObject *pywrc_resource_get_identifier(
 	                  (uint64_t) identifier );
 
 	return( integer_object );
+}
+
+/* Retrieves the name
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_get_name(
+           pywrc_resource_t *pywrc_resource,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
+	const char *errors       = NULL;
+	static char *function    = "pywrc_resource_get_name";
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
+	int result               = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_resource == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid resource.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_get_utf8_name_size(
+	          pywrc_resource->resource,
+	          &utf8_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to determine size of name as UTF-8 string.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( ( result == 0 )
+	      || ( utf8_string_size == 0 ) )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
+
+	if( utf8_string == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
+		 function );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_get_utf8_name(
+	          pywrc_resource->resource,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve name as UTF-8 string.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
+	 */
+	string_object = PyUnicode_DecodeUTF8(
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
+
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
+	PyMem_Free(
+	 utf8_string );
+
+	return( string_object );
+
+on_error:
+	if( utf8_string != NULL )
+	{
+		PyMem_Free(
+		 utf8_string );
+	}
+	return( NULL );
 }
 
 /* Retrieves the number of languages

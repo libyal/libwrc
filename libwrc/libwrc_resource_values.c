@@ -26,6 +26,7 @@
 #include "libwrc_data_descriptor.h"
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
+#include "libwrc_libuna.h"
 #include "libwrc_resource_values.h"
 
 /* Creates resource values
@@ -227,6 +228,194 @@ int libwrc_resource_values_get_identifier(
 	}
 	*identifier = resource_values->identifier;
 
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-8 encoded name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libwrc_resource_values_get_utf8_name_size(
+     libwrc_resource_values_t *resource_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libwrc_resource_values_get_utf8_name_size";
+
+	if( resource_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource values.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( resource_values->name_string == NULL )
+	 || ( resource_values->name_string_size == 0 ) )
+	{
+		return( 0 );
+	}
+	if( libuna_utf8_string_size_from_utf16_stream(
+	     resource_values->name_string,
+	     resource_values->name_string_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-8 string size.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-8 encoded name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libwrc_resource_values_get_utf8_name(
+     libwrc_resource_values_t *resource_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libwrc_resource_values_get_utf8_name";
+
+	if( resource_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource values.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( resource_values->name_string == NULL )
+	 || ( resource_values->name_string_size == 0 ) )
+	{
+		return( 0 );
+	}
+	if( libuna_utf8_string_copy_from_utf16_stream(
+	     utf8_string,
+	     utf8_string_size,
+	     resource_values->name_string,
+	     resource_values->name_string_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-8 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libwrc_resource_values_get_utf16_name_size(
+     libwrc_resource_values_t *resource_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libwrc_resource_values_get_utf16_name_size";
+
+	if( resource_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource values.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( resource_values->name_string == NULL )
+	 || ( resource_values->name_string_size == 0 ) )
+	{
+		return( 0 );
+	}
+	if( libuna_utf16_string_size_from_utf16_stream(
+	     resource_values->name_string,
+	     resource_values->name_string_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-16 string size.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libwrc_resource_values_get_utf16_name(
+     libwrc_resource_values_t *resource_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libwrc_resource_values_get_utf16_name";
+
+	if( resource_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource values.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( resource_values->name_string == NULL )
+	 || ( resource_values->name_string_size == 0 ) )
+	{
+		return( 0 );
+	}
+	if( libuna_utf16_string_copy_from_utf16_stream(
+	     utf16_string,
+	     utf16_string_size,
+	     resource_values->name_string,
+	     resource_values->name_string_size,
+	     LIBUNA_ENDIAN_LITTLE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
 	return( 1 );
 }
 

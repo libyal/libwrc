@@ -1,4 +1,4 @@
-.Dd February 23, 2019
+.Dd December 29, 2021
 .Dt libwrc 3
 .Os libwrc
 .Sh NAME
@@ -83,11 +83,19 @@ Resource functions
 .Ft int
 .Fn libwrc_resource_free "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
+.Fn libwrc_resource_read "libwrc_resource_t *resource" "libwrc_error_t **error"
+.Ft int
 .Fn libwrc_resource_get_identifier "libwrc_resource_t *resource" "uint32_t *identifier" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_resource_get_type "libwrc_resource_t *resource" "int *type" "libwrc_error_t **error"
+.Fn libwrc_resource_get_utf8_name_size "libwrc_resource_t *resource" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_resource_read "libwrc_resource_t *resource" "libwrc_error_t **error"
+.Fn libwrc_resource_get_utf8_name"libwrc_resource_t *resource" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_get_utf16_name_size "libwrc_resource_t *resource" "size_t *utf16_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_get_utf16_name"libwrc_resource_t *resource" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_get_type "libwrc_resource_t *resource" "int *type" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_resource_get_number_of_languages "libwrc_resource_t *resource" "int *number_of_languages" "libwrc_error_t **error"
 .Ft int

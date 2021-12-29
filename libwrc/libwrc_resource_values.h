@@ -79,6 +79,28 @@ int libwrc_resource_values_get_identifier(
      uint32_t *identifier,
      libcerror_error_t **error );
 
+int libwrc_resource_values_get_utf8_name_size(
+     libwrc_resource_values_t *resource_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+int libwrc_resource_values_get_utf8_name(
+     libwrc_resource_values_t *resource_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+int libwrc_resource_values_get_utf16_name_size(
+     libwrc_resource_values_t *resource_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+int libwrc_resource_values_get_utf16_name(
+     libwrc_resource_values_t *resource_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
 int libwrc_resource_values_get_type(
      libwrc_resource_values_t *resource_values,
      int *type,
