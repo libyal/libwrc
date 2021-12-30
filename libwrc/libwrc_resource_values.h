@@ -74,6 +74,12 @@ int libwrc_resource_values_compare(
      libwrc_resource_values_t *second_resource_values,
      libcerror_error_t **error );
 
+int libwrc_resource_values_set_name_string(
+     libwrc_resource_values_t *resource_values,
+     const uint8_t *name_string,
+     size_t name_string_size,
+     libcerror_error_t **error );
+
 int libwrc_resource_values_get_identifier(
      libwrc_resource_values_t *resource_values,
      uint32_t *identifier,

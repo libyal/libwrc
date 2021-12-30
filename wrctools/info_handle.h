@@ -146,6 +146,16 @@ int info_handle_version_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error );
 
+int info_handle_resource_hierarchy_fprint_resource_item(
+     info_handle_t *info_handle,
+     libwrc_resource_item_t *resource_item,
+     int indentation_level,
+     libcerror_error_t **error );
+
+int info_handle_resource_hierarchy_fprint(
+     info_handle_t *info_handle,
+     libcerror_error_t **error );
+
 int info_handle_stream_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error );

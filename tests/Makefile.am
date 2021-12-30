@@ -49,6 +49,7 @@ check_PROGRAMS = \
 	wrc_test_mui_values \
 	wrc_test_notify \
 	wrc_test_resource \
+	wrc_test_resource_item \
 	wrc_test_resource_values \
 	wrc_test_stream \
 	wrc_test_support \
@@ -144,6 +145,7 @@ wrc_test_notify_LDADD = \
 	@LIBCERROR_LIBADD@
 
 wrc_test_resource_SOURCES = \
+	wrc_test_libcdata.h \
 	wrc_test_libcerror.h \
 	wrc_test_libwrc.h \
 	wrc_test_macros.h \
@@ -152,6 +154,21 @@ wrc_test_resource_SOURCES = \
 	wrc_test_unused.h
 
 wrc_test_resource_LDADD = \
+	@LIBCDATA_LIBADD@ \
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
+
+wrc_test_resource_item_SOURCES = \
+	wrc_test_libcdata.h \
+	wrc_test_libcerror.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_memory.c wrc_test_memory.h \
+	wrc_test_resource_item.c \
+	wrc_test_unused.h
+
+wrc_test_resource_item_LDADD = \
+	@LIBCDATA_LIBADD@ \
 	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@
 

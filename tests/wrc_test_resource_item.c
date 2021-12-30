@@ -1,5 +1,5 @@
 /*
- * Library resource type test program
+ * Library resource_item type test program
  *
  * Copyright (C) 2011-2021, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -21,7 +21,6 @@
 
 #include <common.h>
 #include <file_stream.h>
-#include <memory.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
@@ -35,20 +34,21 @@
 #include "wrc_test_memory.h"
 #include "wrc_test_unused.h"
 
-#include "../libwrc/libwrc_resource.h"
+#include "../libwrc/libwrc_libcdata.h"
+#include "../libwrc/libwrc_resource_item.h"
 #include "../libwrc/libwrc_resource_values.h"
 
 #if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
-/* Tests the libwrc_resource_initialize function
+/* Tests the libwrc_resource_item_initialize function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_resource_initialize(
+int wrc_test_resource_item_initialize(
      void )
 {
 	libcdata_tree_node_t *resource_node       = NULL;
 	libcerror_error_t *error                  = NULL;
-	libwrc_resource_t *resource               = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
 	libwrc_resource_values_t *resource_values = NULL;
 	int result                                = 0;
 
@@ -112,12 +112,9 @@ int wrc_test_resource_initialize(
 
 	/* Test regular cases
 	 */
-	result = libwrc_resource_initialize(
-	          &resource,
-	          NULL,
-	          NULL,
+	result = libwrc_resource_item_initialize(
+	          &resource_item,
 	          resource_node,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -126,15 +123,15 @@ int wrc_test_resource_initialize(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "resource",
-	 resource );
+	 "resource_item",
+	 resource_item );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	result = libwrc_resource_free(
-	          &resource,
+	result = libwrc_resource_item_free(
+	          &resource_item,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -143,8 +140,8 @@ int wrc_test_resource_initialize(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NULL(
-	 "resource",
-	 resource );
+	 "resource_item",
+	 resource_item );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -152,12 +149,9 @@ int wrc_test_resource_initialize(
 
 	/* Test error cases
 	 */
-	result = libwrc_resource_initialize(
-	          NULL,
-	          NULL,
+	result = libwrc_resource_item_initialize(
 	          NULL,
 	          resource_node,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -172,14 +166,11 @@ int wrc_test_resource_initialize(
 	libcerror_error_free(
 	 &error );
 
-	resource = (libwrc_resource_t *) 0x12345678UL;
+	resource_item = (libwrc_resource_item_t *) 0x12345678UL;
 
-	result = libwrc_resource_initialize(
-	          &resource,
-	          NULL,
-	          NULL,
+	result = libwrc_resource_item_initialize(
+	          &resource_item,
 	          resource_node,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -194,14 +185,11 @@ int wrc_test_resource_initialize(
 	libcerror_error_free(
 	 &error );
 
-	resource = NULL;
+	resource_item = NULL;
 
-	result = libwrc_resource_initialize(
-	          &resource,
+	result = libwrc_resource_item_initialize(
+	          &resource_item,
 	          NULL,
-	          NULL,
-	          NULL,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -222,26 +210,23 @@ int wrc_test_resource_initialize(
 	     test_number < number_of_malloc_fail_tests;
 	     test_number++ )
 	{
-		/* Test libwrc_resource_initialize with malloc failing
+		/* Test libwrc_resource_item_initialize with malloc failing
 		 */
 		wrc_test_malloc_attempts_before_fail = test_number;
 
-		result = libwrc_resource_initialize(
-		          &resource,
-		          NULL,
-		          NULL,
+		result = libwrc_resource_item_initialize(
+		          &resource_item,
 		          resource_node,
-		          0,
 		          &error );
 
 		if( wrc_test_malloc_attempts_before_fail != -1 )
 		{
 			wrc_test_malloc_attempts_before_fail = -1;
 
-			if( resource != NULL )
+			if( resource_item != NULL )
 			{
-				libwrc_resource_free(
-				 &resource,
+				libwrc_resource_item_free(
+				 &resource_item,
 				 NULL );
 			}
 		}
@@ -253,8 +238,8 @@ int wrc_test_resource_initialize(
 			 -1 );
 
 			WRC_TEST_ASSERT_IS_NULL(
-			 "resource",
-			 resource );
+			 "resource_item",
+			 resource_item );
 
 			WRC_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -268,26 +253,23 @@ int wrc_test_resource_initialize(
 	     test_number < number_of_memset_fail_tests;
 	     test_number++ )
 	{
-		/* Test libwrc_resource_initialize with memset failing
+		/* Test libwrc_resource_item_initialize with memset failing
 		 */
 		wrc_test_memset_attempts_before_fail = test_number;
 
-		result = libwrc_resource_initialize(
-		          &resource,
-		          NULL,
-		          NULL,
+		result = libwrc_resource_item_initialize(
+		          &resource_item,
 		          resource_node,
-		          0,
 		          &error );
 
 		if( wrc_test_memset_attempts_before_fail != -1 )
 		{
 			wrc_test_memset_attempts_before_fail = -1;
 
-			if( resource != NULL )
+			if( resource_item != NULL )
 			{
-				libwrc_resource_free(
-				 &resource,
+				libwrc_resource_item_free(
+				 &resource_item,
 				 NULL );
 			}
 		}
@@ -299,8 +281,8 @@ int wrc_test_resource_initialize(
 			 -1 );
 
 			WRC_TEST_ASSERT_IS_NULL(
-			 "resource",
-			 resource );
+			 "resource_item",
+			 resource_item );
 
 			WRC_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -340,10 +322,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( resource != NULL )
+	if( resource_item != NULL )
 	{
-		libwrc_resource_free(
-		 &resource,
+		libwrc_resource_item_free(
+		 &resource_item,
 		 NULL );
 	}
 	if( resource_node != NULL )
@@ -364,10 +346,10 @@ on_error:
 
 #endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
-/* Tests the libwrc_resource_free function
+/* Tests the libwrc_resource_item_free function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_resource_free(
+int wrc_test_resource_item_free(
      void )
 {
 	libcerror_error_t *error = NULL;
@@ -375,7 +357,7 @@ int wrc_test_resource_free(
 
 	/* Test error cases
 	 */
-	result = libwrc_resource_free(
+	result = libwrc_resource_item_free(
 	          NULL,
 	          &error );
 
@@ -402,11 +384,11 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libwrc_resource_get_identifier function
+/* Tests the libwrc_resource_item_get_identifier function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_resource_get_identifier(
-     libwrc_resource_t *resource )
+int wrc_test_resource_item_get_identifier(
+     libwrc_resource_item_t *resource_item )
 {
 	libcerror_error_t *error = NULL;
 	uint32_t identifier      = 0;
@@ -414,8 +396,8 @@ int wrc_test_resource_get_identifier(
 
 	/* Test regular cases
 	 */
-	result = libwrc_resource_get_identifier(
-	          resource,
+	result = libwrc_resource_item_get_identifier(
+	          resource_item,
 	          &identifier,
 	          &error );
 
@@ -430,7 +412,7 @@ int wrc_test_resource_get_identifier(
 
 	/* Test error cases
 	 */
-	result = libwrc_resource_get_identifier(
+	result = libwrc_resource_item_get_identifier(
 	          NULL,
 	          &identifier,
 	          &error );
@@ -447,8 +429,8 @@ int wrc_test_resource_get_identifier(
 	libcerror_error_free(
 	 &error );
 
-	result = libwrc_resource_get_identifier(
-	          resource,
+	result = libwrc_resource_item_get_identifier(
+	          resource_item,
 	          NULL,
 	          &error );
 
@@ -475,11 +457,11 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libwrc_resource_get_utf8_name_size function
+/* Tests the libwrc_resource_item_get_utf8_name_size function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_resource_get_utf8_name_size(
-     libwrc_resource_t *resource )
+int wrc_test_resource_item_get_utf8_name_size(
+     libwrc_resource_item_t *resource_item )
 {
 	libcerror_error_t *error = NULL;
 	int result               = 0;
@@ -487,8 +469,8 @@ int wrc_test_resource_get_utf8_name_size(
 
 	/* Test regular cases
 	 */
-	result = libwrc_resource_get_utf8_name_size(
-	          resource,
+	result = libwrc_resource_item_get_utf8_name_size(
+	          resource_item,
 	          &utf8_name_size,
 	          &error );
 
@@ -508,7 +490,7 @@ int wrc_test_resource_get_utf8_name_size(
 
 	/* Test error cases
 	 */
-	result = libwrc_resource_get_utf8_name_size(
+	result = libwrc_resource_item_get_utf8_name_size(
 	          NULL,
 	          &utf8_name_size,
 	          &error );
@@ -525,8 +507,8 @@ int wrc_test_resource_get_utf8_name_size(
 	libcerror_error_free(
 	 &error );
 
-	result = libwrc_resource_get_utf8_name_size(
-	          resource,
+	result = libwrc_resource_item_get_utf8_name_size(
+	          resource_item,
 	          NULL,
 	          &error );
 
@@ -553,11 +535,11 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libwrc_resource_get_utf16_name_size function
+/* Tests the libwrc_resource_item_get_utf16_name_size function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_resource_get_utf16_name_size(
-     libwrc_resource_t *resource )
+int wrc_test_resource_item_get_utf16_name_size(
+     libwrc_resource_item_t *resource_item )
 {
 	libcerror_error_t *error = NULL;
 	int result               = 0;
@@ -565,8 +547,8 @@ int wrc_test_resource_get_utf16_name_size(
 
 	/* Test regular cases
 	 */
-	result = libwrc_resource_get_utf16_name_size(
-	          resource,
+	result = libwrc_resource_item_get_utf16_name_size(
+	          resource_item,
 	          &utf16_name_size,
 	          &error );
 
@@ -586,7 +568,7 @@ int wrc_test_resource_get_utf16_name_size(
 
 	/* Test error cases
 	 */
-	result = libwrc_resource_get_utf16_name_size(
+	result = libwrc_resource_item_get_utf16_name_size(
 	          NULL,
 	          &utf16_name_size,
 	          &error );
@@ -603,8 +585,8 @@ int wrc_test_resource_get_utf16_name_size(
 	libcerror_error_free(
 	 &error );
 
-	result = libwrc_resource_get_utf16_name_size(
-	          resource,
+	result = libwrc_resource_item_get_utf16_name_size(
+	          resource_item,
 	          NULL,
 	          &error );
 
@@ -631,26 +613,31 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libwrc_resource_get_type function
+/* Tests the libwrc_resource_item_get_number_of_sub_items function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_resource_get_type(
-     libwrc_resource_t *resource )
+int wrc_test_resource_item_get_number_of_sub_items(
+     libwrc_resource_item_t *resource_item )
 {
 	libcerror_error_t *error = NULL;
+	int number_of_sub_items  = 0;
 	int result               = 0;
-	int type                 = 0;
 
 	/* Test regular cases
 	 */
-	result = libwrc_resource_get_type(
-	          resource,
-	          &type,
+	result = libwrc_resource_item_get_number_of_sub_items(
+	          resource_item,
+	          &number_of_sub_items,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "number_of_sub_items",
+	 number_of_sub_items,
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NULL(
@@ -659,9 +646,9 @@ int wrc_test_resource_get_type(
 
 	/* Test error cases
 	 */
-	result = libwrc_resource_get_type(
+	result = libwrc_resource_item_get_number_of_sub_items(
 	          NULL,
-	          &type,
+	          &number_of_sub_items,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -676,86 +663,8 @@ int wrc_test_resource_get_type(
 	libcerror_error_free(
 	 &error );
 
-	result = libwrc_resource_get_type(
-	          resource,
-	          NULL,
-	          &error );
-
-	WRC_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
-/* Tests the libwrc_resource_get_number_of_items function
- * Returns 1 if successful or 0 if not
- */
-int wrc_test_resource_get_number_of_items(
-     libwrc_resource_t *resource )
-{
-	libcerror_error_t *error = NULL;
-	int number_of_items      = 0;
-	int result               = 0;
-
-	/* Test regular cases
-	 */
-	result = libwrc_resource_get_number_of_items(
-	          resource,
-	          &number_of_items,
-	          &error );
-
-	WRC_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	WRC_TEST_ASSERT_EQUAL_INT(
-	 "number_of_items",
-	 number_of_items,
-	 1 );
-
-	WRC_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test error cases
-	 */
-	result = libwrc_resource_get_number_of_items(
-	          NULL,
-	          &number_of_items,
-	          &error );
-
-	WRC_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libwrc_resource_get_number_of_items(
-	          resource,
+	result = libwrc_resource_item_get_number_of_sub_items(
+	          resource_item,
 	          NULL,
 	          &error );
 
@@ -782,22 +691,22 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libwrc_resource_get_item_by_index function
+/* Tests the libwrc_resource_item_get_sub_item_by_index function
  * Returns 1 if successful or 0 if not
  */
-int wrc_test_resource_get_item_by_index(
-     libwrc_resource_t *resource )
+int wrc_test_resource_item_get_sub_item_by_index(
+     libwrc_resource_item_t *resource_item )
 {
-	libcerror_error_t *error              = NULL;
-	libwrc_resource_item_t *resource_item = NULL;
-	int result                            = 0;
+	libcerror_error_t *error                  = NULL;
+	libwrc_resource_item_t *resource_sub_item = NULL;
+	int result                                = 0;
 
 	/* Test regular cases
 	 */
-	result = libwrc_resource_get_item_by_index(
-	          resource,
+	result = libwrc_resource_item_get_sub_item_by_index(
+	          resource_item,
 	          0,
-	          &resource_item,
+	          &resource_sub_item,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -806,15 +715,15 @@ int wrc_test_resource_get_item_by_index(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "resource_item",
-	 resource_item );
+	 "resource_sub_item",
+	 resource_sub_item );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
 	result = libwrc_resource_item_free(
-	          &resource_item,
+	          &resource_sub_item,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -823,8 +732,8 @@ int wrc_test_resource_get_item_by_index(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NULL(
-	 "resource_item",
-	 resource_item );
+	 "resource_sub_item",
+	 resource_sub_item );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -832,10 +741,10 @@ int wrc_test_resource_get_item_by_index(
 
 	/* Test error cases
 	 */
-	result = libwrc_resource_get_item_by_index(
+	result = libwrc_resource_item_get_sub_item_by_index(
 	          NULL,
 	          0,
-	          &resource_item,
+	          &resource_sub_item,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -850,10 +759,10 @@ int wrc_test_resource_get_item_by_index(
 	libcerror_error_free(
 	 &error );
 
-	result = libwrc_resource_get_item_by_index(
-	          resource,
+	result = libwrc_resource_item_get_sub_item_by_index(
+	          resource_item,
 	          -1,
-	          &resource_item,
+	          &resource_sub_item,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -868,8 +777,8 @@ int wrc_test_resource_get_item_by_index(
 	libcerror_error_free(
 	 &error );
 
-	result = libwrc_resource_get_item_by_index(
-	          resource,
+	result = libwrc_resource_item_get_sub_item_by_index(
+	          resource_item,
 	          0,
 	          NULL,
 	          &error );
@@ -913,7 +822,7 @@ int main(
 
 	libcdata_tree_node_t *resource_node       = NULL;
 	libcerror_error_t *error                  = NULL;
-	libwrc_resource_t *resource               = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
 	libwrc_resource_values_t *resource_values = NULL;
 	int result                                = 0;
 
@@ -925,19 +834,19 @@ int main(
 #if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
 	WRC_TEST_RUN(
-	 "libwrc_resource_initialize",
-	 wrc_test_resource_initialize );
+	 "libwrc_resource_item_initialize",
+	 wrc_test_resource_item_initialize );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 	WRC_TEST_RUN(
-	 "libwrc_resource_free",
-	 wrc_test_resource_free );
+	 "libwrc_resource_item_free",
+	 wrc_test_resource_item_free );
 
 #if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 
-	/* Initialize resource for tests
+	/* Initialize resource_item for tests
 	 */
 	result = libwrc_resource_values_initialize(
 	          &resource_values,
@@ -1037,12 +946,9 @@ int main(
 
 	resource_values = NULL;
 
-	result = libwrc_resource_initialize(
-	          &resource,
-	          NULL,
-	          NULL,
+	result = libwrc_resource_item_initialize(
+	          &resource_item,
 	          resource_node,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1051,63 +957,46 @@ int main(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "resource",
-	 resource );
+	 "resource_item",
+	 resource_item );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
 	WRC_TEST_RUN_WITH_ARGS(
-	 "libwrc_resource_get_identifier",
-	 wrc_test_resource_get_identifier,
-	 resource );
+	 "libwrc_resource_item_get_identifier",
+	 wrc_test_resource_item_get_identifier,
+	 resource_item );
 
 	WRC_TEST_RUN_WITH_ARGS(
-	 "libwrc_resource_get_utf8_name_size",
-	 wrc_test_resource_get_utf8_name_size,
-	 resource );
+	 "libwrc_resource_item_get_utf8_name_size",
+	 wrc_test_resource_item_get_utf8_name_size,
+	 resource_item );
 
-	/* TODO: add tests for libwrc_resource_get_utf8_name */
-
-	WRC_TEST_RUN_WITH_ARGS(
-	 "libwrc_resource_get_utf16_name_size",
-	 wrc_test_resource_get_utf16_name_size,
-	 resource );
-
-	/* TODO: add tests for libwrc_resource_get_utf16_name */
+	/* TODO: add tests for libwrc_resource_item_get_utf8_name */
 
 	WRC_TEST_RUN_WITH_ARGS(
-	 "libwrc_resource_get_type",
-	 wrc_test_resource_get_type,
-	 resource );
+	 "libwrc_resource_item_get_utf16_name_size",
+	 wrc_test_resource_item_get_utf16_name_size,
+	 resource_item );
 
-	/* TODO: add tests for libwrc_resource_read */
-
-	/* TODO: add tests for libwrc_resource_read_value */
-
-	/* TODO: add tests for libwrc_resource_read_data_descriptor */
-
-	/* TODO: add tests for libwrc_resource_get_number_of_languages */
-
-	/* TODO: add tests for libwrc_resource_get_language_identifier */
-
-	/* TODO: add tests for libwrc_resource_get_value_by_language_identifier */
+	/* TODO: add tests for libwrc_resource_item_get_utf16_name */
 
 	WRC_TEST_RUN_WITH_ARGS(
-	 "libwrc_resource_get_number_of_items",
-	 wrc_test_resource_get_number_of_items,
-	 resource );
+	 "libwrc_resource_item_get_number_of_sub_items",
+	 wrc_test_resource_item_get_number_of_sub_items,
+	 resource_item );
 
 	WRC_TEST_RUN_WITH_ARGS(
-	 "libwrc_resource_get_item_by_index",
-	 wrc_test_resource_get_item_by_index,
-	 resource );
+	 "libwrc_resource_item_get_sub_item_by_index",
+	 wrc_test_resource_item_get_sub_item_by_index,
+	 resource_item );
 
 	/* Clean up
 	 */
-	result = libwrc_resource_free(
-	          &resource,
+	result = libwrc_resource_item_free(
+	          &resource_item,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1116,8 +1005,8 @@ int main(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NULL(
-	 "resource",
-	 resource );
+	 "resource_item",
+	 resource_item );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1153,10 +1042,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( resource != NULL )
+	if( resource_item != NULL )
 	{
-		libwrc_resource_free(
-		 &resource,
+		libwrc_resource_item_free(
+		 &resource_item,
 		 NULL );
 	}
 	if( resource_node != NULL )

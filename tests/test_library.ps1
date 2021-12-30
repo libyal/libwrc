@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "data_descriptor error io_handle language_entry language_table mui_values notify resource resource_values support version_values wevt_channel wevt_event wevt_keyword wevt_level wevt_map wevt_opcode wevt_provider wevt_task wevt_template_definition"
+$LibraryTests = "data_descriptor error io_handle language_entry language_table mui_values notify resource resource_item resource_values support version_values wevt_channel wevt_event wevt_keyword wevt_level wevt_map wevt_opcode wevt_provider wevt_task wevt_template_definition"
 $LibraryTestsWithInput = "stream"
 $OptionSets = ""
 

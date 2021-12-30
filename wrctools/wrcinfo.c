@@ -44,6 +44,12 @@
 #include "wrctools_signal.h"
 #include "wrctools_unused.h"
 
+enum WRCINFO_MODES
+{
+	WRCINFO_MODE_RESOURCE_HIERARCHY,
+	WRCINFO_MODE_OVERVIEW
+};
+
 info_handle_t *wrcinfo_info_handle = NULL;
 int wrcinfo_abort                  = 0;
 
@@ -57,10 +63,10 @@ void usage_fprint(
 		return;
 	}
 	fprintf( stream, "Use wrcinfo to determine information about a Windows\n"
-	                 "Resource (RC) stream the .rsrc section of a PE/COFF\n"
+	                 "Resource (RC) streams in the .rsrc section of a PE/COFF\n"
 	                 "executable.\n\n" );
 
-	fprintf( stream, "Usage: wrcinfo [ -c codepage ] [ -hvV ] source\n\n" );
+	fprintf( stream, "Usage: wrcinfo [ -c codepage ] [ -hHvV ] source\n\n" );
 
 	fprintf( stream, "\tsource: the source file containing the stream\n\n" );
 
@@ -70,6 +76,7 @@ void usage_fprint(
 	                 "\t        windows-1253, windows-1254, windows-1255, windows-1256\n"
 	                 "\t        windows-1257 or windows-1258\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
+	fprintf( stream, "\t-H:     shows the resource hierarchy\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
 }
@@ -80,7 +87,7 @@ void wrcinfo_signal_handler(
       wrctools_signal_t signal WRCTOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
-	static char *function   = "wrcinfo_signal_handler";
+	static char *function    = "wrcinfo_signal_handler";
 
 	WRCTOOLS_UNREFERENCED_PARAMETER( signal )
 
@@ -131,6 +138,7 @@ int main( int argc, char * const argv[] )
 	system_character_t *source                = NULL;
 	char *program                             = "wrcinfo";
 	system_integer_t option                   = 0;
+	int option_mode                           = WRCINFO_MODE_OVERVIEW;
 	int result                                = 0;
 	int verbose                               = 0;
 
@@ -167,7 +175,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = wrctools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "c:hvV" ) ) ) != (system_integer_t) -1 )
+	                   _SYSTEM_STRING( "c:hHvV" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -193,6 +201,11 @@ int main( int argc, char * const argv[] )
 				 stdout );
 
 				return( EXIT_SUCCESS );
+
+			case (system_integer_t) 'H':
+				option_mode = WRCINFO_MODE_RESOURCE_HIERARCHY;
+
+				break;
 
 			case (system_integer_t) 'v':
 				verbose = 1;
@@ -281,15 +294,34 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( info_handle_stream_fprint(
-	     wrcinfo_info_handle,
-	     &error ) != 1 )
+	switch( option_mode )
 	{
-		fprintf(
-		 stderr,
-		 "Unable to print stream information.\n" );
+		case WRCINFO_MODE_RESOURCE_HIERARCHY:
+			if( info_handle_resource_hierarchy_fprint(
+			     wrcinfo_info_handle,
+			     &error ) != 1 )
+			{
+				fprintf(
+				 stderr,
+				 "Unable to print resource hierarchy information.\n" );
 
-		goto on_error;
+				goto on_error;
+			}
+			break;
+
+		case WRCINFO_MODE_OVERVIEW:
+		default:
+			if( info_handle_stream_fprint(
+			     wrcinfo_info_handle,
+			     &error ) != 1 )
+			{
+				fprintf(
+				 stderr,
+				 "Unable to print stream information.\n" );
+
+				goto on_error;
+			}
+			break;
 	}
 	if( info_handle_close_input(
 	     wrcinfo_info_handle,

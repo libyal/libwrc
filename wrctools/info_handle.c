@@ -380,7 +380,7 @@ int info_handle_set_ascii_codepage(
 }
 
 /* Opens the input
- * Returns 1 if successful, 0 if no resouce stream could be found or -1 on error
+ * Returns 1 if successful, 0 if no resource stream could be found or -1 on error
  */
 int info_handle_open_input(
      info_handle_t *info_handle,
@@ -2202,6 +2202,601 @@ on_error:
 	return( -1 );
 }
 
+/* Prints resource item information as part of the resource hierarchy
+ * Returns 1 if successful or -1 on error
+ */
+int info_handle_resource_hierarchy_fprint_resource_item(
+     info_handle_t *info_handle,
+     libwrc_resource_item_t *resource_item,
+     int indentation_level,
+     libcerror_error_t **error )
+{
+	libwrc_resource_item_t *resource_sub_item = NULL;
+	system_character_t *value_string          = NULL;
+	static char *function                     = "info_handle_resource_hierarchy_fprint_resource_item";
+	size_t value_string_size                  = 0;
+	uint32_t identifier                       = 0;
+	int indentation_level_iterator            = 0;
+	int number_of_resource_sub_items          = 0;
+	int resource_sub_item_index               = 0;
+	int result                                = 0;
+
+	if( info_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid info handle.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libwrc_resource_item_get_utf16_name_size(
+	          resource_item,
+	          &value_string_size,
+	          error );
+#else
+	result = libwrc_resource_item_get_utf8_name_size(
+	          resource_item,
+	          &value_string_size,
+	          error );
+#endif
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve name string size.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		if( libwrc_resource_item_get_identifier(
+		     resource_item,
+		     &identifier,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve identifier.",
+			 function );
+
+			goto on_error;
+		}
+		for( indentation_level_iterator = 0;
+		     indentation_level_iterator < indentation_level;
+		     indentation_level_iterator++ )
+		{
+			fprintf(
+			 info_handle->notify_stream,
+			 " " );
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "0x%08" PRIx32 "\n",
+		 identifier );
+	}
+	else if( value_string_size > 0 )
+	{
+		value_string = system_string_allocate(
+		                value_string_size );
+
+		if( value_string == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create name string.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libwrc_resource_item_get_utf16_name(
+		          resource_item,
+		          (uint16_t *) value_string,
+		          value_string_size,
+		          error );
+#else
+		result = libwrc_resource_item_get_utf8_name(
+		          resource_item,
+		          (uint8_t *) value_string,
+		          value_string_size,
+		          error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve name string.",
+			 function );
+
+			goto on_error;
+		}
+		for( indentation_level_iterator = 0;
+		     indentation_level_iterator < indentation_level;
+		     indentation_level_iterator++ )
+		{
+			fprintf(
+			 info_handle->notify_stream,
+			 " " );
+		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "%" PRIs_SYSTEM "\n",
+		 value_string );
+
+		memory_free(
+		 value_string );
+
+		value_string = NULL;
+	}
+	if( libwrc_resource_item_get_number_of_sub_items(
+	     resource_item,
+	     &number_of_resource_sub_items,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of resource sub items.",
+		 function );
+
+		goto on_error;
+	}
+	for( resource_sub_item_index = 0;
+	     resource_sub_item_index < number_of_resource_sub_items;
+	     resource_sub_item_index++ )
+	{
+		if( libwrc_resource_item_get_sub_item_by_index(
+		     resource_item,
+		     resource_sub_item_index,
+		     &resource_sub_item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+		if( info_handle_resource_hierarchy_fprint_resource_item(
+		     info_handle,
+		     resource_sub_item,
+		     indentation_level + 1,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+		if( libwrc_resource_item_free(
+		     &resource_sub_item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( value_string != NULL )
+	{
+		memory_free(
+		 value_string );
+	}
+	return( -1 );
+}
+
+/* Prints the resource hierarchy information
+ * Returns 1 if successful or -1 on error
+ */
+int info_handle_resource_hierarchy_fprint(
+     info_handle_t *info_handle,
+     libcerror_error_t **error )
+{
+	libwrc_resource_t *resource           = NULL;
+	libwrc_resource_item_t *resource_item = NULL;
+	system_character_t *resource_name     = NULL;
+	system_character_t *value_string      = NULL;
+	static char *function                 = "info_handle_resource_hierarchy_fprint";
+	size_t value_string_size              = 0;
+	int number_of_resource_items          = 0;
+	int number_of_resources               = 0;
+	int resource_index                    = 0;
+	int resource_item_index               = 0;
+	int resource_type                     = 0;
+	int result                            = 0;
+
+	if( info_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid info handle.",
+		 function );
+
+		return( -1 );
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "Windows Resource (RC) information:\n\n" );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "Resource item hierarchy:\n" );
+
+	if( libwrc_stream_get_number_of_resources(
+	     info_handle->input_resource_stream,
+	     &number_of_resources,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of resources.",
+		 function );
+
+		goto on_error;
+	}
+	for( resource_index = 0;
+	     resource_index < number_of_resources;
+	     resource_index++ )
+	{
+		if( libwrc_stream_get_resource_by_index(
+		     info_handle->input_resource_stream,
+		     resource_index,
+		     &resource,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource: %d.",
+			 function,
+			 resource_index );
+
+			goto on_error;
+		}
+		if( libwrc_resource_get_type(
+		     resource,
+		     &resource_type,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to retrieve resource: %d type.",
+			 function,
+			 resource_index );
+
+			goto on_error;
+		}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libwrc_resource_get_utf16_name_size(
+		          resource,
+		          &value_string_size,
+		          error );
+#else
+		result = libwrc_resource_get_utf8_name_size(
+		          resource,
+		          &value_string_size,
+		          error );
+#endif
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve name string size.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			switch( resource_type )
+			{
+				case LIBWRC_RESOURCE_TYPE_CURSOR:
+					resource_name = _SYSTEM_STRING( "CURSOR" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_BITMAP:
+					resource_name = _SYSTEM_STRING( "BITMAP" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_ICON:
+					resource_name = _SYSTEM_STRING( "ICON" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_MENU:
+					resource_name = _SYSTEM_STRING( "MENU" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_DIALOG:
+/* TODO determine if there is a better name to map e.g. POPUP */
+					resource_name = _SYSTEM_STRING( "DIALOG" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_STRING:
+					resource_name = _SYSTEM_STRING( "STRINGTABLE" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_FONT_DIRECTORY:
+/* TODO determine if there is a better name to map to */
+					resource_name = _SYSTEM_STRING( "FONT_DIRECTORY" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_FONT:
+					resource_name = _SYSTEM_STRING( "FONT" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_ACCELERATOR:
+					resource_name = _SYSTEM_STRING( "ACCELERATORS" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_RAW_DATA:
+/* TODO determine if there is a better name to map e.g. RCDATA */
+					resource_name = _SYSTEM_STRING( "RAW_DATA" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
+					resource_name = _SYSTEM_STRING( "MESSAGETABLE" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_GROUP_CURSOR:
+/* TODO determine if there is a better name to map to */
+					resource_name = _SYSTEM_STRING( "GROUP_CURSOR" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_GROUP_ICON:
+/* TODO determine if there is a better name to map to */
+					resource_name = _SYSTEM_STRING( "GROUP_ICON" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_VERSION:
+					resource_name = _SYSTEM_STRING( "VERSIONINFO" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_DIALOG_INCLUDE:
+/* TODO determine if there is a better name to map to */
+					resource_name = _SYSTEM_STRING( "DIALOG_INCLUDE" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_PLUG_AND_PLAY:
+					resource_name = _SYSTEM_STRING ("PLUGPLAY" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_VXD:
+					resource_name = _SYSTEM_STRING( "VXD" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_ANIMATED_CURSOR:
+/* TODO determine if there is a better name to map to */
+					resource_name = _SYSTEM_STRING( "ANIMATED_CURSOR" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_ANIMATED_ICON:
+/* TODO determine if there is a better name to map to */
+					resource_name = _SYSTEM_STRING( "ANIMATED_ICON" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_HTML:
+					resource_name = _SYSTEM_STRING( "HTML" );
+					break;
+
+				case LIBWRC_RESOURCE_TYPE_MANIFEST:
+/* TODO determine if there is a better name to map to */
+					resource_name = _SYSTEM_STRING( "MANIFEST" );
+					break;
+
+				default:
+					resource_name = _SYSTEM_STRING( "UNKNOWN" );
+					break;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "%d (%" PRIs_SYSTEM ")\n",
+			 resource_type,
+			 resource_name );
+		}
+		else if( value_string_size > 0 )
+		{
+			value_string = system_string_allocate(
+			                value_string_size );
+
+			if( value_string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create name string.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libwrc_resource_get_utf16_name(
+			          resource,
+			          (uint16_t *) value_string,
+			          value_string_size,
+			          error );
+#else
+			result = libwrc_resource_get_utf8_name(
+			          resource,
+			          (uint8_t *) value_string,
+			          value_string_size,
+			          error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve name string.",
+				 function );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "%" PRIs_SYSTEM "\n",
+			 value_string );
+
+			memory_free(
+			 value_string );
+
+			value_string = NULL;
+		}
+		if( libwrc_resource_get_number_of_items(
+		     resource,
+		     &number_of_resource_items,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of resource items.",
+			 function );
+
+			goto on_error;
+		}
+		for( resource_item_index = 0;
+		     resource_item_index < number_of_resource_items;
+		     resource_item_index++ )
+		{
+			if( libwrc_resource_get_item_by_index(
+			     resource,
+			     resource_item_index,
+			     &resource_item,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve resource item: %d.",
+				 function,
+				 resource_item_index );
+
+				goto on_error;
+			}
+			if( info_handle_resource_hierarchy_fprint_resource_item(
+			     info_handle,
+			     resource_item,
+			     1,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print resource item: %d.",
+				 function,
+				 resource_item_index );
+
+				goto on_error;
+			}
+			if( libwrc_resource_item_free(
+			     &resource_item,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free resource item: %d.",
+				 function,
+				 resource_item_index );
+
+				goto on_error;
+			}
+		}
+		if( libwrc_resource_free(
+		     &resource,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource: %d.",
+			 function,
+			 resource_index );
+
+			goto on_error;
+		}
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\n" );
+
+	return( 1 );
+
+on_error:
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( value_string != NULL )
+	{
+		memory_free(
+		 value_string );
+	}
+	if( resource != NULL )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	return( -1 );
+}
+
 /* Prints the stream information
  * Returns 1 if successful or -1 on error
  */
@@ -2230,6 +2825,14 @@ int info_handle_stream_fprint(
 
 		return( -1 );
 	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "Windows Resource (RC) information:\n\n" );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "Resources:\n" );
+
 	if( libwrc_stream_get_number_of_resources(
 	     info_handle->input_resource_stream,
 	     &number_of_resources,
@@ -2244,19 +2847,11 @@ int info_handle_stream_fprint(
 
 		goto on_error;
 	}
-	fprintf(
-	 info_handle->notify_stream,
-	 "Windows Resource (RC) information:\n\n" );
-
-	fprintf(
-	 info_handle->notify_stream,
-	 "Resources:\n" );
-
 	for( resource_index = 0;
 	     resource_index < number_of_resources;
 	     resource_index++ )
 	{
-		if( libwrc_stream_get_resource(
+		if( libwrc_stream_get_resource_by_index(
 		     info_handle->input_resource_stream,
 		     resource_index,
 		     &resource,
@@ -2466,29 +3061,6 @@ int info_handle_stream_fprint(
 
 			value_string = NULL;
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( ( resource_type != LIBWRC_RESOURCE_TYPE_VERSION )
-		 && ( resource_type != LIBWRC_RESOURCE_TYPE_MUI )
-		 && ( resource_type != LIBWRC_RESOURCE_TYPE_STRING )
-		 && ( resource_type != LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE )
-		 && ( resource_type != LIBWRC_RESOURCE_TYPE_MANIFEST ) )
-		{
-			if( libwrc_resource_read(
-			     resource,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read resource: %d.",
-				 function,
-				 resource_index );
-
-				goto on_error;
-			}
-		}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 		if( libwrc_resource_free(
 		     &resource,
 		     error ) != 1 )

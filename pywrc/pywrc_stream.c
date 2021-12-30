@@ -1365,7 +1365,7 @@ PyObject *pywrc_stream_get_resource_by_index(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libwrc_stream_get_resource(
+	result = libwrc_stream_get_resource_by_index(
 	          ( (pywrc_stream_t *) pywrc_stream )->stream,
 	          resource_index,
 	          &resource,

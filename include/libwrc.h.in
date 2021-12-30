@@ -274,10 +274,24 @@ int libwrc_stream_get_number_of_resources(
      libwrc_error_t **error );
 
 /* Retrieves a specific resource
+ *
+ * This function is deprecated use libwrc_stream_get_resource_by_index instead
+ *
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_DEPRECATED \
+LIBWRC_EXTERN \
+int libwrc_stream_get_resource(
+     libwrc_stream_t *stream,
+     int resource_index,
+     libwrc_resource_t **resource,
+     libwrc_error_t **error );
+
+/* Retrieves a specific resource
  * Returns 1 if successful or -1 on error
  */
 LIBWRC_EXTERN \
-int libwrc_stream_get_resource(
+int libwrc_stream_get_resource_by_index(
      libwrc_stream_t *stream,
      int resource_index,
      libwrc_resource_t **resource,
@@ -335,6 +349,18 @@ int libwrc_stream_get_resource_by_utf16_name(
 LIBWRC_EXTERN \
 int libwrc_resource_free(
      libwrc_resource_t **resource,
+     libwrc_error_t **error );
+
+/* Reads the resource
+ *
+ * This function is deprecated
+ *
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_DEPRECATED \
+LIBWRC_EXTERN \
+int libwrc_resource_read(
+     libwrc_resource_t *resource,
      libwrc_error_t **error );
 
 /* Retrieves the resource identifier
@@ -397,14 +423,6 @@ int libwrc_resource_get_type(
      int *type,
      libwrc_error_t **error );
 
-/* Reads the resource
- * Returns 1 if successful or -1 on error
- */
-LIBWRC_EXTERN \
-int libwrc_resource_read(
-     libwrc_resource_t *resource,
-     libwrc_error_t **error );
-
 /* Retrieves the number of languages
  * Returns 1 if successful or -1 on error
  */
@@ -422,6 +440,107 @@ int libwrc_resource_get_language_identifier(
      libwrc_resource_t *resource,
      int language_index,
      uint32_t *language_identifier,
+     libwrc_error_t **error );
+
+/* Retrieves the number of items
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_get_number_of_items(
+     libwrc_resource_t *resource,
+     int *number_of_items,
+     libwrc_error_t **error );
+
+/* Retrieves a specific item
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_get_item_by_index(
+     libwrc_resource_t *resource,
+     int item_index,
+     libwrc_resource_item_t **resource_item,
+     libwrc_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Resource item functions
+ * ------------------------------------------------------------------------- */
+
+/* Frees a resource item
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_free(
+     libwrc_resource_item_t **resource_item,
+     libwrc_error_t **error );
+
+/* Retrieves the resource item identifier
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_identifier(
+     libwrc_resource_item_t *resource_item,
+     uint32_t *identifier,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-8 encoded name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_utf8_name_size(
+     libwrc_resource_item_t *resource_item,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-8 encoded name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_utf8_name(
+     libwrc_resource_item_t *resource_item,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-16 encoded name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_utf16_name_size(
+     libwrc_resource_item_t *resource_item,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-16 encoded name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_utf16_name(
+     libwrc_resource_item_t *resource_item,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the number of sub items
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_number_of_sub_items(
+     libwrc_resource_item_t *resource_item,
+     int *number_of_sub_items,
+     libwrc_error_t **error );
+
+/* Retrieves a specific sub item
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_sub_item_by_index(
+     libwrc_resource_item_t *resource_item,
+     int sub_item_index,
+     libwrc_resource_item_t **resource_sub_item,
      libwrc_error_t **error );
 
 /* -------------------------------------------------------------------------
@@ -843,8 +962,12 @@ int libwrc_version_get_product_version(
  * ------------------------------------------------------------------------- */
 
 /* Retrieves the number of providers
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_template_get_number_of_providers(
      libwrc_resource_t *resource,
@@ -853,8 +976,12 @@ int libwrc_wevt_template_get_number_of_providers(
      libwrc_error_t **error );
 
 /* Retrieves a specific provider
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_template_get_provider(
      libwrc_resource_t *resource,
@@ -864,8 +991,12 @@ int libwrc_wevt_template_get_provider(
      libwrc_error_t **error );
 
 /* Retrieves a specific provider by identifier (GUID)
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_template_get_provider_by_identifier(
      libwrc_resource_t *resource,
@@ -880,16 +1011,24 @@ int libwrc_wevt_template_get_provider_by_identifier(
  * ------------------------------------------------------------------------- */
 
 /* Frees a provider
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_provider_free(
      libwrc_wevt_provider_t **provider,
      libwrc_error_t **error );
 
 /* Retrieves the number of events
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_provider_get_number_of_events(
      libwrc_wevt_provider_t *provider,
@@ -897,8 +1036,12 @@ int libwrc_wevt_provider_get_number_of_events(
      libwrc_error_t **error );
 
 /* Retrieves a specific event
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_provider_get_event(
      libwrc_wevt_provider_t *provider,
@@ -907,8 +1050,12 @@ int libwrc_wevt_provider_get_event(
      libwrc_error_t **error );
 
 /* Retrieves a specific event by identifier
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_provider_get_event_by_identifier(
      libwrc_wevt_provider_t *provider,
@@ -921,8 +1068,12 @@ int libwrc_wevt_provider_get_event_by_identifier(
  * ------------------------------------------------------------------------- */
 
 /* Frees a channel
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_channel_free(
      libwrc_wevt_channel_t **channel,
@@ -933,16 +1084,24 @@ int libwrc_wevt_channel_free(
  * ------------------------------------------------------------------------- */
 
 /* Frees an event
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_event_free(
      libwrc_wevt_event_t **event,
      libwrc_error_t **error );
 
 /* Retrieves the identifier
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_event_get_identifier(
      libwrc_wevt_event_t *event,
@@ -950,8 +1109,12 @@ int libwrc_wevt_event_get_identifier(
      libwrc_error_t **error );
 
 /* Retrieves the message identifier
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_event_get_message_identifier(
      libwrc_wevt_event_t *event,
@@ -963,8 +1126,12 @@ int libwrc_wevt_event_get_message_identifier(
  * ------------------------------------------------------------------------- */
 
 /* Frees a keyword
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_keyword_free(
      libwrc_wevt_keyword_t **keyword,
@@ -975,8 +1142,12 @@ int libwrc_wevt_keyword_free(
  * ------------------------------------------------------------------------- */
 
 /* Frees a level
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_level_free(
      libwrc_wevt_level_t **level,
@@ -987,8 +1158,12 @@ int libwrc_wevt_level_free(
  * ------------------------------------------------------------------------- */
 
 /* Frees a map
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_map_free(
      libwrc_wevt_map_t **map,
@@ -999,8 +1174,12 @@ int libwrc_wevt_map_free(
  * ------------------------------------------------------------------------- */
 
 /* Frees an opcode
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_opcode_free(
      libwrc_wevt_opcode_t **opcode,
@@ -1011,8 +1190,12 @@ int libwrc_wevt_opcode_free(
  * ------------------------------------------------------------------------- */
 
 /* Frees a task
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_task_free(
      libwrc_wevt_task_t **task,
@@ -1023,8 +1206,12 @@ int libwrc_wevt_task_free(
  * ------------------------------------------------------------------------- */
 
 /* Frees a template definition
+ *
+ * This function is deprecated use libfwevt instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_wevt_template_definition_free(
      libwrc_wevt_template_definition_t **template_definition,

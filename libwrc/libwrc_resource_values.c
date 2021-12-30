@@ -194,6 +194,107 @@ int libwrc_resource_values_compare(
 	return( LIBCDATA_COMPARE_EQUAL );
 }
 
+/* Sets the name string
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_resource_values_set_name_string(
+     libwrc_resource_values_t *resource_values,
+     const uint8_t *name_string,
+     size_t name_string_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libwrc_resource_values_get_identifier";
+
+	if( resource_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource values.",
+		 function );
+
+		return( -1 );
+	}
+	if( resource_values->name_string != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid resource values - name string value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( name_string == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid name string.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( name_string_size == 0 )
+	 || ( name_string_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid name string size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	resource_values->name_string = (uint8_t *) memory_allocate(
+	                                            sizeof( uint8_t ) * name_string_size );
+
+	if( resource_values->name_string == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource node name string.",
+		 function );
+
+		goto on_error;
+	}
+	resource_values->name_string_size = name_string_size;
+
+	if( memory_copy(
+	     resource_values->name_string,
+	     name_string,
+	     name_string_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy name string.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( resource_values->name_string != NULL )
+	{
+		memory_free(
+		 resource_values->name_string );
+
+		resource_values->name_string = NULL;
+	}
+	resource_values->name_string_size = 0;
+
+	return( -1 );
+}
+
 /* Retrieves the identifier
  * Returns 1 if successful or -1 on error
  */

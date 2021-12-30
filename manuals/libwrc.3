@@ -1,4 +1,4 @@
-.Dd December 29, 2021
+.Dd December 30, 2021
 .Dt libwrc 3
 .Os libwrc
 .Sh NAME
@@ -61,7 +61,7 @@ Stream functions
 .Ft int
 .Fn libwrc_stream_get_number_of_resources "libwrc_stream_t *stream" "int *number_of_resources" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_stream_get_resource "libwrc_stream_t *stream" "int resource_index" "libwrc_resource_t **resource" "libwrc_error_t **error"
+.Fn libwrc_stream_get_resource_by_index "libwrc_stream_t *stream" "int resource_index" "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_stream_get_resource_by_identifier "libwrc_stream_t *stream" "uint32_t identifier" "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
@@ -83,8 +83,6 @@ Resource functions
 .Ft int
 .Fn libwrc_resource_free "libwrc_resource_t **resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_resource_read "libwrc_resource_t *resource" "libwrc_error_t **error"
-.Ft int
 .Fn libwrc_resource_get_identifier "libwrc_resource_t *resource" "uint32_t *identifier" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_resource_get_utf8_name_size "libwrc_resource_t *resource" "size_t *utf8_string_size" "libwrc_error_t **error"
@@ -100,6 +98,28 @@ Resource functions
 .Fn libwrc_resource_get_number_of_languages "libwrc_resource_t *resource" "int *number_of_languages" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_resource_get_language_identifier "libwrc_resource_t *resource" "int language_index" "uint32_t *language_identifier" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_get_number_of_items "libwrc_resource_t *resource" "int *number_of_items" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_get_item_by_index "libwrc_resource_t *resource" "int item_index" "libwrc_resource_item_t **resource_item" "libwrc_error_t **error"
+.Pp
+Resource item functions
+.Ft int
+.Fn libwrc_resource_item_free "libwrc_resource_item_t **resource_item" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_identifier "libwrc_resource_item_t *resource_item" "uint32_t *identifier" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_utf8_name_size "libwrc_resource_item_t *resource_item" "size_t *utf8_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_utf8_name"libwrc_resource_item_t *resource_item" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_utf16_name_size "libwrc_resource_item_t *resource_item" "size_t *utf16_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_utf16_name"libwrc_resource_item_t *resource_item" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_number_of_sub_items "libwrc_resource_item_t *resource_item" "int *number_of_sub_items" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_sub_item_by_index "libwrc_resource_item_t *resource_item" "int sub_item_index" "libwrc_resource_item_t **resource_sub_item" "libwrc_error_t **error"
 .Pp
 Manifest resource functions
 .Ft int
@@ -180,60 +200,6 @@ Version resource functions
 .Fn libwrc_version_get_file_version "libwrc_resource_t *resource" "uint32_t language_identifier" "uint64_t *version" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_version_get_product_version "libwrc_resource_t *resource" "uint32_t language_identifier" "uint64_t *version" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE resource functions
-.Ft int
-.Fn libwrc_wevt_template_get_number_of_providers "libwrc_resource_t *resource" "uint32_t language_identifier" "int *number_of_providers" "libwrc_error_t **error"
-.Ft int
-.Fn libwrc_wevt_template_get_provider "libwrc_resource_t *resource" "uint32_t language_identifier" "int provider_index" "libwrc_wevt_provider_t **provider" "libwrc_error_t **error"
-.Ft int
-.Fn libwrc_wevt_template_get_provider_by_identifier "libwrc_resource_t *resource" "uint32_t language_identifier" "const uint8_t *provider_identifier" "size_t provider_identifier_size" "libwrc_wevt_provider_t **provider" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE provider functions
-.Ft int
-.Fn libwrc_wevt_provider_free "libwrc_wevt_provider_t **provider" "libwrc_error_t **error"
-.Ft int
-.Fn libwrc_wevt_provider_get_number_of_events "libwrc_wevt_provider_t *provider" "int *number_of_events" "libwrc_error_t **error"
-.Ft int
-.Fn libwrc_wevt_provider_get_event "libwrc_wevt_provider_t *provider" "int event_index" "libwrc_wevt_event_t **event" "libwrc_error_t **error"
-.Ft int
-.Fn libwrc_wevt_provider_get_event_by_identifier "libwrc_wevt_provider_t *provider" "uint32_t event_identifier" "libwrc_wevt_event_t **event" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE channel functions
-.Ft int
-.Fn libwrc_wevt_channel_free "libwrc_wevt_channel_t **channel" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE event functions
-.Ft int
-.Fn libwrc_wevt_event_free "libwrc_wevt_event_t **event" "libwrc_error_t **error"
-.Ft int
-.Fn libwrc_wevt_event_get_identifier "libwrc_wevt_event_t *event" "uint32_t *identifier" "libwrc_error_t **error"
-.Ft int
-.Fn libwrc_wevt_event_get_message_identifier "libwrc_wevt_event_t *event" "uint32_t *message_identifier" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE keyword functions
-.Ft int
-.Fn libwrc_wevt_keyword_free "libwrc_wevt_keyword_t **keyword" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE level functions
-.Ft int
-.Fn libwrc_wevt_level_free "libwrc_wevt_level_t **level" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE map functions
-.Ft int
-.Fn libwrc_wevt_map_free "libwrc_wevt_map_t **map" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE opcode functions
-.Ft int
-.Fn libwrc_wevt_opcode_free "libwrc_wevt_opcode_t **opcode" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE task functions
-.Ft int
-.Fn libwrc_wevt_task_free "libwrc_wevt_task_t **task" "libwrc_error_t **error"
-.Pp
-WEVT_TEMPLATE template definition functions
-.Ft int
-.Fn libwrc_wevt_template_definition_free "libwrc_wevt_template_definition_t **template_definition" "libwrc_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libwrc_get_version

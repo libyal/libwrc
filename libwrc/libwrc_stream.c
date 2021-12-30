@@ -1167,6 +1167,90 @@ int libwrc_stream_get_resource(
 	return( 1 );
 }
 
+/* Retrieves a specific resource
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_stream_get_resource_by_index(
+     libwrc_stream_t *stream,
+     int resource_index,
+     libwrc_resource_t **resource,
+     libcerror_error_t **error )
+{
+	libcdata_tree_node_t *resource_node       = NULL;
+	libwrc_internal_stream_t *internal_stream = NULL;
+	static char *function                     = "libwrc_stream_get_resource_by_index";
+
+	if( stream == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid stream.",
+		 function );
+
+		return( -1 );
+	}
+	internal_stream = (libwrc_internal_stream_t *) stream;
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	if( *resource != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid resource value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_tree_node_get_sub_node_by_index(
+	     internal_stream->resources_root_node,
+	     resource_index,
+	     &resource_node,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event resource node: %d.",
+		 function,
+		 resource_index );
+
+		return( -1 );
+	}
+	if( libwrc_resource_initialize(
+	     resource,
+	     internal_stream->io_handle,
+	     internal_stream->file_io_handle,
+	     resource_node,
+	     LIBWRC_RESOURCE_FLAGS_DEFAULT,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create resource.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
 /* Retrieves a specific resource by identifier
  * Returns 1 if successful, 0 if no such resource or -1 on error
  */

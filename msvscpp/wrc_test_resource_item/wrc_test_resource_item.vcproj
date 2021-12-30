@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="wrc_test_resource"
-	ProjectGUID="{34B2419D-4B49-41DB-AF92-F2B7B28CDC74}"
-	RootNamespace="wrc_test_resource"
+	Name="wrc_test_resource_item"
+	ProjectGUID="{74AB98A2-10EA-487C-B402-1B78C1A8AA77}"
+	RootNamespace="wrc_test_resource_item"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -180,7 +180,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\wrc_test_resource.c"
+				RelativePath="..\..\tests\wrc_test_resource_item.c"
 				>
 			</File>
 		</Filter>

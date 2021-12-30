@@ -313,6 +313,7 @@ int libwrc_io_handle_read_resource_node(
 	libwrc_resource_values_t *sub_resource_values = NULL;
 	uint8_t *resource_node_data                   = NULL;
 	static char *function                         = "libwrc_io_handle_read_resource_node";
+	size_t name_string_size                       = 0;
 	size_t resource_node_data_offset              = 0;
 	size_t resource_node_data_size                = 0;
 	ssize_t read_count                            = 0;
@@ -463,7 +464,8 @@ int libwrc_io_handle_read_resource_node(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	if( flags != 0 )
 	{
 		libcerror_error_set(
@@ -715,7 +717,7 @@ int libwrc_io_handle_read_resource_node(
 				}
 				byte_stream_copy_to_uint16_little_endian(
 				 resource_name_size_data,
-				 resource_values->name_string_size );
+				 name_string_size );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libcnotify_verbose != 0 )
@@ -724,14 +726,14 @@ int libwrc_io_handle_read_resource_node(
 					 "%s: resource node entry: %03d name string size\t: %" PRIzd "\n",
 					 function,
 					 resource_node_entry,
-					 resource_values->name_string_size );
+					 name_string_size );
 
 				}
 #endif
-				resource_values->name_string_size *= 2;
+				name_string_size *= 2;
 
-				if( ( resource_values->name_string_size == 0 )
-				 || ( resource_values->name_string_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+				if( ( name_string_size == 0 )
+				 || ( name_string_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 				{
 					libcerror_error_set(
 					 error,
@@ -743,7 +745,7 @@ int libwrc_io_handle_read_resource_node(
 					goto on_error;
 				}
 				resource_values->name_string = (uint8_t *) memory_allocate(
-				                                            sizeof( uint8_t ) * resource_values->name_string_size );
+				                                            sizeof( uint8_t ) * name_string_size );
 
 				if( resource_values->name_string == NULL )
 				{
@@ -756,13 +758,15 @@ int libwrc_io_handle_read_resource_node(
 
 					goto on_error;
 				}
+				resource_values->name_string_size = name_string_size;
+
 				read_count = libbfio_handle_read_buffer(
 					      file_io_handle,
 					      resource_values->name_string,
-					      resource_values->name_string_size,
+					      name_string_size,
 					      error );
 
-				if( read_count != (ssize_t) resource_values->name_string_size )
+				if( read_count != (ssize_t) name_string_size )
 				{
 					libcerror_error_set(
 					 error,

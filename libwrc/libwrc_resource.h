@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWRC_INTERNAL_RESOURCE_H )
-#define _LIBWRC_INTERNAL_RESOURCE_H
+#if !defined( _LIBWRC_RESOURCE_H )
+#define _LIBWRC_RESOURCE_H
 
 #include <common.h>
 #include <types.h>
@@ -108,12 +108,6 @@ int libwrc_resource_get_identifier(
      libcerror_error_t **error );
 
 LIBWRC_EXTERN \
-int libwrc_resource_get_type(
-     libwrc_resource_t *resource,
-     int *type,
-     libcerror_error_t **error );
-
-LIBWRC_EXTERN \
 int libwrc_resource_get_utf8_name_size(
      libwrc_resource_t *resource,
      size_t *utf8_string_size,
@@ -140,6 +134,12 @@ int libwrc_resource_get_utf16_name(
      libcerror_error_t **error );
 
 LIBWRC_EXTERN \
+int libwrc_resource_get_type(
+     libwrc_resource_t *resource,
+     int *type,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
 int libwrc_resource_get_number_of_languages(
      libwrc_resource_t *resource,
      int *number_of_languages,
@@ -160,9 +160,22 @@ int libwrc_resource_get_value_by_language_identifier(
      intptr_t **value,
      libcerror_error_t **error );
 
+LIBWRC_EXTERN \
+int libwrc_resource_get_number_of_items(
+     libwrc_resource_t *resource,
+     int *number_of_items,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_get_item_by_index(
+     libwrc_resource_t *resource,
+     int item_index,
+     libwrc_resource_item_t **resource_item,
+     libcerror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBWRC_INTERNAL_RESOURCE_H ) */
+#endif /* !defined( _LIBWRC_RESOURCE_H ) */
 

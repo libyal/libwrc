@@ -1,19 +1,19 @@
-.Dd July 30, 2019
+.Dd December 30, 2021
 .Dt wrcinfo
 .Os libwrc
 .Sh NAME
 .Nm wrcinfo
-.Nd determines information about a Windows Resource (RC) stream
-of the .rsrc section of a MZ, PE/COFF executable
+.Nd determines information about a Windows Resource (RC) streams
+in the .rsrc section of a MZ, PE/COFF executable
 .Sh SYNOPSIS
 .Nm wrcinfo
-.Op Fl hvV
+.Op Fl hHvV
 .Op Fl c Ar codepage
 .Ar source
 .Sh DESCRIPTION
 .Nm wrcinfo
-is a utility to determine information about a Windows Resource (RC) stream
-of the .rsrc section of a MZ, PE/COFF executable
+is a utility to determine information about a Windows Resource (RC) streams
+in the .rsrc section of a MZ, PE/COFF executable
 .Pp
 .Nm wrcinfo
 is part of the
@@ -31,6 +31,8 @@ The options are as follows:
 specify the codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
 .It Fl h
 shows this help
+.It Fl H
+shows the resource hierarchy
 .It Fl v
 verbose output to stderr
 .It Fl V
@@ -42,28 +44,43 @@ None
 None
 .Sh EXAMPLES
 .Bd -literal
-# wrcinfo Windows/System32/ntoskrnl.exe
-wrcinfo 20121027
+# wrcinfo adtschema.dll
+wrcinfo 20211230
 .sp
 Windows Resource (RC) information:
-        number of resources     : 4
+.sp
+Resources:
+	11 (MESSAGETABLE)
+	14 (VERSIONINFO)
+	WEVT_TEMPLATE
+	MUI
 .sp
 Version resource:
-        number of languages     : 1
+	number of languages	: 1
 .sp
-        language identifier     : 0x00000409 (en-US)
-        file version            : 6.1.7601.17592
-        product version         : 6.1.7601.17592
+	language identifier	: 0x00000409 (en-US)
+	file version		: 6.0.6000.16386
+	product version		: 6.0.6000.16386
+.sp
+MUI resource:
+	number of languages	: 1
+.sp
+	language identifier	: 0x00000409 (en-US)
+	file type		: 0x00000011
+	main name		: WEVT_TEMPLATE
+	MUI name		: MUI
+	language		: en-US
+	fallback language	: en-US
 .sp
 Message-table resource:
-        number of languages     : 1
+	number of languages	: 1
 .sp
-        language identifier     : 0x00000409 (en-US)
-        number of messages      : 312
+	language identifier	: 0x00000409 (en-US)
+	number of messages	: 399
 .sp
-        message                 : 0
-        identifier              : 0x00000001
-        data                    : APC_INDEX_MISMATCH
+	message			: 0
+	identifier		: 0x70003000
+	data			: Security State Change
 .sp
 .Dl ...
 .sp

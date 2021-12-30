@@ -38,6 +38,7 @@
 #include "libwrc_message_table_values.h"
 #include "libwrc_mui_values.h"
 #include "libwrc_resource.h"
+#include "libwrc_resource_item.h"
 #include "libwrc_resource_values.h"
 #include "libwrc_string_values.h"
 #include "libwrc_version_values.h"
@@ -77,17 +78,6 @@ int libwrc_resource_initialize(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid resource value already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( resource_node == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid resource node.",
 		 function );
 
 		return( -1 );
@@ -487,6 +477,7 @@ int libwrc_resource_read_value(
 
 			break;
 
+/* TODO deprecate */
 		case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
 			resource_type_string = "event template";
 
@@ -783,6 +774,7 @@ int libwrc_resource_read_value(
 					}
 					break;
 
+/* TODO deprecate */
 				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
 					if( libwrc_language_entry_initialize(
 					     &language_entry,
@@ -884,6 +876,7 @@ int libwrc_resource_read_value(
 					          error );
 					break;
 
+/* TODO deprecate */
 				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
 					result = libwrc_wevt_template_values_read(
 					          language_entry,
@@ -1184,47 +1177,6 @@ int libwrc_resource_get_identifier(
 	return( 1 );
 }
 
-/* Retrieves the resource type
- * Returns 1 if successful or -1 on error
- */
-int libwrc_resource_get_type(
-     libwrc_resource_t *resource,
-     int *type,
-     libcerror_error_t **error )
-{
-	libwrc_internal_resource_t *internal_resource = NULL;
-	static char *function                         = "libwrc_resource_get_type";
-
-	if( resource == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid resource.",
-		 function );
-
-		return( -1 );
-	}
-	internal_resource = (libwrc_internal_resource_t *) resource;
-
-	if( libwrc_resource_values_get_type(
-	     internal_resource->resource_values,
-	     type,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve type.",
-		 function );
-
-		return( -1 );
-	}
-	return( 1 );
-}
-
 /* Retrieves the size of the UTF-8 encoded name
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if not available or -1 on error
@@ -1407,6 +1359,47 @@ int libwrc_resource_get_utf16_name(
 		return( -1 );
 	}
 	return( result );
+}
+
+/* Retrieves the resource type
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_resource_get_type(
+     libwrc_resource_t *resource,
+     int *type,
+     libcerror_error_t **error )
+{
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_type";
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	if( libwrc_resource_values_get_type(
+	     internal_resource->resource_values,
+	     type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve type.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 
 /* Retrieves the number of languages
@@ -1644,6 +1637,106 @@ int libwrc_resource_get_value_by_language_identifier(
 		 "%s: unable to retrieve value: %d.",
 		 function,
 		 value_index );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the number of items
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_resource_get_number_of_items(
+     libwrc_resource_t *resource,
+     int *number_of_items,
+     libcerror_error_t **error )
+{
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_number_of_items";
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	if( libcdata_tree_node_get_number_of_sub_nodes(
+	     internal_resource->resource_node,
+	     number_of_items,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of resource sub nodes.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific item
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_resource_get_item_by_index(
+     libwrc_resource_t *resource,
+     int item_index,
+     libwrc_resource_item_t **resource_item,
+     libcerror_error_t **error )
+{
+	libcdata_tree_node_t *resource_sub_node       = NULL;
+	libwrc_internal_resource_t *internal_resource = NULL;
+	static char *function                         = "libwrc_resource_get_item_by_index";
+
+	if( resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource.",
+		 function );
+
+		return( -1 );
+	}
+	internal_resource = (libwrc_internal_resource_t *) resource;
+
+	if( libcdata_tree_node_get_sub_node_by_index(
+	     internal_resource->resource_node,
+	     item_index,
+	     &resource_sub_node,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource sub node: %d.",
+		 function,
+		 item_index );
+
+		return( -1 );
+	}
+	if( libwrc_resource_item_initialize(
+	     resource_item,
+	     resource_sub_node,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create resource item.",
+		 function );
 
 		return( -1 );
 	}

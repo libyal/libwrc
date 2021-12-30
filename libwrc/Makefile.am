@@ -2,6 +2,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
@@ -53,6 +54,7 @@ libwrc_la_SOURCES = \
 	libwrc_mui_values.c libwrc_mui_values.h \
 	libwrc_notify.c libwrc_notify.h \
 	libwrc_resource.c libwrc_resource.h \
+	libwrc_resource_item.c libwrc_resource_item.h \
 	libwrc_resource_values.c libwrc_resource_values.h \
 	libwrc_stream.c libwrc_stream.h \
 	libwrc_support.c libwrc_support.h \
@@ -81,6 +83,7 @@ libwrc_la_SOURCES = \
 
 libwrc_la_LIBADD = \
 	@LIBCERROR_LIBADD@ \
+	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
@@ -95,7 +98,8 @@ libwrc_la_LIBADD = \
 	@LIBFGUID_LIBADD@ \
 	@LIBFVALUE_LIBADD@ \
 	@LIBFWEVT_LIBADD@ \
-	@LIBFWNT_LIBADD@
+	@LIBFWNT_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 libwrc_la_LDFLAGS = -no-undefined -version-info 1:0:0
 

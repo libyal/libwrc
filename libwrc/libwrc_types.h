@@ -35,6 +35,7 @@
  */
 #if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
 typedef struct libwrc_resource {}			libwrc_resource_t;
+typedef struct libwrc_resource_item {}			libwrc_resource_item_t;
 typedef struct libwrc_stream {}				libwrc_stream_t;
 typedef struct libwrc_wevt_channel {}			libwrc_wevt_channel_t;
 typedef struct libwrc_wevt_event {}			libwrc_wevt_event_t;
@@ -48,6 +49,7 @@ typedef struct libwrc_wevt_template_definition {}	libwrc_wevt_template_definitio
 
 #else
 typedef intptr_t libwrc_resource_t;
+typedef intptr_t libwrc_resource_item_t;
 typedef intptr_t libwrc_stream_t;
 typedef intptr_t libwrc_wevt_channel_t;
 typedef intptr_t libwrc_wevt_event_t;

@@ -1,4 +1,7 @@
 TODO:
+* implement resource item API (to handle hierarchy)
+
+* deprecate and remove WEVT_TEMPLATE resource functions in favor of libfwevt
 * pywrc:
   - MUI check output of pywrc_mui_get_main_name amd pywrc_mui_get_mui_name
   - add version type support (complete pywrc_version.c)
@@ -40,7 +43,7 @@ Tools:
 * wrcinfo:
   - what about PE/COFF files with multiple .rsrc sections?
 * wrcmount
-  - create
+  - create, needs resource item API
 
 20140928
 * see `git log' for more recent change log
