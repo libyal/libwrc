@@ -126,6 +126,10 @@ PyObject *pywrc_stream_get_resource_by_identifier(
            PyObject *arguments,
            PyObject *keywords );
 
+PyObject *pywrc_stream_get_resource_by_type(
+           pywrc_stream_t *pywrc_stream,
+           PyObject *arguments );
+
 PyObject *pywrc_stream_get_resource_by_name(
            pywrc_stream_t *pywrc_stream,
            PyObject *arguments,
@@ -135,5 +139,5 @@ PyObject *pywrc_stream_get_resource_by_name(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_STREAM_H ) */
 

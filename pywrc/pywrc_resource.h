@@ -27,7 +27,6 @@
 
 #include "pywrc_libwrc.h"
 #include "pywrc_python.h"
-#include "pywrc_stream.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -45,9 +44,9 @@ struct pywrc_resource
 	 */
 	libwrc_resource_t *resource;
 
-	/* The stream object
+	/* The parent object
 	 */
-	pywrc_stream_t *stream_object;
+	PyObject *parent_object;
 };
 
 extern PyMethodDef pywrc_resource_object_methods[];
@@ -56,7 +55,7 @@ extern PyTypeObject pywrc_resource_type_object;
 PyObject *pywrc_resource_new(
            PyTypeObject *type_object,
            libwrc_resource_t *resource,
-           pywrc_stream_t *stream_object );
+           PyObject *parent_object );
 
 int pywrc_resource_init(
      pywrc_resource_t *pywrc_resource );
@@ -89,9 +88,26 @@ PyObject *pywrc_resource_get_language_identifiers(
            pywrc_resource_t *pywrc_resource,
            PyObject *arguments );
 
+PyObject *pywrc_resource_get_number_of_items(
+           pywrc_resource_t *pywrc_resource,
+           PyObject *arguments );
+
+PyObject *pywrc_resource_get_item_by_index(
+           PyObject *pywrc_resource,
+           int item_index );
+
+PyObject *pywrc_resource_get_item(
+           pywrc_resource_t *pywrc_resource,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pywrc_resource_get_items(
+           pywrc_resource_t *pywrc_resource,
+           PyObject *arguments );
+
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYWRC_RESOURCE_H ) */
 

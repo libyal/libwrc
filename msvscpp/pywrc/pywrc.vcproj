@@ -210,6 +210,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\pywrc\pywrc_resource_item.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pywrc\pywrc_resource_items.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pywrc\pywrc_resources.c"
 				>
 			</File>
@@ -289,6 +297,14 @@
 			</File>
 			<File
 				RelativePath="..\..\pywrc\pywrc_resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pywrc\pywrc_resource_item.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pywrc\pywrc_resource_items.h"
 				>
 			</File>
 			<File

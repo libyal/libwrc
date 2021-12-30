@@ -37,6 +37,8 @@
 #include "pywrc_mui.h"
 #include "pywrc_python.h"
 #include "pywrc_resource.h"
+#include "pywrc_resource_item.h"
+#include "pywrc_resource_items.h"
 #include "pywrc_resources.h"
 #include "pywrc_stream.h"
 #include "pywrc_string.h"
@@ -243,17 +245,8 @@ PyMODINIT_FUNC initpywrc(
                 void )
 #endif
 {
-	PyObject *module                               = NULL;
-	PyTypeObject *language_identifiers_type_object = NULL;
-	PyTypeObject *manifest_type_object             = NULL;
-	PyTypeObject *message_table_type_object        = NULL;
-	PyTypeObject *mui_type_object                  = NULL;
-	PyTypeObject *resource_type_object             = NULL;
-	PyTypeObject *resources_type_object            = NULL;
-	PyTypeObject *stream_type_object               = NULL;
-	PyTypeObject *string_type_object               = NULL;
-	PyTypeObject *version_type_object              = NULL;
-	PyGILState_STATE gil_state                     = 0;
+	PyObject *module           = NULL;
+	PyGILState_STATE gil_state = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libwrc_notify_set_stream(
@@ -373,6 +366,40 @@ PyMODINIT_FUNC initpywrc(
 	 module,
 	 "resource",
 	 (PyObject *) &pywrc_resource_type_object );
+
+	/* Setup the resource item type object
+	 */
+	pywrc_resource_item_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_resource_item_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_resource_item_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "resource_item",
+	 (PyObject *) &pywrc_resource_item_type_object );
+
+	/* Setup the resource items type object
+	 */
+	pywrc_resource_items_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_resource_items_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_resource_items_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "resource_items",
+	 (PyObject *) &pywrc_resource_items_type_object );
 
 	/* Setup the resources type object
 	 */

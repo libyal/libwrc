@@ -33,6 +33,8 @@
 #include "pywrc_libwrc.h"
 #include "pywrc_python.h"
 #include "pywrc_resource.h"
+#include "pywrc_resource_item.h"
+#include "pywrc_resource_items.h"
 #include "pywrc_unused.h"
 
 PyMethodDef pywrc_resource_object_methods[] = {
@@ -69,6 +71,20 @@ PyMethodDef pywrc_resource_object_methods[] = {
 	  "\n"
 	  "Retrieves a specific language identifier." },
 
+	{ "get_number_of_items",
+	  (PyCFunction) pywrc_resource_get_number_of_items,
+	  METH_NOARGS,
+	  "get_number_of_items() -> Integer\n"
+	  "\n"
+	  "Retrieves the number of items." },
+
+	{ "get_item",
+	  (PyCFunction) pywrc_resource_get_item,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "get_item(item_index) -> Object\n"
+	  "\n"
+	  "Retrieves the item specified by the index." },
+
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
 };
@@ -97,6 +113,18 @@ PyGetSetDef pywrc_resource_object_get_set_definitions[] = {
 	  (getter) pywrc_resource_get_language_identifiers,
 	  (setter) 0,
 	  "The language identifiers",
+	  NULL },
+
+	{ "number_of_items",
+	  (getter) pywrc_resource_get_number_of_items,
+	  (setter) 0,
+	  "The number of items.",
+	  NULL },
+
+	{ "items",
+	  (getter) pywrc_resource_get_items,
+	  (setter) 0,
+	  "The items.",
 	  NULL },
 
 	/* Sentinel */
@@ -204,7 +232,7 @@ PyTypeObject pywrc_resource_type_object = {
 PyObject *pywrc_resource_new(
            PyTypeObject *type_object,
            libwrc_resource_t *resource,
-           pywrc_stream_t *stream_object )
+           PyObject *parent_object )
 {
 	pywrc_resource_t *pywrc_resource = NULL;
 	static char *function            = "pywrc_resource_new";
@@ -212,12 +240,14 @@ PyObject *pywrc_resource_new(
 	if( resource == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid resource.",
 		 function );
 
 		return( NULL );
 	}
+	/* PyObject_New does not invoke tp_init
+	 */
 	pywrc_resource = PyObject_New(
 	                  struct pywrc_resource,
 	                  type_object );
@@ -242,10 +272,10 @@ PyObject *pywrc_resource_new(
 		goto on_error;
 	}
 	pywrc_resource->resource      = resource;
-	pywrc_resource->stream_object = stream_object;
+	pywrc_resource->parent_object = parent_object;
 
 	Py_IncRef(
-	 (PyObject *) pywrc_resource->stream_object );
+	 (PyObject *) pywrc_resource->parent_object );
 
 	return( (PyObject *) pywrc_resource );
 
@@ -258,7 +288,7 @@ on_error:
 	return( NULL );
 }
 
-/* Initializes an resource object
+/* Initializes a resource object
  * Returns 0 if successful or -1 on error
  */
 int pywrc_resource_init(
@@ -269,7 +299,7 @@ int pywrc_resource_init(
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid resource.",
 		 function );
 
@@ -279,33 +309,29 @@ int pywrc_resource_init(
 	 */
 	pywrc_resource->resource = NULL;
 
-	return( 0 );
+	PyErr_Format(
+	 PyExc_NotImplementedError,
+	 "%s: initialize of resource not supported.",
+	 function );
+
+	return( -1 );
 }
 
-/* Frees an resource object
+/* Frees a resource object
  */
 void pywrc_resource_free(
       pywrc_resource_t *pywrc_resource )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pywrc_resource_free";
 	int result                  = 0;
 
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid resource.",
-		 function );
-
-		return;
-	}
-	if( pywrc_resource->resource == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid resource - missing libwrc resource.",
 		 function );
 
 		return;
@@ -331,29 +357,32 @@ void pywrc_resource_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libwrc_resource_free(
-	          &( pywrc_resource->resource ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pywrc_resource->resource != NULL )
 	{
-		pywrc_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to free libwrc resource.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libwrc_resource_free(
+		          &( pywrc_resource->resource ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pywrc_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to free libwrc resource.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
-	if( pywrc_resource->stream_object != NULL )
+	if( pywrc_resource->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pywrc_resource->stream_object );
+		 (PyObject *) pywrc_resource->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pywrc_resource );
@@ -366,8 +395,8 @@ PyObject *pywrc_resource_get_identifier(
            pywrc_resource_t *pywrc_resource,
            PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pywrc_resource_get_identifier";
 	uint32_t identifier      = 0;
 	int result               = 0;
@@ -377,7 +406,7 @@ PyObject *pywrc_resource_get_identifier(
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid resource.",
 		 function );
 
@@ -540,8 +569,8 @@ PyObject *pywrc_resource_get_number_of_languages(
            pywrc_resource_t *pywrc_resource,
            PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pywrc_resource_get_number_of_languages";
 	int number_of_languages  = 0;
 	int result               = 0;
@@ -551,7 +580,7 @@ PyObject *pywrc_resource_get_number_of_languages(
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid resource.",
 		 function );
 
@@ -605,7 +634,7 @@ PyObject *pywrc_resource_get_language_identifier_by_index(
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid resource.",
 		 function );
 
@@ -684,7 +713,7 @@ PyObject *pywrc_resource_get_language_identifiers(
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid resource.",
 		 function );
 
@@ -728,4 +757,224 @@ PyObject *pywrc_resource_get_language_identifiers(
 	}
 	return( language_identifiers_object );
 }
+
+/* Retrieves the number of resource items
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_get_number_of_items(
+           pywrc_resource_t *pywrc_resource,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pywrc_resource_get_number_of_items";
+	int number_of_items      = 0;
+	int result               = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_resource == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid resource.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_get_number_of_items(
+	          pywrc_resource->resource,
+	          &number_of_items,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve .",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_items );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_items );
+#endif
+	return( integer_object );
+}
+
+/* Retrieves a specific resource item by index
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_get_item_by_index(
+           PyObject *pywrc_resource,
+           int item_index )
+{
+	PyObject *item_object        = NULL;
+	libcerror_error_t *error     = NULL;
+	libwrc_resource_item_t *item = NULL;
+	static char *function        = "pywrc_resource_get_item_by_index";
+	int result                   = 0;
+
+	if( pywrc_resource == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid resource.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_get_item_by_index(
+	          ( (pywrc_resource_t *) pywrc_resource )->resource,
+	          item_index,
+	          &item,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve : %d.",
+		 function,
+		 item_index );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	item_object = pywrc_resource_item_new(
+	               item,
+	               pywrc_resource );
+
+	if( item_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create resource item object.",
+		 function );
+
+		goto on_error;
+	}
+	return( item_object );
+
+on_error:
+	if( item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &item,
+		 NULL );
+	}
+	return( NULL );
+}
+
+/* Retrieves a specific resource item
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_get_item(
+           pywrc_resource_t *pywrc_resource,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *item_object       = NULL;
+	static char *keyword_list[] = { "item_index", NULL };
+	int item_index              = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "i",
+	     keyword_list,
+	     &item_index ) == 0 )
+	{
+		return( NULL );
+	}
+	item_object = pywrc_resource_get_item_by_index(
+	               (PyObject *) pywrc_resource,
+	               item_index );
+
+	return( item_object );
+}
+
+/* Retrieves a sequence and iterator object for the resource items
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_get_items(
+           pywrc_resource_t *pywrc_resource,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pywrc_resource_get_items";
+	int number_of_items       = 0;
+	int result                = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_resource == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid resource.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_get_number_of_items(
+	          pywrc_resource->resource,
+	          &number_of_items,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of items.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	sequence_object = pywrc_resource_items_new(
+	                   (PyObject *) pywrc_resource,
+	                   &pywrc_resource_get_item_by_index,
+	                   number_of_items );
+
+	if( sequence_object == NULL )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to create sequence object.",
+		 function );
+
+		return( NULL );
+	}
+	return( sequence_object );
+}
+
 

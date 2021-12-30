@@ -30,6 +30,8 @@ pywrc_la_SOURCES = \
 	pywrc_mui.c pywrc_mui.h \
 	pywrc_python.h \
 	pywrc_resource.c pywrc_resource.h \
+	pywrc_resource_item.c pywrc_resource_item.h \
+	pywrc_resource_items.c pywrc_resource_items.h \
 	pywrc_resources.c pywrc_resources.h \
 	pywrc_stream.c pywrc_stream.h \
 	pywrc_string.c pywrc_string.h \

@@ -47,13 +47,15 @@
 #include "pywrc_version.h"
 
 #if !defined( LIBWRC_HAVE_BFIO )
+
 LIBWRC_EXTERN \
 int libwrc_stream_open_file_io_handle(
      libwrc_stream_t *stream,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libwrc_error_t **error );
-#endif
+
+#endif /* !defined( LIBWRC_HAVE_BFIO ) */
 
 PyMethodDef pywrc_stream_object_methods[] = {
 
@@ -275,8 +277,8 @@ PyTypeObject pywrc_stream_type_object = {
 int pywrc_stream_init(
      pywrc_stream_t *pywrc_stream )
 {
-	static char *function    = "pywrc_stream_init";
 	libcerror_error_t *error = NULL;
+	static char *function    = "pywrc_stream_init";
 
 	if( pywrc_stream == NULL )
 	{
@@ -287,6 +289,8 @@ int pywrc_stream_init(
 
 		return( -1 );
 	}
+	/* Make sure libwrc stream is set to NULL
+	 */
 	pywrc_stream->stream         = NULL;
 	pywrc_stream->file_io_handle = NULL;
 
@@ -313,8 +317,8 @@ int pywrc_stream_init(
 void pywrc_stream_free(
       pywrc_stream_t *pywrc_stream )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pywrc_stream_free";
 	int result                  = 0;
 
@@ -323,15 +327,6 @@ void pywrc_stream_free(
 		PyErr_Format(
 		 PyExc_ValueError,
 		 "%s: invalid stream.",
-		 function );
-
-		return;
-	}
-	if( pywrc_stream->stream == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid stream - missing libwrc stream.",
 		 function );
 
 		return;
@@ -451,9 +446,9 @@ PyObject *pywrc_stream_open(
 {
 	PyObject *string_object      = NULL;
 	libcerror_error_t *error     = NULL;
+	const char *filename_narrow  = NULL;
 	static char *function        = "pywrc_stream_open";
 	static char *keyword_list[]  = { "filename", "mode", NULL };
-	const char *filename_narrow  = NULL;
 	char *mode                   = NULL;
 	int result                   = 0;
 
@@ -507,8 +502,8 @@ PyObject *pywrc_stream_open(
 	if( result == -1 )
 	{
 		pywrc_error_fetch_and_raise(
-	         PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 PyExc_RuntimeError,
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -524,7 +519,7 @@ PyObject *pywrc_stream_open(
 
 		result = libwrc_stream_open_wide(
 		          pywrc_stream->stream,
-	                  filename_wide,
+		          filename_wide,
 		          LIBWRC_OPEN_READ,
 		          &error );
 
@@ -537,23 +532,23 @@ PyObject *pywrc_stream_open(
 		{
 			pywrc_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
 		}
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libwrc_stream_open(
 		          pywrc_stream->stream,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBWRC_OPEN_READ,
 		          &error );
 
@@ -584,17 +579,17 @@ PyObject *pywrc_stream_open(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pywrc_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -606,16 +601,16 @@ PyObject *pywrc_stream_open(
 
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   string_object );
+		                   string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   string_object );
+		                   string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libwrc_stream_open(
 		          pywrc_stream->stream,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBWRC_OPEN_READ,
 		          &error );
 
@@ -843,7 +838,7 @@ PyObject *pywrc_stream_close(
 		{
 			pywrc_error_raise(
 			 error,
-			 PyExc_IOError,
+			 PyExc_MemoryError,
 			 "%s: unable to free libbfio file IO handle.",
 			 function );
 
@@ -866,8 +861,8 @@ PyObject *pywrc_stream_get_ascii_codepage(
            pywrc_stream_t *pywrc_stream,
            PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
 	const char *codepage_string = NULL;
 	static char *function       = "pywrc_stream_get_ascii_codepage";
 	int ascii_codepage          = 0;
@@ -1077,8 +1072,8 @@ int pywrc_stream_set_ascii_codepage_setter(
 	if( result == -1 )
 	{
 		pywrc_error_fetch_and_raise(
-	         PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 PyExc_RuntimeError,
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( -1 );
@@ -1094,17 +1089,17 @@ int pywrc_stream_set_ascii_codepage_setter(
 		{
 			pywrc_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( -1 );
 		}
 #if PY_MAJOR_VERSION >= 3
 		codepage_string = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		codepage_string = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		if( codepage_string == NULL )
 		{
@@ -1124,17 +1119,17 @@ int pywrc_stream_set_ascii_codepage_setter(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pywrc_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -1439,7 +1434,7 @@ PyObject *pywrc_stream_get_resource_by_index(
 	resource_object = pywrc_resource_new(
 	                   type_object,
 	                   resource,
-	                   (pywrc_stream_t *) pywrc_stream );
+	                   pywrc_stream );
 
 	if( resource_object == NULL )
 	{
@@ -1668,7 +1663,7 @@ PyObject *pywrc_stream_get_resource_by_identifier(
 	resource_object = pywrc_resource_new(
 	                   type_object,
 	                   resource,
-	                   pywrc_stream );
+	                   (PyObject *) pywrc_stream );
 
 	if( resource_object == NULL )
 	{
@@ -1799,7 +1794,7 @@ PyObject *pywrc_stream_get_resource_by_name(
 	resource_object = pywrc_resource_new(
 	                   type_object,
 	                   resource,
-	                   pywrc_stream );
+	                   (PyObject *) pywrc_stream );
 
 	if( resource_object == NULL )
 	{
