@@ -53,7 +53,6 @@ int libwrc_resource_initialize(
      libwrc_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libcdata_tree_node_t *resource_node,
-     uint8_t flags,
      libcerror_error_t **error )
 {
 	libwrc_internal_resource_t *internal_resource = NULL;
@@ -79,18 +78,6 @@ int libwrc_resource_initialize(
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid resource value already set.",
 		 function );
-
-		return( -1 );
-	}
-	if( ( flags & ~( LIBWRC_RESOURCE_FLAG_MANAGED_FILE_IO_HANDLE ) ) != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags: 0x%02" PRIx8 ".",
-		 function,
-		 flags );
 
 		return( -1 );
 	}
@@ -150,45 +137,10 @@ int libwrc_resource_initialize(
 
 		return( -1 );
 	}
-	if( ( flags & LIBWRC_RESOURCE_FLAG_MANAGED_FILE_IO_HANDLE ) == 0 )
-	{
-		internal_resource->file_io_handle = file_io_handle;
-	}
-	else
-	{
-		if( libbfio_handle_clone(
-		     &( internal_resource->file_io_handle ),
-		     file_io_handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy file IO handle.",
-			 function );
-
-			goto on_error;
-		}
-		if( libbfio_handle_set_open_on_demand(
-		     internal_resource->file_io_handle,
-		     1,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to set open on demand in file IO handle.",
-			 function );
-
-			goto on_error;
-		}
-	}
 	internal_resource->io_handle       = io_handle;
+	internal_resource->file_io_handle  = file_io_handle;
 	internal_resource->resource_node   = resource_node;
 	internal_resource->resource_values = resource_values;
-	internal_resource->flags           = flags;
 
 	*resource = (libwrc_resource_t *) internal_resource;
 
@@ -197,15 +149,6 @@ int libwrc_resource_initialize(
 on_error:
 	if( internal_resource != NULL )
 	{
-		if( ( flags & LIBWRC_RESOURCE_FLAG_MANAGED_FILE_IO_HANDLE ) != 0 )
-		{
-			if( internal_resource->file_io_handle != NULL )
-			{
-				libbfio_handle_free(
-				 &( internal_resource->file_io_handle ),
-				 NULL );
-			}
-		}
 		memory_free(
 		 internal_resource );
 	}
@@ -239,40 +182,8 @@ int libwrc_resource_free(
 		internal_resource = (libwrc_internal_resource_t *) *resource;
 		*resource         = NULL;
 
-		/* The io_handle, resource_node and resource_values references are freed elsewhere
+		/* The io_handle, file_io_handle, resource_node and resource_values references are freed elsewhere
 		 */
-		if( ( internal_resource->flags & LIBWRC_RESOURCE_FLAG_MANAGED_FILE_IO_HANDLE ) != 0 )
-		{
-			if( internal_resource->file_io_handle != NULL )
-			{
-				if( libbfio_handle_close(
-				     internal_resource->file_io_handle,
-				     error ) != 0 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-					 "%s: unable to close file IO handle.",
-					 function );
-
-					result = -1;
-				}
-				if( libbfio_handle_free(
-				     &( internal_resource->file_io_handle ),
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free file IO handle.",
-					 function );
-
-					result = -1;
-				}
-			}
-		}
 		if( internal_resource->value != NULL )
 		{
 			if( internal_resource->free_value != NULL )
@@ -1728,6 +1639,8 @@ int libwrc_resource_get_item_by_index(
 	}
 	if( libwrc_resource_item_initialize(
 	     resource_item,
+	     internal_resource->io_handle,
+	     internal_resource->file_io_handle,
 	     resource_sub_node,
 	     error ) != 1 )
 	{

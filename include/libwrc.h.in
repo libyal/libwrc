@@ -524,6 +524,54 @@ int libwrc_resource_item_get_utf16_name(
      size_t utf16_string_size,
      libwrc_error_t **error );
 
+/* Reads resouce item data from the current offset into a buffer
+ * Returns the number of bytes read or -1 on error
+ */
+LIBWRC_EXTERN \
+ssize_t libwrc_resource_item_read_buffer(
+         libwrc_resource_item_t *resource_item,
+         uint8_t *buffer,
+         size_t size,
+         libwrc_error_t **error );
+
+/* Reads resouce item data a specific offset into a buffer
+ * Returns the number of bytes read or -1 on error
+ */
+ssize_t libwrc_resource_item_read_buffer_at_offset(
+         libwrc_resource_item_t *resource_item,
+         uint8_t *buffer,
+         size_t buffer_size,
+         off64_t offset,
+         libwrc_error_t **error );
+
+/* Seeks a certain offset of the resouce item data
+ * Returns the offset if seek is successful or -1 on error
+ */
+LIBWRC_EXTERN \
+off64_t libwrc_resource_item_seek_offset(
+         libwrc_resource_item_t *resource_item,
+         off64_t offset,
+         int whence,
+         libwrc_error_t **error );
+
+/* Retrieves the current offset in the resouce item data
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_offset(
+     libwrc_resource_item_t *resource_item,
+     off64_t *offset,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the resource data
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_size(
+     libwrc_resource_item_t *resource_item,
+     uint32_t *size,
+     libwrc_error_t **error );
+
 /* Retrieves the number of sub items
  * Returns 1 if successful or -1 on error
  */

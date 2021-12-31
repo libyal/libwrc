@@ -261,16 +261,6 @@ PyObject *pywrc_resource_new(
 
 		goto on_error;
 	}
-	if( pywrc_resource_init(
-	     pywrc_resource ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize resource.",
-		 function );
-
-		goto on_error;
-	}
 	pywrc_resource->resource      = resource;
 	pywrc_resource->parent_object = parent_object;
 

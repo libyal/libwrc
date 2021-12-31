@@ -1,4 +1,4 @@
-.Dd December 30, 2021
+.Dd December 31, 2021
 .Dt libwrc 3
 .Os libwrc
 .Sh NAME
@@ -116,6 +116,14 @@ Resource item functions
 .Fn libwrc_resource_item_get_utf16_name_size "libwrc_resource_item_t *resource_item" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_resource_item_get_utf16_name "libwrc_resource_item_t *resource_item" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_size "libwrc_resource_item_t *resource_item" "uint32_t *size" "libwrc_error_t **error"
+.Ft ssize_t
+.Fn libwrc_resource_item_read_buffer "libwrc_resource_item_t *resource_item" "uint8_t *buffer" "size_t size" "libwrc_error_t **error"
+.Ft off64_t
+.Fn libwrc_resource_item_seek_offset "libwrc_resource_item_t *resource_item" "off64_t offset" "int whence" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_resource_item_get_offset "libwrc_resource_item_t *resource_item" "off64_t *offset" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_resource_item_get_number_of_sub_items "libwrc_resource_item_t *resource_item" "int *number_of_sub_items" "libwrc_error_t **error"
 .Ft int

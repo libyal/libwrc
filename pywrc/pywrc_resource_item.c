@@ -27,6 +27,7 @@
 #endif
 
 #include "pywrc_error.h"
+#include "pywrc_integer.h"
 #include "pywrc_libcerror.h"
 #include "pywrc_libwrc.h"
 #include "pywrc_python.h"
@@ -49,6 +50,61 @@ PyMethodDef pywrc_resource_item_object_methods[] = {
 	  "get_name() -> Unicode string or None\n"
 	  "\n"
 	  "Retrieves the name." },
+
+	/* Functions to access the resource item data */
+
+	{ "read_buffer",
+	  (PyCFunction) pywrc_resource_item_read_buffer,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "read_buffer(size) -> String\n"
+	  "\n"
+	  "Reads a buffer of resource item data." },
+
+	{ "read_buffer_at_offset",
+	  (PyCFunction) pywrc_resource_item_read_buffer_at_offset,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "read_buffer_at_offset(size, offset) -> String\n"
+	  "\n"
+	  "Reads a buffer of resource item data at a specific offset." },
+
+	{ "seek_offset",
+	  (PyCFunction) pywrc_resource_item_seek_offset,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "seek_offset(offset, whence) -> None\n"
+	  "\n"
+	  "Seeks an offset within the resource item data." },
+
+	{ "get_offset",
+	  (PyCFunction) pywrc_resource_item_get_offset,
+	  METH_NOARGS,
+	  "get_offset() -> Integer\n"
+	  "\n"
+	  "Retrieves the current offset within the resource item data." },
+
+	/* Some Pythonesque aliases */
+
+	{ "read",
+	  (PyCFunction) pywrc_resource_item_read_buffer,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "read(size) -> String\n"
+	  "\n"
+	  "Reads a buffer of resource item data." },
+
+	{ "seek",
+	  (PyCFunction) pywrc_resource_item_seek_offset,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "seek(offset, whence) -> None\n"
+	  "\n"
+	  "Seeks an offset within the resource item data." },
+
+	{ "tell",
+	  (PyCFunction) pywrc_resource_item_get_offset,
+	  METH_NOARGS,
+	  "tell() -> Integer\n"
+	  "\n"
+	  "Retrieves the current offset within the resource item data." },
+
+	/* Functions to access sub items */
 
 	{ "get_number_of_sub_items",
 	  (PyCFunction) pywrc_resource_item_get_number_of_sub_items,
@@ -518,6 +574,540 @@ on_error:
 		 utf8_string );
 	}
 	return( NULL );
+}
+
+/* Reads (resource item) data at the current offset into a buffer
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_item_read_buffer(
+           pywrc_resource_item_t *pywrc_resource_item,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *integer_object    = NULL;
+	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	char *buffer                = NULL;
+	static char *function       = "pywrc_resource_item_read_buffer";
+	static char *keyword_list[] = { "size", NULL };
+	size64_t read_size          = 0;
+	ssize_t read_count          = 0;
+	int result                  = 0;
+
+	if( pywrc_resource_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid pywrc resource item.",
+		 function );
+
+		return( NULL );
+	}
+	if( pywrc_resource_item->resource_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid pywrc resource item - missing libwrc resource item.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "|O",
+	     keyword_list,
+	     &integer_object ) == 0 )
+	{
+		return( NULL );
+	}
+	if( integer_object == NULL )
+	{
+		result = 0;
+	}
+	else
+	{
+		result = PyObject_IsInstance(
+		          integer_object,
+		          (PyObject *) &PyLong_Type );
+
+		if( result == -1 )
+		{
+			pywrc_error_fetch_and_raise(
+			 PyExc_RuntimeError,
+			 "%s: unable to determine if integer object is of type long.",
+			 function );
+
+			return( NULL );
+		}
+#if PY_MAJOR_VERSION < 3
+		else if( result == 0 )
+		{
+			PyErr_Clear();
+
+			result = PyObject_IsInstance(
+				  integer_object,
+				  (PyObject *) &PyInt_Type );
+
+			if( result == -1 )
+			{
+				pywrc_error_fetch_and_raise(
+				 PyExc_RuntimeError,
+				 "%s: unable to determine if integer object is of type int.",
+				 function );
+
+				return( NULL );
+			}
+		}
+#endif
+	}
+	if( result != 0 )
+	{
+		if( pywrc_integer_unsigned_copy_to_64bit(
+		     integer_object,
+		     (uint64_t *) &read_size,
+		     &error ) != 1 )
+		{
+			pywrc_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to convert integer object into read size.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+	}
+	else if( ( integer_object == NULL )
+	      || ( integer_object == Py_None ) )
+	{
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libwrc_resource_item_get_size(
+			  pywrc_resource_item->resource_item,
+			  (uint32_t *) &read_size,
+			  &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pywrc_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to retrieve size.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+	}
+	else
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported integer object type.",
+		 function );
+
+		return( NULL );
+	}
+	if( read_size == 0 )
+	{
+#if PY_MAJOR_VERSION >= 3
+		string_object = PyBytes_FromString(
+		                 "" );
+#else
+		string_object = PyString_FromString(
+		                 "" );
+#endif
+		return( string_object );
+	}
+	/* Make sure the data fits into a memory buffer
+	 */
+	if( ( read_size > (size64_t) INT_MAX )
+	 || ( read_size > (size64_t) SSIZE_MAX ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid argument read size value exceeds maximum.",
+		 function );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	string_object = PyBytes_FromStringAndSize(
+	                 NULL,
+	                 read_size );
+
+	buffer = PyBytes_AsString(
+	          string_object );
+#else
+	/* Note that a size of 0 is not supported
+	 */
+	string_object = PyString_FromStringAndSize(
+	                 NULL,
+	                 read_size );
+
+	buffer = PyString_AsString(
+	          string_object );
+#endif
+	Py_BEGIN_ALLOW_THREADS
+
+	read_count = libwrc_resource_item_read_buffer(
+	              pywrc_resource_item->resource_item,
+	              (uint8_t *) buffer,
+	              (size_t) read_size,
+	              &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( read_count <= -1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to read data.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		Py_DecRef(
+		 (PyObject *) string_object );
+
+		return( NULL );
+	}
+	/* Need to resize the string here in case read_size was not fully read.
+	 */
+#if PY_MAJOR_VERSION >= 3
+	if( _PyBytes_Resize(
+	     &string_object,
+	     (Py_ssize_t) read_count ) != 0 )
+#else
+	if( _PyString_Resize(
+	     &string_object,
+	     (Py_ssize_t) read_count ) != 0 )
+#endif
+	{
+		Py_DecRef(
+		 (PyObject *) string_object );
+
+		return( NULL );
+	}
+	return( string_object );
+}
+
+/* Reads (resource item) data at a specific offset
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_item_read_buffer_at_offset(
+           pywrc_resource_item_t *pywrc_resource_item,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *integer_object    = NULL;
+	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	char *buffer                = NULL;
+	static char *function       = "pywrc_resource_item_read_buffer_at_offset";
+	static char *keyword_list[] = { "size", "offset", NULL };
+	size64_t read_size          = 0;
+	ssize_t read_count          = 0;
+	off64_t read_offset         = 0;
+	int result                  = 0;
+
+	if( pywrc_resource_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid pywrc resource item.",
+		 function );
+
+		return( NULL );
+	}
+	if( pywrc_resource_item->resource_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid pywrc resource item - missing libwrc resource item.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "OL",
+	     keyword_list,
+	     &integer_object,
+	     &read_offset ) == 0 )
+	{
+		return( NULL );
+	}
+	result = PyObject_IsInstance(
+	          integer_object,
+	          (PyObject *) &PyLong_Type );
+
+	if( result == -1 )
+	{
+		pywrc_error_fetch_and_raise(
+	         PyExc_RuntimeError,
+		 "%s: unable to determine if integer object is of type long.",
+		 function );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION < 3
+	else if( result == 0 )
+	{
+		PyErr_Clear();
+
+		result = PyObject_IsInstance(
+		          integer_object,
+		          (PyObject *) &PyInt_Type );
+
+		if( result == -1 )
+		{
+			pywrc_error_fetch_and_raise(
+		         PyExc_RuntimeError,
+			 "%s: unable to determine if integer object is of type int.",
+			 function );
+
+			return( NULL );
+		}
+	}
+#endif
+	if( result != 0 )
+	{
+		if( pywrc_integer_unsigned_copy_to_64bit(
+		     integer_object,
+		     (uint64_t *) &read_size,
+		     &error ) != 1 )
+		{
+			pywrc_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to convert integer object into read size.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+	}
+	else
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported integer object type.",
+		 function );
+
+		return( NULL );
+	}
+	if( read_size == 0 )
+	{
+#if PY_MAJOR_VERSION >= 3
+		string_object = PyBytes_FromString(
+		                 "" );
+#else
+		string_object = PyString_FromString(
+		                 "" );
+#endif
+		return( string_object );
+	}
+	/* Make sure the data fits into a memory buffer
+	 */
+	if( ( read_size > (size64_t) INT_MAX )
+	 || ( read_size > (size64_t) SSIZE_MAX ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid argument read size value exceeds maximum.",
+		 function );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	string_object = PyBytes_FromStringAndSize(
+	                 NULL,
+	                 read_size );
+
+	buffer = PyBytes_AsString(
+	          string_object );
+#else
+	/* Note that a size of 0 is not supported
+	 */
+	string_object = PyString_FromStringAndSize(
+	                 NULL,
+	                 read_size );
+
+	buffer = PyString_AsString(
+	          string_object );
+#endif
+	Py_BEGIN_ALLOW_THREADS
+
+	read_count = libwrc_resource_item_read_buffer_at_offset(
+	              pywrc_resource_item->resource_item,
+	              (uint8_t *) buffer,
+	              (size_t) read_size,
+	              (off64_t) read_offset,
+	              &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( read_count <= -1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to read data.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		Py_DecRef(
+		 (PyObject *) string_object );
+
+		return( NULL );
+	}
+	/* Need to resize the string here in case read_size was not fully read.
+	 */
+#if PY_MAJOR_VERSION >= 3
+	if( _PyBytes_Resize(
+	     &string_object,
+	     (Py_ssize_t) read_count ) != 0 )
+#else
+	if( _PyString_Resize(
+	     &string_object,
+	     (Py_ssize_t) read_count ) != 0 )
+#endif
+	{
+		Py_DecRef(
+		 (PyObject *) string_object );
+
+		return( NULL );
+	}
+	return( string_object );
+}
+
+/* Seeks a certain offset in the (resource item) data
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_item_seek_offset(
+           pywrc_resource_item_t *pywrc_resource_item,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	libcerror_error_t *error    = NULL;
+	static char *function       = "pywrc_resource_item_seek_offset";
+	static char *keyword_list[] = { "offset", "whence", NULL };
+	off64_t offset              = 0;
+	int whence                  = 0;
+
+	if( pywrc_resource_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid item.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "L|i",
+	     keyword_list,
+	     &offset,
+	     &whence ) == 0 )
+	{
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	offset = libwrc_resource_item_seek_offset(
+	          pywrc_resource_item->resource_item,
+	          offset,
+	          whence,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+ 	if( offset == -1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to seek offset.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+}
+
+/* Retrieves the current offset in the (resource item) data
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pywrc_resource_item_get_offset(
+           pywrc_resource_item_t *pywrc_resource_item,
+           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
+	static char *function    = "pywrc_resource_item_get_offset";
+	off64_t current_offset   = 0;
+	int result               = 0;
+
+	PYWRC_UNREFERENCED_PARAMETER( arguments )
+
+	if( pywrc_resource_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid item.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libwrc_resource_item_get_offset(
+	          pywrc_resource_item->resource_item,
+	          &current_offset,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pywrc_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve offset.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	integer_object = pywrc_integer_signed_new_from_64bit(
+	                  (int64_t) current_offset );
+
+	return( integer_object );
 }
 
 /* Retrieves the number of sub items

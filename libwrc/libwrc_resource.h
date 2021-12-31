@@ -66,10 +66,6 @@ struct libwrc_internal_resource
 	int (*free_value)(
 	       intptr_t **value,
 	       libcerror_error_t **error );
-
-	/* The flags
-	 */
-	uint8_t flags;
 };
 
 int libwrc_resource_initialize(
@@ -77,7 +73,6 @@ int libwrc_resource_initialize(
      libwrc_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libcdata_tree_node_t *resource_node,
-     uint8_t flags,
      libcerror_error_t **error );
 
 LIBWRC_EXTERN \

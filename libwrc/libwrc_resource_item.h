@@ -26,6 +26,8 @@
 #include <types.h>
 
 #include "libwrc_extern.h"
+#include "libwrc_io_handle.h"
+#include "libwrc_libbfio.h"
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_resource_values.h"
@@ -39,6 +41,14 @@ typedef struct libwrc_internal_resource_item libwrc_internal_resource_item_t;
 
 struct libwrc_internal_resource_item
 {
+	/* The IO handle
+	 */
+	libwrc_io_handle_t *io_handle;
+
+	/* The file IO handle
+	 */
+	libbfio_handle_t *file_io_handle;
+
 	/* The resource node
 	 */
 	libcdata_tree_node_t *resource_node;
@@ -46,10 +56,16 @@ struct libwrc_internal_resource_item
 	/* The resource values
 	 */
 	libwrc_resource_values_t *resource_values;
+
+	/* The current data offset
+	 */
+	off64_t current_offset;
 };
 
 int libwrc_resource_item_initialize(
      libwrc_resource_item_t **resource_item,
+     libwrc_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      libcdata_tree_node_t *resource_node,
      libcerror_error_t **error );
 
@@ -88,6 +104,40 @@ int libwrc_resource_item_get_utf16_name(
      libwrc_resource_item_t *resource_item,
      uint16_t *utf16_string,
      size_t utf16_string_size,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+ssize_t libwrc_resource_item_read_buffer(
+         libwrc_resource_item_t *resource_item,
+         uint8_t *buffer,
+         size_t size,
+         libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+ssize_t libwrc_resource_item_read_buffer_at_offset(
+         libwrc_resource_item_t *resource_item,
+         uint8_t *buffer,
+         size_t size,
+         off64_t offset,
+         libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+off64_t libwrc_resource_item_seek_offset(
+         libwrc_resource_item_t *resource_item,
+         off64_t offset,
+         int whence,
+         libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_offset(
+     libwrc_resource_item_t *resource_item,
+     off64_t *offset,
+     libcerror_error_t **error );
+
+LIBWRC_EXTERN \
+int libwrc_resource_item_get_size(
+     libwrc_resource_item_t *resource_item,
+     uint32_t *size,
      libcerror_error_t **error );
 
 LIBWRC_EXTERN \

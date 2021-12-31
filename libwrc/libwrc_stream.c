@@ -1132,7 +1132,6 @@ int libwrc_stream_get_resource(
 	     internal_stream->io_handle,
 	     internal_stream->file_io_handle,
 	     resource_node,
-	     LIBWRC_RESOURCE_FLAGS_DEFAULT,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1216,7 +1215,6 @@ int libwrc_stream_get_resource_by_index(
 	     internal_stream->io_handle,
 	     internal_stream->file_io_handle,
 	     resource_node,
-	     LIBWRC_RESOURCE_FLAGS_DEFAULT,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1349,7 +1347,6 @@ int libwrc_stream_get_resource_by_identifier(
 			     internal_stream->io_handle,
 			     internal_stream->file_io_handle,
 			     resource_node,
-			     LIBWRC_RESOURCE_FLAGS_DEFAULT,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -1500,7 +1497,6 @@ int libwrc_stream_get_resource_by_type(
 			     internal_stream->io_handle,
 			     internal_stream->file_io_handle,
 			     resource_node,
-			     LIBWRC_RESOURCE_FLAGS_DEFAULT,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -1675,7 +1671,6 @@ int libwrc_stream_get_resource_by_utf8_name(
 				     internal_stream->io_handle,
 				     internal_stream->file_io_handle,
 				     resource_node,
-				     LIBWRC_RESOURCE_FLAGS_DEFAULT,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
@@ -1851,7 +1846,6 @@ int libwrc_stream_get_resource_by_utf16_name(
 				     internal_stream->io_handle,
 				     internal_stream->file_io_handle,
 				     resource_node,
-				     LIBWRC_RESOURCE_FLAGS_DEFAULT,
 				     error ) != 1 )
 				{
 					libcerror_error_set(

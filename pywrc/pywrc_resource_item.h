@@ -70,6 +70,25 @@ PyObject *pywrc_resource_item_get_name(
            pywrc_resource_item_t *pywrc_resource_item,
            PyObject *arguments );
 
+PyObject *pywrc_resource_item_read_buffer(
+           pywrc_resource_item_t *pywrc_resource_item,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pywrc_resource_item_read_buffer_at_offset(
+           pywrc_resource_item_t *pywrc_resource_item,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pywrc_resource_item_seek_offset(
+           pywrc_resource_item_t *pywrc_resource_item,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pywrc_resource_item_get_offset(
+           pywrc_resource_item_t *pywrc_resource_item,
+           PyObject *arguments );
+
 PyObject *pywrc_resource_item_get_number_of_sub_items(
            pywrc_resource_item_t *pywrc_resource_item,
            PyObject *arguments );

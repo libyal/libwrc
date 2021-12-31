@@ -117,7 +117,6 @@ int wrc_test_resource_initialize(
 	          NULL,
 	          NULL,
 	          resource_node,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -157,7 +156,6 @@ int wrc_test_resource_initialize(
 	          NULL,
 	          NULL,
 	          resource_node,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -179,7 +177,6 @@ int wrc_test_resource_initialize(
 	          NULL,
 	          NULL,
 	          resource_node,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -201,7 +198,6 @@ int wrc_test_resource_initialize(
 	          NULL,
 	          NULL,
 	          NULL,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -231,7 +227,6 @@ int wrc_test_resource_initialize(
 		          NULL,
 		          NULL,
 		          resource_node,
-		          0,
 		          &error );
 
 		if( wrc_test_malloc_attempts_before_fail != -1 )
@@ -277,7 +272,6 @@ int wrc_test_resource_initialize(
 		          NULL,
 		          NULL,
 		          resource_node,
-		          0,
 		          &error );
 
 		if( wrc_test_memset_attempts_before_fail != -1 )
@@ -553,6 +547,121 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libwrc_resource_get_utf8_name function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_resource_get_utf8_name(
+     libwrc_resource_t *resource )
+{
+	uint8_t utf8_name[ 32 ];
+
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libwrc_resource_get_utf8_name(
+	          resource,
+	          utf8_name,
+	          32,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+/* TODO compare name */
+
+	/* Test error cases
+	 */
+	result = libwrc_resource_get_utf8_name(
+	          NULL,
+	          utf8_name,
+	          32,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_resource_get_utf8_name(
+	          resource,
+	          NULL,
+	          32,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_resource_get_utf8_name(
+	          resource,
+	          utf8_name,
+	          0,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_resource_get_utf8_name(
+	          resource,
+	          utf8_name,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* Tests the libwrc_resource_get_utf16_name_size function
  * Returns 1 if successful or 0 if not
  */
@@ -606,6 +715,121 @@ int wrc_test_resource_get_utf16_name_size(
 	result = libwrc_resource_get_utf16_name_size(
 	          resource,
 	          NULL,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libwrc_resource_get_utf16_name function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_resource_get_utf16_name(
+     libwrc_resource_t *resource )
+{
+	uint16_t utf16_name[ 32 ];
+
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libwrc_resource_get_utf16_name(
+	          resource,
+	          utf16_name,
+	          32,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+/* TODO compare name */
+
+	/* Test error cases
+	 */
+	result = libwrc_resource_get_utf16_name(
+	          NULL,
+	          utf16_name,
+	          32,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_resource_get_utf16_name(
+	          resource,
+	          NULL,
+	          32,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_resource_get_utf16_name(
+	          resource,
+	          utf16_name,
+	          0,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_resource_get_utf16_name(
+	          resource,
+	          utf16_name,
+	          (size_t) SSIZE_MAX + 1,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1042,7 +1266,6 @@ int main(
 	          NULL,
 	          NULL,
 	          resource_node,
-	          0,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1068,14 +1291,20 @@ int main(
 	 wrc_test_resource_get_utf8_name_size,
 	 resource );
 
-	/* TODO: add tests for libwrc_resource_get_utf8_name */
+	WRC_TEST_RUN_WITH_ARGS(
+	 "libwrc_resource_get_utf8_name",
+	 wrc_test_resource_get_utf8_name,
+	 resource );
 
 	WRC_TEST_RUN_WITH_ARGS(
 	 "libwrc_resource_get_utf16_name_size",
 	 wrc_test_resource_get_utf16_name_size,
 	 resource );
 
-	/* TODO: add tests for libwrc_resource_get_utf16_name */
+	WRC_TEST_RUN_WITH_ARGS(
+	 "libwrc_resource_get_utf16_name",
+	 wrc_test_resource_get_utf16_name,
+	 resource );
 
 	WRC_TEST_RUN_WITH_ARGS(
 	 "libwrc_resource_get_type",
