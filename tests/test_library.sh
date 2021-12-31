@@ -9,7 +9,7 @@ EXIT_IGNORE=77;
 
 LIBRARY_TESTS="data_descriptor error io_handle language_entry language_table mui_values notify resource resource_item resource_values support version_values wevt_channel wevt_event wevt_keyword wevt_level wevt_map wevt_opcode wevt_provider wevt_task wevt_template_definition";
 LIBRARY_TESTS_WITH_INPUT="stream";
-OPTION_SETS="";
+OPTION_SETS="virtual_address";
 
 INPUT_GLOB="*";
 

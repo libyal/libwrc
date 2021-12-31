@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWRC_INTERNAL_STREAM_H )
-#define _LIBWRC_INTERNAL_STREAM_H
+#if !defined( _LIBWRC_STREAM_H )
+#define _LIBWRC_STREAM_H
 
 #include <common.h>
 #include <types.h>
@@ -40,6 +40,10 @@ typedef struct libwrc_internal_stream libwrc_internal_stream_t;
 
 struct libwrc_internal_stream
 {
+	/* The virtual address
+	 */
+	uint32_t virtual_address;
+
 	/* The resources (tree) root node
 	 */
 	libcdata_tree_node_t *resources_root_node;
@@ -84,13 +88,15 @@ int libwrc_stream_open(
      libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
+
 LIBWRC_EXTERN \
 int libwrc_stream_open_wide(
      libwrc_stream_t *stream,
      const wchar_t *filename,
      int access_flags,
      libcerror_error_t **error );
-#endif
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 LIBWRC_EXTERN \
 int libwrc_stream_open_file_io_handle(
@@ -187,5 +193,5 @@ int libwrc_stream_get_resource_by_utf16_name(
 }
 #endif
 
-#endif /* !defined( _LIBWRC_INTERNAL_STREAM_H ) */
+#endif /* !defined( _LIBWRC_STREAM_H ) */
 

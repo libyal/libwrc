@@ -66,6 +66,7 @@ int libwrc_stream_open_file_io_handle(
 int wrc_test_stream_open_source(
      libwrc_stream_t **stream,
      libbfio_handle_t *file_io_handle,
+     uint32_t virtual_address,
      libcerror_error_t **error )
 {
 	static char *function = "wrc_test_stream_open_source";
@@ -102,6 +103,20 @@ int wrc_test_stream_open_source(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to initialize stream.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_stream_set_virtual_address(
+	     *stream,
+	     virtual_address,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set virtual address.",
 		 function );
 
 		goto on_error;
@@ -422,7 +437,8 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int wrc_test_stream_open(
-     const system_character_t *source )
+     const system_character_t *source,
+     uint32_t virtual_address )
 {
 	char narrow_source[ 256 ];
 
@@ -459,6 +475,20 @@ int wrc_test_stream_open(
 	WRC_TEST_ASSERT_IS_NOT_NULL(
 	 "stream",
 	 stream );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwrc_stream_set_virtual_address(
+	          stream,
+	          virtual_address,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -599,7 +629,8 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int wrc_test_stream_open_wide(
-     const system_character_t *source )
+     const system_character_t *source,
+     uint32_t virtual_address )
 {
 	wchar_t wide_source[ 256 ];
 
@@ -636,6 +667,20 @@ int wrc_test_stream_open_wide(
 	WRC_TEST_ASSERT_IS_NOT_NULL(
 	 "stream",
 	 stream );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwrc_stream_set_virtual_address(
+	          stream,
+	          virtual_address,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -776,7 +821,8 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int wrc_test_stream_open_file_io_handle(
-     const system_character_t *source )
+     const system_character_t *source,
+     uint32_t virtual_address )
 {
 	libbfio_handle_t *file_io_handle = NULL;
 	libcerror_error_t *error         = NULL;
@@ -840,6 +886,20 @@ int wrc_test_stream_open_file_io_handle(
 	WRC_TEST_ASSERT_IS_NOT_NULL(
 	 "stream",
 	 stream );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwrc_stream_set_virtual_address(
+	          stream,
+	          virtual_address,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1039,7 +1099,8 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int wrc_test_stream_open_close(
-     const system_character_t *source )
+     const system_character_t *source,
+     uint32_t virtual_address )
 {
 	libcerror_error_t *error = NULL;
 	libwrc_stream_t *stream  = NULL;
@@ -1059,6 +1120,20 @@ int wrc_test_stream_open_close(
 	WRC_TEST_ASSERT_IS_NOT_NULL(
 	 "stream",
 	 stream );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwrc_stream_set_virtual_address(
+	          stream,
+	          virtual_address,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1235,10 +1310,9 @@ on_error:
 int wrc_test_stream_get_ascii_codepage(
      libwrc_stream_t *stream )
 {
-	libcerror_error_t *error  = NULL;
-	int ascii_codepage        = 0;
-	int ascii_codepage_is_set = 0;
-	int result                = 0;
+	libcerror_error_t *error = NULL;
+	int ascii_codepage       = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
@@ -1255,8 +1329,6 @@ int wrc_test_stream_get_ascii_codepage(
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	ascii_codepage_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1277,25 +1349,23 @@ int wrc_test_stream_get_ascii_codepage(
 	libcerror_error_free(
 	 &error );
 
-	if( ascii_codepage_is_set != 0 )
-	{
-		result = libwrc_stream_get_ascii_codepage(
-		          stream,
-		          NULL,
-		          &error );
+	result = libwrc_stream_get_ascii_codepage(
+	          stream,
+	          NULL,
+	          &error );
 
-		WRC_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		WRC_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1451,10 +1521,9 @@ on_error:
 int wrc_test_stream_get_virtual_address(
      libwrc_stream_t *stream )
 {
-	libcerror_error_t *error   = NULL;
-	uint32_t virtual_address   = 0;
-	int result                 = 0;
-	int virtual_address_is_set = 0;
+	libcerror_error_t *error = NULL;
+	uint32_t virtual_address = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
@@ -1471,8 +1540,6 @@ int wrc_test_stream_get_virtual_address(
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	virtual_address_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1493,25 +1560,23 @@ int wrc_test_stream_get_virtual_address(
 	libcerror_error_free(
 	 &error );
 
-	if( virtual_address_is_set != 0 )
-	{
-		result = libwrc_stream_get_virtual_address(
-		          stream,
-		          NULL,
-		          &error );
+	result = libwrc_stream_get_virtual_address(
+	          stream,
+	          NULL,
+	          &error );
 
-		WRC_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		WRC_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1529,10 +1594,9 @@ on_error:
 int wrc_test_stream_get_number_of_resources(
      libwrc_stream_t *stream )
 {
-	libcerror_error_t *error       = NULL;
-	int number_of_resources        = 0;
-	int number_of_resources_is_set = 0;
-	int result                     = 0;
+	libcerror_error_t *error = NULL;
+	int number_of_resources  = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
@@ -1549,8 +1613,6 @@ int wrc_test_stream_get_number_of_resources(
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	number_of_resources_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1571,25 +1633,253 @@ int wrc_test_stream_get_number_of_resources(
 	libcerror_error_free(
 	 &error );
 
-	if( number_of_resources_is_set != 0 )
+	result = libwrc_stream_get_number_of_resources(
+	          stream,
+	          NULL,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
 	{
-		result = libwrc_stream_get_number_of_resources(
-		          stream,
-		          NULL,
-		          &error );
-
-		WRC_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		WRC_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
 		libcerror_error_free(
 		 &error );
 	}
+	return( 0 );
+}
+
+/* Tests the libwrc_stream_get_resource function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_stream_get_resource(
+     libwrc_stream_t *stream )
+{
+	libcerror_error_t *error    = NULL;
+	libwrc_resource_t *resource = NULL;
+	int result                  = 0;
+
+	/* Test regular cases
+	 */
+	result = libwrc_stream_get_resource(
+	          stream,
+	          0,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "resource",
+	 resource );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwrc_resource_free(
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "resource",
+	 resource );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libwrc_stream_get_resource(
+	          NULL,
+	          0,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_stream_get_resource(
+	          stream,
+	          -1,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_stream_get_resource(
+	          stream,
+	          0,
+	          NULL,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libwrc_stream_get_resource_by_index function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_stream_get_resource_by_index(
+     libwrc_stream_t *stream )
+{
+	libcerror_error_t *error    = NULL;
+	libwrc_resource_t *resource = NULL;
+	int result                  = 0;
+
+	/* Test regular cases
+	 */
+	result = libwrc_stream_get_resource_by_index(
+	          stream,
+	          0,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "resource",
+	 resource );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwrc_resource_free(
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "resource",
+	 resource );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libwrc_stream_get_resource_by_index(
+	          NULL,
+	          0,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_stream_get_resource_by_index(
+	          stream,
+	          -1,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_stream_get_resource_by_index(
+	          stream,
+	          0,
+	          NULL,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1613,18 +1903,20 @@ int main(
      char * const argv[] )
 #endif
 {
-	libbfio_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error         = NULL;
-	libwrc_stream_t *stream          = NULL;
-	system_character_t *source       = NULL;
-	system_integer_t option          = 0;
-	size_t string_length             = 0;
-	int result                       = 0;
+	libbfio_handle_t *file_io_handle           = NULL;
+	libcerror_error_t *error                   = NULL;
+	libwrc_stream_t *stream                    = NULL;
+	system_character_t *option_virtual_address = NULL;
+	system_character_t *source                 = NULL;
+	system_integer_t option                    = 0;
+	size_t string_length                       = 0;
+	uint64_t virtual_address                   = 0;
+	int result                                 = 0;
 
 	while( ( option = wrc_test_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "" ) ) ) != (system_integer_t) -1 )
+	                   _SYSTEM_STRING( "v:" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -1636,11 +1928,36 @@ int main(
 				 argv[ optind - 1 ] );
 
 				return( EXIT_FAILURE );
+
+			case (system_integer_t) 'v':
+				option_virtual_address = optarg;
+
+				break;
 		}
 	}
 	if( optind < argc )
 	{
 		source = argv[ optind ];
+	}
+	if( option_virtual_address != NULL )
+	{
+		string_length = system_string_length(
+		                 option_virtual_address );
+
+		result = wrc_test_system_string_copy_from_64_bit_in_decimal(
+		          option_virtual_address,
+		          string_length + 1,
+		          (uint64_t *) &virtual_address,
+		          &error );
+
+		WRC_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+	        WRC_TEST_ASSERT_IS_NULL(
+	         "error",
+	         error );
 	}
 #if defined( HAVE_DEBUG_OUTPUT ) && defined( WRC_TEST_STREAM_VERBOSE )
 	libwrc_notify_set_verbose(
@@ -1664,21 +1981,24 @@ int main(
 		WRC_TEST_RUN_WITH_ARGS(
 		 "libwrc_stream_open",
 		 wrc_test_stream_open,
-		 source );
+		 source,
+		 (uint32_t) virtual_address );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 		WRC_TEST_RUN_WITH_ARGS(
 		 "libwrc_stream_open_wide",
 		 wrc_test_stream_open_wide,
-		 source );
+		 source,
+		 (uint32_t) virtual_address );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 		WRC_TEST_RUN_WITH_ARGS(
 		 "libwrc_stream_open_file_io_handle",
 		 wrc_test_stream_open_file_io_handle,
-		 source );
+		 source,
+		 (uint32_t) virtual_address );
 
 		WRC_TEST_RUN(
 		 "libwrc_stream_close",
@@ -1687,7 +2007,8 @@ int main(
 		WRC_TEST_RUN_WITH_ARGS(
 		 "libwrc_stream_open_close",
 		 wrc_test_stream_open_close,
-		 source );
+		 source,
+		 (uint32_t) virtual_address );
 
 		/* Initialize test
 		 */
@@ -1736,6 +2057,7 @@ int main(
 		result = wrc_test_stream_open_source(
 		          &stream,
 		          file_io_handle,
+		          (uint32_t) virtual_address,
 		          &error );
 
 		WRC_TEST_ASSERT_EQUAL_INT(
@@ -1784,7 +2106,15 @@ int main(
 		 wrc_test_stream_get_number_of_resources,
 		 stream );
 
-		/* TODO: add tests for libwrc_stream_get_resource */
+		WRC_TEST_RUN_WITH_ARGS(
+		 "libwrc_stream_get_resource",
+		 wrc_test_stream_get_resource,
+		 stream );
+
+		WRC_TEST_RUN_WITH_ARGS(
+		 "libwrc_stream_get_resource_by_index",
+		 wrc_test_stream_get_resource_by_index,
+		 stream );
 
 		/* TODO: add tests for libwrc_stream_get_resource_by_identifier */
 

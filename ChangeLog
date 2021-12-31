@@ -1,11 +1,12 @@
 TODO:
 * implement resource item API (to handle hierarchy)
+** add read support
 
-* deprecate and remove WEVT_TEMPLATE resource functions in favor of libfwevt
+* deprecate and remove WEVT_TEMPLATE resource functions in favour of libfwevt
+
 * pywrc:
   - MUI check output of pywrc_mui_get_main_name amd pywrc_mui_get_mui_name
   - add version type support (complete pywrc_version.c)
-  - add WEVT template type support
   - add iterator objects for a message table of a specific language
   - add iterator objects for strings of a specific language
 * code clean up:
@@ -13,14 +14,8 @@ TODO:
   - libwrc_string_get_index_by_identifier
   - libwrc_message_table_get_number_of_messages
   - libwrc_message_table_get_index_by_identifier
-  - refactor wevt template code into libfwevt (+/-)
 * MUI
   - match muirct output
-* WEVT_TEMPLATE
-  - code clean remove WEVT/wevt in variable names
-  - add maps support
-  - rename event template to provider ?
-  - refactor libfwevt to take relative data (see channel)
 * VERSION
   - check if libwrc_version_values_read_string works
   - check if multi language version is now supported

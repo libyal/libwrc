@@ -48,6 +48,12 @@ int wrc_test_get_wide_source(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
+int wrc_test_system_string_copy_from_64_bit_in_decimal(
+     const system_character_t *string,
+     size_t string_size,
+     uint64_t *value_64bit,
+     libcerror_error_t **error );
+
 int wrc_test_open_file_io_handle(
      libbfio_handle_t **file_io_handle,
      uint8_t *data,

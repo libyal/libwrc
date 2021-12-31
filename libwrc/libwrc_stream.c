@@ -810,6 +810,8 @@ int libwrc_stream_open_read(
 	{
 		internal_stream->io_handle->abort = 0;
 	}
+	internal_stream->io_handle->virtual_address = internal_stream->virtual_address;
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -975,17 +977,6 @@ int libwrc_stream_get_virtual_address(
 	}
 	internal_stream = (libwrc_internal_stream_t *) stream;
 
-	if( internal_stream->io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid stream - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
 	if( virtual_address == NULL )
 	{
 		libcerror_error_set(
@@ -997,7 +988,7 @@ int libwrc_stream_get_virtual_address(
 
 		return( -1 );
 	}
-	*virtual_address = internal_stream->io_handle->virtual_address;
+	*virtual_address = internal_stream->virtual_address;
 
 	return( 1 );
 }
@@ -1026,18 +1017,7 @@ int libwrc_stream_set_virtual_address(
 	}
 	internal_stream = (libwrc_internal_stream_t *) stream;
 
-	if( internal_stream->io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid stream - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	internal_stream->io_handle->virtual_address = virtual_address;
+	internal_stream->virtual_address = virtual_address;
 
 	return( 1 );
 }
