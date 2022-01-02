@@ -94,10 +94,10 @@ int info_handle_close_input(
      info_handle_t *info_handle,
      libcerror_error_t **error );
 
-int info_handle_manifest_string_fprint(
+int info_handle_manifest_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *manifest_resource,
-     uint32_t language_identifier,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error );
 
 int info_handle_manifest_resource_fprint(
@@ -109,6 +109,12 @@ int info_handle_message_string_fprint(
      libwrc_resource_t *message_table_resource,
      uint32_t language_identifier,
      int message_index,
+     libcerror_error_t **error );
+
+int info_handle_message_table_resource_item_fprint(
+     info_handle_t *info_handle,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error );
 
 int info_handle_message_table_resource_fprint(
@@ -125,24 +131,23 @@ int info_handle_mui_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error );
 
-int info_handle_string_fprint(
+int info_handle_string_table_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *string_resource,
-     uint32_t language_identifier,
-     int string_index,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error );
 
-int info_handle_string_resource_fprint(
+int info_handle_string_table_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error );
 
-int info_handle_version_values_fprint(
+int info_handle_version_information_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *version_resource,
-     uint32_t language_identifier,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error );
 
-int info_handle_version_resource_fprint(
+int info_handle_version_information_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error );
 

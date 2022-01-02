@@ -1,5 +1,5 @@
 /*
- * The Windows RC version resource
+ * The Windows RC version information (VERSIONINFO) resource
  *
  * Copyright (C) 2011-2022, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _WRC_VERSION_RESOURCE_H )
-#define _WRC_VERSION_RESOURCE_H
+#if !defined( _WRC_VERSION_INFORMATION_RESOURCE_H )
+#define _WRC_VERSION_INFORMATION_RESOURCE_H
 
 #include <common.h>
 #include <types.h>
@@ -53,5 +53,5 @@ struct wrc_version_value_header
 }
 #endif
 
-#endif /* !defined( _WRC_VERSION_RESOURCE_H ) */
+#endif /* !defined( _WRC_VERSION_INFORMATION_RESOURCE_H ) */
 

@@ -34,7 +34,7 @@
 #include "libwrc_libfvalue.h"
 #include "libwrc_version_values.h"
 
-#include "wrc_version_resource.h"
+#include "wrc_version_information_resource.h"
 
 uint8_t libwrc_version_information_value_identifier[ 32 ] = \
 	{ 'V', 0, 'S', 0, '_', 0, 'V', 0, 'E', 0, 'R', 0, 'S', 0, 'I', 0, 'O', 0, 'N', 0, '_', 0, 'I', 0, 'N', 0, 'F', 0, 'O', 0, 0, 0 };

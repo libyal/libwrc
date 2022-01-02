@@ -1,8 +1,12 @@
 TODO:
-* implement resource item API (to handle hierarchy)
-** add read support
+* escape special characters in string table and message table output
 
-* deprecate and remove WEVT_TEMPLATE resource functions in favour of libfwevt
+* deprecate and remove
+  - libwrc_stream_get_resource
+  - WEVT_TEMPLATE resource
+  - message table values
+  - string values
+  - version values
 
 * pywrc:
   - MUI check output of pywrc_mui_get_main_name amd pywrc_mui_get_mui_name
@@ -19,10 +23,6 @@ TODO:
 * VERSION
   - check if libwrc_version_values_read_string works
   - check if multi language version is now supported
-* MOFDATA ?
-* update man pages
-  - libwrc.3
-  - wrcinfo.1
 * virtual address can be outside .rsrc section (in UPX packed files?)
   - location of unpacked runtime data ?
 * make sure data types are large enough

@@ -80,11 +80,6 @@ int libwrc_resource_free(
      libwrc_resource_t **resource,
      libcerror_error_t **error );
 
-LIBWRC_EXTERN \
-int libwrc_resource_read(
-     libwrc_resource_t *resource,
-     libcerror_error_t **error );
-
 int libwrc_resource_read_value(
      libwrc_internal_resource_t *internal_resource,
      libcerror_error_t **error );

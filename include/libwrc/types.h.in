@@ -201,9 +201,14 @@ typedef int64_t off64_t;
 
 /* The following type definitions hide internal data structures
  */
+typedef intptr_t libwrc_manifest_resource_t;
+typedef intptr_t libwrc_message_table_resource_t;
+typedef intptr_t libwrc_mui_resource_t;
 typedef intptr_t libwrc_resource_t;
 typedef intptr_t libwrc_resource_item_t;
 typedef intptr_t libwrc_stream_t;
+typedef intptr_t libwrc_string_table_resource_t;
+typedef intptr_t libwrc_version_information_resource_t;
 typedef intptr_t libwrc_wevt_channel_t;
 typedef intptr_t libwrc_wevt_event_t;
 typedef intptr_t libwrc_wevt_keyword_t;

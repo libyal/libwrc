@@ -574,19 +574,24 @@ int info_handle_close_input(
 	return( 0 );
 }
 
-/* Prints the manifest string information
+/* Prints a manifest resource item
  * Returns 1 if successful or -1 on error
  */
-int info_handle_manifest_string_fprint(
+int info_handle_manifest_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *manifest_resource,
-     uint32_t language_identifier,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error )
 {
-	system_character_t *value_string = NULL;
-	static char *function            = "info_handle_manifest_string_fprint";
-	size_t value_string_size         = 0;
-	int result                       = 0;
+	libwrc_manifest_resource_t *manifest_resource = NULL;
+	system_character_t *value_string              = NULL;
+	uint8_t *resource_data                        = NULL;
+	static char *function                         = "info_handle_manifest_resource_item_fprint";
+	size_t value_string_size                      = 0;
+	ssize_t read_count                            = 0;
+	uint32_t language_identifier                  = 0;
+	uint32_t resource_data_size                   = 0;
+	int result                                    = 0;
 
 	if( info_handle == NULL )
 	{
@@ -599,16 +604,126 @@ int info_handle_manifest_string_fprint(
 
 		return( -1 );
 	}
+	if( libwrc_resource_item_get_identifier(
+	     resource_item,
+	     &language_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource item identifier.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tResource %" PRIu32 ": 0x%04" PRIx32 " (%s)\n",
+	 identifier,
+	 language_identifier,
+	 libfwnt_locale_identifier_language_tag_get_identifier(
+	  language_identifier & 0x0000ffffUL ) );
+
+	if( libwrc_resource_item_get_size(
+	     resource_item,
+	     &resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource item size.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource data size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	resource_data = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * resource_data_size );
+
+	if( resource_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource data.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libwrc_resource_item_read_buffer(
+	              resource_item,
+	              resource_data,
+	              (size_t) resource_data_size,
+	              error );
+
+	if( read_count != (ssize_t) resource_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read from resource item.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_manifest_resource_initialize(
+	     &manifest_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize manifest resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_manifest_resource_read(
+	     manifest_resource,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read manifest resource.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 resource_data );
+
+	resource_data = NULL;
+
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libwrc_manifest_get_utf16_string_size(
+	result = libwrc_manifest_resource_get_utf16_string_size(
 	          manifest_resource,
-	          language_identifier,
 	          &value_string_size,
 	          error );
 #else
-	result = libwrc_manifest_get_utf8_string_size(
+	result = libwrc_manifest_resource_get_utf8_string_size(
 	          manifest_resource,
-	          language_identifier,
 	          &value_string_size,
 	          error );
 #endif
@@ -625,6 +740,17 @@ int info_handle_manifest_string_fprint(
 	}
 	if( value_string_size > 0 )
 	{
+		if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid value string size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		value_string = system_string_allocate(
 		                value_string_size );
 
@@ -640,16 +766,14 @@ int info_handle_manifest_string_fprint(
 			goto on_error;
 		}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_manifest_get_utf16_string(
+		result = libwrc_manifest_resource_get_utf16_string(
 		          manifest_resource,
-		          language_identifier,
 		          (uint16_t *) value_string,
 		          value_string_size,
 		          error );
 #else
-		result = libwrc_manifest_get_utf8_string(
+		result = libwrc_manifest_resource_get_utf8_string(
 		          manifest_resource,
-		          language_identifier,
 		          (uint8_t *) value_string,
 		          value_string_size,
 		          error );
@@ -679,6 +803,19 @@ int info_handle_manifest_string_fprint(
 	 info_handle->notify_stream,
 	 "\n" );
 
+	if( libwrc_manifest_resource_free(
+	     &manifest_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free manifest resource.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
 
 on_error:
@@ -687,22 +824,37 @@ on_error:
 		memory_free(
 		 value_string );
 	}
+	if( manifest_resource != NULL )
+	{
+		libwrc_manifest_resource_free(
+		 &manifest_resource,
+		 NULL );
+	}
+	if( resource_data != NULL )
+	{
+		memory_free(
+		 resource_data );
+	}
 	return( -1 );
 }
 
-/* Prints the manifest resource information
+/* Prints the manifest resource
  * Returns 1 if successful or -1 on error
  */
 int info_handle_manifest_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libwrc_resource_t *manifest_resource = NULL;
-	static char *function                = "info_handle_manifest_resource_fprint";
-	uint32_t language_identifier         = 0;
-	int language_index                   = 0;
-	int number_of_languages              = 0;
-	int result                           = 0;
+	libwrc_resource_t *resource               = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
+	libwrc_resource_item_t *resource_sub_item = NULL;
+	static char *function                     = "info_handle_manifest_resource_fprint";
+	uint32_t identifier                       = 0;
+	int number_of_resource_items              = 0;
+	int number_of_resource_sub_items          = 0;
+	int resource_item_index                   = 0;
+	int resource_sub_item_index               = 0;
+	int result                                = 0;
 
 	if( info_handle == NULL )
 	{
@@ -718,7 +870,7 @@ int info_handle_manifest_resource_fprint(
 	result = libwrc_stream_get_resource_by_identifier(
 	          info_handle->input_resource_stream,
 	          LIBWRC_RESOURCE_IDENTIFIER_MANIFEST,
-	          &manifest_resource,
+	          &resource,
 	          error );
 
 	if( result == -1 )
@@ -727,7 +879,7 @@ int info_handle_manifest_resource_fprint(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve manifest resource.",
+		 "%s: unable to retrieve resource.",
 		 function );
 
 		goto on_error;
@@ -736,84 +888,145 @@ int info_handle_manifest_resource_fprint(
 	{
 		fprintf(
 		 info_handle->notify_stream,
-		 "Manifest resource:\n" );
+		 "Manifest resources:\n" );
 
-		if( libwrc_resource_get_number_of_languages(
-		     manifest_resource,
-		     &number_of_languages,
+		if( libwrc_resource_get_number_of_items(
+		     resource,
+		     &number_of_resource_items,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number of languages.",
+			 "%s: unable to retrieve number of resource items.",
 			 function );
 
 			goto on_error;
 		}
-		fprintf(
-		 info_handle->notify_stream,
-		 "\tnumber of languages\t: %d\n",
-		 number_of_languages );
-
-		fprintf(
-		 info_handle->notify_stream,
-		 "\n" );
-
-		for( language_index = 0;
-		     language_index < number_of_languages;
-		     language_index++ )
+		for( resource_item_index = 0;
+		     resource_item_index < number_of_resource_items;
+		     resource_item_index++ )
 		{
-			if( libwrc_resource_get_language_identifier(
-			     manifest_resource,
-			     language_index,
-			     &language_identifier,
+			if( libwrc_resource_get_item_by_index(
+			     resource,
+			     resource_item_index,
+			     &resource_item,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve language identifier: %d.",
+				 "%s: unable to retrieve resource item: %d.",
 				 function,
-				 language_index );
+				 resource_item_index );
 
 				goto on_error;
 			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tlanguage identifier\t: 0x%08" PRIx32 " (%s)\n",
-			 language_identifier,
-			 libfwnt_locale_identifier_language_tag_get_identifier(
-			  language_identifier & 0x0000ffffUL ) );
-
-			if( info_handle_manifest_string_fprint(
-			     info_handle,
-			     manifest_resource,
-			     language_identifier,
+			if( libwrc_resource_item_get_identifier(
+			     resource_item,
+			     &identifier,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print manifest string for language identifier: 0x%08" PRIx32 ".",
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve identifier.",
+				 function );
+
+				goto on_error;
+			}
+			if( libwrc_resource_item_get_number_of_sub_items(
+			     resource_item,
+			     &number_of_resource_sub_items,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve number of resource sub items.",
+				 function );
+
+				goto on_error;
+			}
+			for( resource_sub_item_index = 0;
+			     resource_sub_item_index < number_of_resource_sub_items;
+			     resource_sub_item_index++ )
+			{
+				if( libwrc_resource_item_get_sub_item_by_index(
+				     resource_item,
+				     resource_sub_item_index,
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( info_handle_manifest_resource_item_fprint(
+				     info_handle,
+				     identifier,
+				     resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+					 "%s: unable to print manifest resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( libwrc_resource_item_free(
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+			}
+			if( libwrc_resource_item_free(
+			     &resource_item,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free resource item: %d.",
 				 function,
-				 language_identifier );
+				 resource_item_index );
 
 				goto on_error;
 			}
 		}
 		if( libwrc_resource_free(
-		     &manifest_resource,
+		     &resource,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free manifest resource.",
+			 "%s: unable to free resource.",
 			 function );
 
 			goto on_error;
@@ -822,30 +1035,48 @@ int info_handle_manifest_resource_fprint(
 	return( 1 );
 
 on_error:
-	if( manifest_resource != NULL )
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( resource != NULL )
 	{
 		libwrc_resource_free(
-		 &manifest_resource,
+		 &resource,
 		 NULL );
 	}
 	return( -1 );
 }
 
-/* Prints the message table string information
+/* Prints a message table resource item
  * Returns 1 if successful or -1 on error
  */
-int info_handle_message_table_string_fprint(
+int info_handle_message_table_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *message_table_resource,
-     uint32_t language_identifier,
-     int message_index,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error )
 {
-	system_character_t *value_string = NULL;
-	static char *function            = "info_handle_message_table_string_fprint";
-	size_t value_string_size         = 0;
-	uint32_t message_identifier      = 0;
-	int result                       = 0;
+	libwrc_message_table_resource_t *message_table_resource = NULL;
+	system_character_t *value_string                        = NULL;
+	uint8_t *resource_data                                  = NULL;
+	static char *function                                   = "info_handle_message_table_resource_item_fprint";
+	size_t value_string_size                                = 0;
+	ssize_t read_count                                      = 0;
+	uint32_t language_identifier                            = 0;
+	uint32_t message_identifier                             = 0;
+	uint32_t resource_data_size                             = 0;
+	int message_index                                       = 0;
+	int number_of_messages                                  = 0;
+	int result                                              = 0;
 
 	if( info_handle == NULL )
 	{
@@ -858,91 +1089,178 @@ int info_handle_message_table_string_fprint(
 
 		return( -1 );
 	}
-	if( libwrc_message_table_get_identifier(
-	     message_table_resource,
-	     language_identifier,
-	     message_index,
-	     &message_identifier,
+	if( libwrc_resource_item_get_identifier(
+	     resource_item,
+	     &language_identifier,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message identifier: %d.",
-		 function,
-		 message_index );
+		 "%s: unable to retrieve resource item identifier.",
+		 function );
 
 		goto on_error;
 	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tmessage\t\t\t: %d\n",
-	 message_index );
+	 "\tResource %" PRIu32 ": 0x%04" PRIx32 " (%s)\n",
+	 identifier,
+	 language_identifier,
+	 libfwnt_locale_identifier_language_tag_get_identifier(
+	  language_identifier & 0x0000ffffUL ) );
 
-	fprintf(
-	 info_handle->notify_stream,
-	 "\tidentifier\t\t: 0x%08" PRIx32 "\n",
-	 message_identifier );
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libwrc_message_table_get_utf16_string_size(
-	          message_table_resource,
-	          language_identifier,
-	          message_index,
-	          &value_string_size,
-	          error );
-#else
-	result = libwrc_message_table_get_utf8_string_size(
-	          message_table_resource,
-	          language_identifier,
-	          message_index,
-	          &value_string_size,
-	          error );
-#endif
-	if( result != 1 )
+	if( libwrc_resource_item_get_size(
+	     resource_item,
+	     &resource_data_size,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table string: %d size.",
-		 function,
-		 message_index );
+		 "%s: unable to retrieve resource item size.",
+		 function );
 
 		goto on_error;
 	}
-	if( value_string_size > 0 )
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
-		value_string = system_string_allocate(
-		                value_string_size );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource data size value out of bounds.",
+		 function );
 
-		if( value_string == NULL )
+		goto on_error;
+	}
+	resource_data = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * resource_data_size );
+
+	if( resource_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource data.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libwrc_resource_item_read_buffer(
+	              resource_item,
+	              resource_data,
+	              (size_t) resource_data_size,
+	              error );
+
+	if( read_count != (ssize_t) resource_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read from resource item.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_message_table_resource_initialize(
+	     &message_table_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize message table resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_message_table_resource_read(
+	     message_table_resource,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     info_handle->ascii_codepage,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read message table resource.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 resource_data );
+
+	resource_data = NULL;
+
+	if( libwrc_message_table_resource_get_number_of_messages(
+	     message_table_resource,
+	     &number_of_messages,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of messages.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tnumber of messages\t: %d\n",
+	 number_of_messages );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "\n" );
+
+	for( message_index = 0;
+	     message_index < number_of_messages;
+	     message_index++ )
+	{
+		if( libwrc_message_table_resource_get_identifier(
+		     message_table_resource,
+		     message_index,
+		     &message_identifier,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create value string.",
-			 function );
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message identifier: %d.",
+			 function,
+			 message_index );
 
 			goto on_error;
 		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\t0x%08" PRIx32 "",
+		 message_identifier );
+
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_message_table_get_utf16_string(
+		result = libwrc_message_table_resource_get_utf16_string_size(
 		          message_table_resource,
-		          language_identifier,
 		          message_index,
-		          (uint16_t *) value_string,
-		          value_string_size,
+		          &value_string_size,
 		          error );
 #else
-		result = libwrc_message_table_get_utf8_string(
+		result = libwrc_message_table_resource_get_utf8_string_size(
 		          message_table_resource,
-		          language_identifier,
 		          message_index,
-		          (uint8_t *) value_string,
-		          value_string_size,
+		          &value_string_size,
 		          error );
 #endif
 		if( result != 1 )
@@ -951,26 +1269,97 @@ int info_handle_message_table_string_fprint(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message table string: %d.",
+			 "%s: unable to retrieve message table string: %d size.",
 			 function,
 			 message_index );
 
 			goto on_error;
 		}
+		if( value_string_size > 0 )
+		{
+			if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid value string size value out of bounds.",
+				 function );
+
+				goto on_error;
+			}
+			value_string = system_string_allocate(
+			                value_string_size );
+
+			if( value_string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create value string.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libwrc_message_table_resource_get_utf16_string(
+			          message_table_resource,
+			          message_index,
+			          (uint16_t *) value_string,
+			          value_string_size,
+			          error );
+#else
+			result = libwrc_message_table_resource_get_utf8_string(
+			          message_table_resource,
+			          message_index,
+			          (uint8_t *) value_string,
+			          value_string_size,
+			          error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message table string: %d.",
+				 function,
+				 message_index );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "\t\t: %" PRIs_SYSTEM "",
+			 value_string );
+
+			memory_free(
+			 value_string );
+
+			value_string = NULL;
+		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tdata\t\t\t: %" PRIs_SYSTEM "",
-		 value_string );
-
-		memory_free(
-		 value_string );
-
-		value_string = NULL;
+		 "\n" );
 	}
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );
 
+	if( libwrc_message_table_resource_free(
+	     &message_table_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free message table resource.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
 
 on_error:
@@ -979,23 +1368,36 @@ on_error:
 		memory_free(
 		 value_string );
 	}
+	if( message_table_resource != NULL )
+	{
+		libwrc_message_table_resource_free(
+		 &message_table_resource,
+		 NULL );
+	}
+	if( resource_data != NULL )
+	{
+		memory_free(
+		 resource_data );
+	}
 	return( -1 );
 }
 
-/* Prints the message table resource information
+/* Prints the message table resource
  * Returns 1 if successful or -1 on error
  */
 int info_handle_message_table_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libwrc_resource_t *message_table_resource = NULL;
+	libwrc_resource_t *resource               = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
+	libwrc_resource_item_t *resource_sub_item = NULL;
 	static char *function                     = "info_handle_message_table_resource_fprint";
-	uint32_t language_identifier              = 0;
-	int language_index                        = 0;
-	int message_index                         = 0;
-	int number_of_languages                   = 0;
-	int number_of_messages                    = 0;
+	uint32_t identifier                       = 0;
+	int number_of_resource_items              = 0;
+	int number_of_resource_sub_items          = 0;
+	int resource_item_index                   = 0;
+	int resource_sub_item_index               = 0;
 	int result                                = 0;
 
 	if( info_handle == NULL )
@@ -1012,7 +1414,7 @@ int info_handle_message_table_resource_fprint(
 	result = libwrc_stream_get_resource_by_identifier(
 	          info_handle->input_resource_stream,
 	          LIBWRC_RESOURCE_IDENTIFIER_MESSAGE_TABLE,
-	          &message_table_resource,
+	          &resource,
 	          error );
 
 	if( result == -1 )
@@ -1021,7 +1423,7 @@ int info_handle_message_table_resource_fprint(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table resource.",
+		 "%s: unable to retrieve resource.",
 		 function );
 
 		goto on_error;
@@ -1030,116 +1432,145 @@ int info_handle_message_table_resource_fprint(
 	{
 		fprintf(
 		 info_handle->notify_stream,
-		 "Message-table resource:\n" );
+		 "Message table (MESSAGETABLE) resources:\n" );
 
-		if( libwrc_resource_get_number_of_languages(
-		     message_table_resource,
-		     &number_of_languages,
+		if( libwrc_resource_get_number_of_items(
+		     resource,
+		     &number_of_resource_items,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number of languages.",
+			 "%s: unable to retrieve number of resource items.",
 			 function );
 
 			goto on_error;
 		}
-		fprintf(
-		 info_handle->notify_stream,
-		 "\tnumber of languages\t: %d\n",
-		 number_of_languages );
-
-		fprintf(
-		 info_handle->notify_stream,
-		 "\n" );
-
-		for( language_index = 0;
-		     language_index < number_of_languages;
-		     language_index++ )
+		for( resource_item_index = 0;
+		     resource_item_index < number_of_resource_items;
+		     resource_item_index++ )
 		{
-			if( libwrc_resource_get_language_identifier(
-			     message_table_resource,
-			     language_index,
-			     &language_identifier,
+			if( libwrc_resource_get_item_by_index(
+			     resource,
+			     resource_item_index,
+			     &resource_item,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve language identifier: %d.",
+				 "%s: unable to retrieve resource item: %d.",
 				 function,
-				 language_index );
+				 resource_item_index );
 
 				goto on_error;
 			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tlanguage identifier\t: 0x%08" PRIx32 " (%s)\n",
-			 language_identifier,
-			 libfwnt_locale_identifier_language_tag_get_identifier(
-			  language_identifier & 0x0000ffffUL ) );
-
-			if( libwrc_message_table_get_number_of_messages(
-			     message_table_resource,
-			     language_identifier,
-			     &number_of_messages,
+			if( libwrc_resource_item_get_identifier(
+			     resource_item,
+			     &identifier,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve number of messages for language identifier: 0x%08" PRIx32 ".",
-				 function,
-				 language_identifier );
+				 "%s: unable to retrieve identifier.",
+				 function );
 
 				goto on_error;
 			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tnumber of messages\t: %d\n",
-			 number_of_messages );
-
-			fprintf(
-			 info_handle->notify_stream,
-			 "\n" );
-
-			for( message_index = 0;
-			     message_index < number_of_messages;
-			     message_index++ )
+			if( libwrc_resource_item_get_number_of_sub_items(
+			     resource_item,
+			     &number_of_resource_sub_items,
+			     error ) != 1 )
 			{
-				if( info_handle_message_table_string_fprint(
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve number of resource sub items.",
+				 function );
+
+				goto on_error;
+			}
+			for( resource_sub_item_index = 0;
+			     resource_sub_item_index < number_of_resource_sub_items;
+			     resource_sub_item_index++ )
+			{
+				if( libwrc_resource_item_get_sub_item_by_index(
+				     resource_item,
+				     resource_sub_item_index,
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( info_handle_message_table_resource_item_fprint(
 				     info_handle,
-				     message_table_resource,
-				     language_identifier,
-				     message_index,
+				     identifier,
+				     resource_sub_item,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-					 "%s: unable to print message table string: %d for language identifier: 0x%08" PRIx32 ".",
+					 "%s: unable to print message table resource sub item: %d.",
 					 function,
-					 message_index,
-					 language_identifier );
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( libwrc_resource_item_free(
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
 
 					goto on_error;
 				}
 			}
+			if( libwrc_resource_item_free(
+			     &resource_item,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free resource item: %d.",
+				 function,
+				 resource_item_index );
+
+				goto on_error;
+			}
 		}
 		if( libwrc_resource_free(
-		     &message_table_resource,
+		     &resource,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free message table resource.",
+			 "%s: unable to free resource.",
 			 function );
 
 			goto on_error;
@@ -1148,10 +1579,22 @@ int info_handle_message_table_resource_fprint(
 	return( 1 );
 
 on_error:
-	if( message_table_resource != NULL )
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( resource != NULL )
 	{
 		libwrc_resource_free(
-		 &message_table_resource,
+		 &resource,
 		 NULL );
 	}
 	return( -1 );
@@ -1219,6 +1662,17 @@ int info_handle_mui_values_fprint(
 	if( ( result != 0 )
 	 && ( value_string_size > 0 ) )
 	{
+		if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid value string size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		value_string = system_string_allocate(
 		                value_string_size );
 
@@ -1296,6 +1750,17 @@ int info_handle_mui_values_fprint(
 	if( ( result != 0 )
 	 && ( value_string_size > 0 ) )
 	{
+		if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid value string size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		value_string = system_string_allocate(
 		                value_string_size );
 
@@ -1373,6 +1838,17 @@ int info_handle_mui_values_fprint(
 	if( ( result != 0 )
 	 && ( value_string_size > 0 ) )
 	{
+		if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid value string size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		value_string = system_string_allocate(
 		                value_string_size );
 
@@ -1450,6 +1926,17 @@ int info_handle_mui_values_fprint(
 	if( ( result != 0 )
 	 && ( value_string_size > 0 ) )
 	{
+		if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid value string size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		value_string = system_string_allocate(
 		                value_string_size );
 
@@ -1515,7 +2002,7 @@ on_error:
 	return( -1 );
 }
 
-/* Prints the MUI resource information
+/* Prints the MUI resource
  * Returns 1 if successful or -1 on error
  */
 int info_handle_mui_resource_fprint(
@@ -1562,7 +2049,7 @@ int info_handle_mui_resource_fprint(
 	{
 		fprintf(
 		 info_handle->notify_stream,
-		 "MUI resource:\n" );
+		 "MUI resources:\n" );
 
 		if( libwrc_resource_get_number_of_languages(
 		     mui_resource,
@@ -1609,7 +2096,7 @@ int info_handle_mui_resource_fprint(
 			}
 			fprintf(
 			 info_handle->notify_stream,
-			 "\tlanguage identifier\t: 0x%08" PRIx32 " (%s)\n",
+			 "\tlanguage identifier\t: 0x%04" PRIx32 " (%s)\n",
 			 language_identifier,
 			 libfwnt_locale_identifier_language_tag_get_identifier(
 			  language_identifier & 0x0000ffffUL ) );
@@ -1624,9 +2111,8 @@ int info_handle_mui_resource_fprint(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print MUI values for language identifier: 0x%08" PRIx32 ".",
-				 function,
-				 language_identifier );
+				 "%s: unable to print MUI values.",
+				 function );
 
 				goto on_error;
 			}
@@ -1657,21 +2143,27 @@ on_error:
 	return( -1 );
 }
 
-/* Prints the string information
+/* Prints a string table resource item
  * Returns 1 if successful or -1 on error
  */
-int info_handle_string_fprint(
+int info_handle_string_table_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *string_resource,
-     uint32_t language_identifier,
-     int string_index,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error )
 {
-	system_character_t *value_string = NULL;
-	static char *function            = "info_handle_string_fprint";
-	size_t value_string_size         = 0;
-	uint32_t string_identifier       = 0;
-	int result                       = 0;
+	libwrc_string_table_resource_t *string_table_resource = NULL;
+	system_character_t *value_string                      = NULL;
+	uint8_t *resource_data                                = NULL;
+	static char *function                                 = "info_handle_string_table_resource_item_fprint";
+	size_t value_string_size                              = 0;
+	ssize_t read_count                                    = 0;
+	uint32_t language_identifier                          = 0;
+	uint32_t resource_data_size                           = 0;
+	uint32_t string_identifier                            = 0;
+	int number_of_strings                                 = 0;
+	int result                                            = 0;
+	int string_index                                      = 0;
 
 	if( info_handle == NULL )
 	{
@@ -1684,91 +2176,178 @@ int info_handle_string_fprint(
 
 		return( -1 );
 	}
-	if( libwrc_string_get_identifier(
-	     string_resource,
-	     language_identifier,
-	     string_index,
-	     &string_identifier,
+	if( libwrc_resource_item_get_identifier(
+	     resource_item,
+	     &language_identifier,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string identifier: %d.",
-		 function,
-		 string_index );
+		 "%s: unable to retrieve resource item identifier.",
+		 function );
 
 		goto on_error;
 	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tstring\t\t\t: %d\n",
-	 string_index );
+	 "\tResource %" PRIu32 ": 0x%04" PRIx32 " (%s)\n",
+	 identifier,
+	 language_identifier,
+	 libfwnt_locale_identifier_language_tag_get_identifier(
+	  language_identifier & 0x0000ffffUL ) );
 
-	fprintf(
-	 info_handle->notify_stream,
-	 "\tidentifier\t\t: 0x%08" PRIx32 "\n",
-	 string_identifier );
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libwrc_string_get_utf16_string_size(
-	          string_resource,
-	          language_identifier,
-	          string_index,
-	          &value_string_size,
-	          error );
-#else
-	result = libwrc_string_get_utf8_string_size(
-	          string_resource,
-	          language_identifier,
-	          string_index,
-	          &value_string_size,
-	          error );
-#endif
-	if( result != 1 )
+	if( libwrc_resource_item_get_size(
+	     resource_item,
+	     &resource_data_size,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string: %d size.",
-		 function,
-		 string_index );
+		 "%s: unable to retrieve resource item size.",
+		 function );
 
 		goto on_error;
 	}
-	if( value_string_size > 0 )
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
-		value_string = system_string_allocate(
-		                value_string_size );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource data size value out of bounds.",
+		 function );
 
-		if( value_string == NULL )
+		goto on_error;
+	}
+	resource_data = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * resource_data_size );
+
+	if( resource_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource data.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libwrc_resource_item_read_buffer(
+	              resource_item,
+	              resource_data,
+	              (size_t) resource_data_size,
+	              error );
+
+	if( read_count != (ssize_t) resource_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read from resource item.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_string_table_resource_initialize(
+	     &string_table_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize string table resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_string_table_resource_read(
+	     string_table_resource,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read string table resource.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 resource_data );
+
+	resource_data = NULL;
+
+	if( libwrc_string_table_resource_get_number_of_strings(
+	     string_table_resource,
+	     &number_of_strings,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of strings.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tnumber of strings\t: %d\n",
+	 number_of_strings );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "\n" );
+
+	for( string_index = 0;
+	     string_index < number_of_strings;
+	     string_index++ )
+	{
+		if( libwrc_string_table_resource_get_identifier(
+		     string_table_resource,
+		     string_index,
+		     &string_identifier,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create value string.",
-			 function );
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve string identifier: %d.",
+			 function,
+			 string_index );
 
 			goto on_error;
 		}
+		fprintf(
+		 info_handle->notify_stream,
+		 "\t0x%08" PRIx32 "",
+		 string_identifier );
+
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_string_get_utf16_string(
-		          string_resource,
-		          language_identifier,
+		result = libwrc_string_table_resource_get_utf16_string_size(
+		          string_table_resource,
 		          string_index,
-		          (uint16_t *) value_string,
-		          value_string_size,
+		          &value_string_size,
 		          error );
 #else
-		result = libwrc_string_get_utf8_string(
-		          string_resource,
-		          language_identifier,
+		result = libwrc_string_table_resource_get_utf8_string_size(
+		          string_table_resource,
 		          string_index,
-		          (uint8_t *) value_string,
-		          value_string_size,
+		          &value_string_size,
 		          error );
 #endif
 		if( result != 1 )
@@ -1777,26 +2356,97 @@ int info_handle_string_fprint(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve string: %d.",
+			 "%s: unable to retrieve string: %d size.",
 			 function,
 			 string_index );
 
 			goto on_error;
 		}
+		if( value_string_size > 0 )
+		{
+			if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid value string size value out of bounds.",
+				 function );
+
+				goto on_error;
+			}
+			value_string = system_string_allocate(
+			                value_string_size );
+
+			if( value_string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create value string.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libwrc_string_table_resource_get_utf16_string(
+			          string_table_resource,
+			          string_index,
+			          (uint16_t *) value_string,
+			          value_string_size,
+			          error );
+#else
+			result = libwrc_string_table_resource_get_utf8_string(
+			          string_table_resource,
+			          string_index,
+			          (uint8_t *) value_string,
+			          value_string_size,
+			          error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve string: %d.",
+				 function,
+				 string_index );
+
+				goto on_error;
+			}
+			fprintf(
+			 info_handle->notify_stream,
+			 "\t\t: %" PRIs_SYSTEM "",
+			 value_string );
+
+			memory_free(
+			 value_string );
+
+			value_string = NULL;
+		}
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tdata\t\t\t: %" PRIs_SYSTEM "\n",
-		 value_string );
-
-		memory_free(
-		 value_string );
-
-		value_string = NULL;
+		 "\n" );
 	}
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );
 
+	if( libwrc_string_table_resource_free(
+	     &string_table_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free string table resource.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
 
 on_error:
@@ -1805,24 +2455,37 @@ on_error:
 		memory_free(
 		 value_string );
 	}
+	if( string_table_resource != NULL )
+	{
+		libwrc_string_table_resource_free(
+		 &string_table_resource,
+		 NULL );
+	}
+	if( resource_data != NULL )
+	{
+		memory_free(
+		 resource_data );
+	}
 	return( -1 );
 }
 
-/* Prints the strings resource information
+/* Prints the string table resource
  * Returns 1 if successful or -1 on error
  */
-int info_handle_string_resource_fprint(
+int info_handle_string_table_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libwrc_resource_t *string_resource = NULL;
-	static char *function              = "info_handle_string_resource_fprint";
-	uint32_t language_identifier       = 0;
-	int language_index                 = 0;
-	int number_of_languages            = 0;
-	int number_of_strings              = 0;
-	int result                         = 0;
-	int string_index                   = 0;
+	libwrc_resource_t *resource               = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
+	libwrc_resource_item_t *resource_sub_item = NULL;
+	static char *function                     = "info_handle_string_table_resource_fprint";
+	uint32_t identifier                       = 0;
+	int number_of_resource_items              = 0;
+	int number_of_resource_sub_items          = 0;
+	int resource_item_index                   = 0;
+	int resource_sub_item_index               = 0;
+	int result                                = 0;
 
 	if( info_handle == NULL )
 	{
@@ -1838,7 +2501,7 @@ int info_handle_string_resource_fprint(
 	result = libwrc_stream_get_resource_by_identifier(
 	          info_handle->input_resource_stream,
 	          LIBWRC_RESOURCE_IDENTIFIER_STRING,
-	          &string_resource,
+	          &resource,
 	          error );
 
 	if( result == -1 )
@@ -1847,7 +2510,7 @@ int info_handle_string_resource_fprint(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string resource.",
+		 "%s: unable to retrieve resource.",
 		 function );
 
 		goto on_error;
@@ -1856,117 +2519,145 @@ int info_handle_string_resource_fprint(
 	{
 		fprintf(
 		 info_handle->notify_stream,
-		 "String resource:\n" );
+		 "String table (STRINGTABLE) resources:\n" );
 
-		if( libwrc_resource_get_number_of_languages(
-		     string_resource,
-		     &number_of_languages,
+		if( libwrc_resource_get_number_of_items(
+		     resource,
+		     &number_of_resource_items,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number of languages.",
+			 "%s: unable to retrieve number of resource items.",
 			 function );
 
 			goto on_error;
 		}
-		fprintf(
-		 info_handle->notify_stream,
-		 "\tnumber of languages\t: %d\n",
-		 number_of_languages );
-
-		fprintf(
-		 info_handle->notify_stream,
-		 "\n" );
-
-		for( language_index = 0;
-		     language_index < number_of_languages;
-		     language_index++ )
+		for( resource_item_index = 0;
+		     resource_item_index < number_of_resource_items;
+		     resource_item_index++ )
 		{
-			if( libwrc_resource_get_language_identifier(
-			     string_resource,
-			     language_index,
-			     &language_identifier,
+			if( libwrc_resource_get_item_by_index(
+			     resource,
+			     resource_item_index,
+			     &resource_item,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve language identifier: %d.",
+				 "%s: unable to retrieve resource item: %d.",
 				 function,
-				 language_index );
+				 resource_item_index );
 
 				goto on_error;
 			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tlanguage identifier\t: 0x%08" PRIx32 " (%s)\n",
-			 language_identifier,
-			 libfwnt_locale_identifier_language_tag_get_identifier(
-			  language_identifier & 0x0000ffffUL ) );
-
-			if( libwrc_string_get_number_of_strings(
-			     string_resource,
-			     language_identifier,
-			     &number_of_strings,
+			if( libwrc_resource_item_get_identifier(
+			     resource_item,
+			     &identifier,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve number of strings for language identifier: 0x%08" PRIx32 ".",
-				 function,
-				 language_identifier );
+				 "%s: unable to retrieve identifier.",
+				 function );
 
 				goto on_error;
 			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tnumber of strings\t: %d\n",
-			 number_of_strings );
-
-			fprintf(
-			 info_handle->notify_stream,
-			 "\n" );
-
-			for( string_index = 0;
-			     string_index < number_of_strings;
-			     string_index++ )
+			if( libwrc_resource_item_get_number_of_sub_items(
+			     resource_item,
+			     &number_of_resource_sub_items,
+			     error ) != 1 )
 			{
-				if( info_handle_string_fprint(
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve number of resource sub items.",
+				 function );
+
+				goto on_error;
+			}
+			for( resource_sub_item_index = 0;
+			     resource_sub_item_index < number_of_resource_sub_items;
+			     resource_sub_item_index++ )
+			{
+				if( libwrc_resource_item_get_sub_item_by_index(
+				     resource_item,
+				     resource_sub_item_index,
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( info_handle_string_table_resource_item_fprint(
 				     info_handle,
-				     string_resource,
-				     language_identifier,
-				     string_index,
+				     identifier,
+				     resource_sub_item,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-					 "%s: unable to print string: %d for language identifier: 0x%08" PRIx32 ".",
+					 "%s: unable to print string table resource sub item: %d.",
 					 function,
-					 string_index,
-					 language_identifier );
+					 resource_sub_item_index );
 
 					goto on_error;
 				}
+				if( libwrc_resource_item_free(
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
 
+					goto on_error;
+				}
+			}
+			if( libwrc_resource_item_free(
+			     &resource_item,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free resource item: %d.",
+				 function,
+				 resource_item_index );
+
+				goto on_error;
 			}
 		}
 		if( libwrc_resource_free(
-		     &string_resource,
+		     &resource,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free string resource.",
+			 "%s: unable to free resource.",
 			 function );
 
 			goto on_error;
@@ -1975,26 +2666,43 @@ int info_handle_string_resource_fprint(
 	return( 1 );
 
 on_error:
-	if( string_resource != NULL )
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( resource != NULL )
 	{
 		libwrc_resource_free(
-		 &string_resource,
+		 &resource,
 		 NULL );
 	}
 	return( -1 );
 }
 
-/* Prints the version values information
+/* Prints a version information resource item
  * Returns 1 if successful or -1 on error
  */
-int info_handle_version_values_fprint(
+int info_handle_version_information_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *version_resource,
-     uint32_t language_identifier,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error )
 {
-	static char *function = "info_handle_version_values_fprint";
-	uint64_t value_64bit  = 0;
+	libwrc_version_information_resource_t *version_information_resource = NULL;
+	uint8_t *resource_data                                              = NULL;
+	static char *function                                               = "info_handle_version_information_resource_item_fprint";
+	ssize_t read_count                                                  = 0;
+	uint64_t value_64bit                                                = 0;
+	uint32_t language_identifier                                        = 0;
+	uint32_t resource_data_size                                         = 0;
 
 	if( info_handle == NULL )
 	{
@@ -2007,9 +2715,120 @@ int info_handle_version_values_fprint(
 
 		return( -1 );
 	}
-	if( libwrc_version_get_file_version(
-	     version_resource,
-	     language_identifier,
+	if( libwrc_resource_item_get_identifier(
+	     resource_item,
+	     &language_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource item identifier.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tResource %" PRIu32 ": 0x%04" PRIx32 " (%s)\n",
+	 identifier,
+	 language_identifier,
+	 libfwnt_locale_identifier_language_tag_get_identifier(
+	  language_identifier & 0x0000ffffUL ) );
+
+	if( libwrc_resource_item_get_size(
+	     resource_item,
+	     &resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource item size.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource data size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	resource_data = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * resource_data_size );
+
+	if( resource_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource data.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libwrc_resource_item_read_buffer(
+	              resource_item,
+	              resource_data,
+	              (size_t) resource_data_size,
+	              error );
+
+	if( read_count != (ssize_t) resource_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read from resource item.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_version_information_resource_initialize(
+	     &version_information_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize version information resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_version_information_resource_read(
+	     version_information_resource,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read version information resource.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 resource_data );
+
+	resource_data = NULL;
+
+	if( libwrc_version_information_resource_get_file_version(
+	     version_information_resource,
 	     &value_64bit,
 	     error ) != 1 )
 	{
@@ -2030,9 +2849,8 @@ int info_handle_version_values_fprint(
 	 ( value_64bit >> 16 ) & 0xffff,
 	 value_64bit & 0xffff );
 
-	if( libwrc_version_get_product_version(
-	     version_resource,
-	     language_identifier,
+	if( libwrc_version_information_resource_get_product_version(
+	     version_information_resource,
 	     &value_64bit,
 	     error ) != 1 )
 	{
@@ -2054,26 +2872,58 @@ int info_handle_version_values_fprint(
 	 value_64bit & 0xffff );
 
 /* TODO add more info */
+
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );
 
+	if( libwrc_version_information_resource_free(
+	     &version_information_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free version information resource.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
+
+on_error:
+	if( version_information_resource != NULL )
+	{
+		libwrc_version_information_resource_free(
+		 &version_information_resource,
+		 NULL );
+	}
+	if( resource_data != NULL )
+	{
+		memory_free(
+		 resource_data );
+	}
+	return( -1 );
 }
 
-/* Prints the version resource information
+/* Prints the version information resource
  * Returns 1 if successful or -1 on error
  */
-int info_handle_version_resource_fprint(
+int info_handle_version_information_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libwrc_resource_t *version_resource = NULL;
-	static char *function               = "info_handle_version_resource_fprint";
-	uint32_t language_identifier        = 0;
-	int language_index                  = 0;
-	int number_of_languages             = 0;
-	int result                          = 0;
+	libwrc_resource_t *resource               = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
+	libwrc_resource_item_t *resource_sub_item = NULL;
+	static char *function                     = "info_handle_version_information_resource_fprint";
+	uint32_t identifier                       = 0;
+	int number_of_resource_items              = 0;
+	int number_of_resource_sub_items          = 0;
+	int resource_item_index                   = 0;
+	int resource_sub_item_index               = 0;
+	int result                                = 0;
 
 	if( info_handle == NULL )
 	{
@@ -2089,7 +2939,7 @@ int info_handle_version_resource_fprint(
 	result = libwrc_stream_get_resource_by_identifier(
 	          info_handle->input_resource_stream,
 	          LIBWRC_RESOURCE_IDENTIFIER_VERSION,
-	          &version_resource,
+	          &resource,
 	          error );
 
 	if( result == -1 )
@@ -2098,7 +2948,7 @@ int info_handle_version_resource_fprint(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve version resource.",
+		 "%s: unable to retrieve resource.",
 		 function );
 
 		goto on_error;
@@ -2107,84 +2957,145 @@ int info_handle_version_resource_fprint(
 	{
 		fprintf(
 		 info_handle->notify_stream,
-		 "Version resource:\n" );
+		 "Version information (VERSIONINFO) resources:\n" );
 
-		if( libwrc_resource_get_number_of_languages(
-		     version_resource,
-		     &number_of_languages,
+		if( libwrc_resource_get_number_of_items(
+		     resource,
+		     &number_of_resource_items,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number of languages.",
+			 "%s: unable to retrieve number of resource items.",
 			 function );
 
 			goto on_error;
 		}
-		fprintf(
-		 info_handle->notify_stream,
-		 "\tnumber of languages\t: %d\n",
-		 number_of_languages );
-
-		fprintf(
-		 info_handle->notify_stream,
-		 "\n" );
-
-		for( language_index = 0;
-		     language_index < number_of_languages;
-		     language_index++ )
+		for( resource_item_index = 0;
+		     resource_item_index < number_of_resource_items;
+		     resource_item_index++ )
 		{
-			if( libwrc_resource_get_language_identifier(
-			     version_resource,
-			     language_index,
-			     &language_identifier,
+			if( libwrc_resource_get_item_by_index(
+			     resource,
+			     resource_item_index,
+			     &resource_item,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve language identifier: %d.",
+				 "%s: unable to retrieve resource item: %d.",
 				 function,
-				 language_index );
+				 resource_item_index );
 
 				goto on_error;
 			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tlanguage identifier\t: 0x%08" PRIx32 " (%s)\n",
-			 language_identifier,
-			 libfwnt_locale_identifier_language_tag_get_identifier(
-			  language_identifier & 0x0000ffffUL ) );
-
-			if( info_handle_version_values_fprint(
-			     info_handle,
-			     version_resource,
-			     language_identifier,
+			if( libwrc_resource_item_get_identifier(
+			     resource_item,
+			     &identifier,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print version values for language identifier: 0x%08" PRIx32 ".",
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve identifier.",
+				 function );
+
+				goto on_error;
+			}
+			if( libwrc_resource_item_get_number_of_sub_items(
+			     resource_item,
+			     &number_of_resource_sub_items,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve number of resource sub items.",
+				 function );
+
+				goto on_error;
+			}
+			for( resource_sub_item_index = 0;
+			     resource_sub_item_index < number_of_resource_sub_items;
+			     resource_sub_item_index++ )
+			{
+				if( libwrc_resource_item_get_sub_item_by_index(
+				     resource_item,
+				     resource_sub_item_index,
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( info_handle_version_information_resource_item_fprint(
+				     info_handle,
+				     identifier,
+				     resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+					 "%s: unable to print version information resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( libwrc_resource_item_free(
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+			}
+			if( libwrc_resource_item_free(
+			     &resource_item,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free resource item: %d.",
 				 function,
-				 language_identifier );
+				 resource_item_index );
 
 				goto on_error;
 			}
 		}
 		if( libwrc_resource_free(
-		     &version_resource,
+		     &resource,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free version resource.",
+			 "%s: unable to free resource.",
 			 function );
 
 			goto on_error;
@@ -2193,10 +3104,22 @@ int info_handle_version_resource_fprint(
 	return( 1 );
 
 on_error:
-	if( version_resource != NULL )
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( resource != NULL )
 	{
 		libwrc_resource_free(
-		 &version_resource,
+		 &resource,
 		 NULL );
 	}
 	return( -1 );
@@ -2285,6 +3208,17 @@ int info_handle_resource_hierarchy_fprint_resource_item(
 	}
 	else if( value_string_size > 0 )
 	{
+		if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid value string size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		value_string = system_string_allocate(
 		                value_string_size );
 
@@ -2558,7 +3492,7 @@ int info_handle_resource_hierarchy_fprint(
 					resource_name = _SYSTEM_STRING( "DIALOG" );
 					break;
 
-				case LIBWRC_RESOURCE_TYPE_STRING:
+				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					resource_name = _SYSTEM_STRING( "STRINGTABLE" );
 					break;
 
@@ -2642,6 +3576,17 @@ int info_handle_resource_hierarchy_fprint(
 		}
 		else if( value_string_size > 0 )
 		{
+			if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid value string size value out of bounds.",
+				 function );
+
+				goto on_error;
+			}
 			value_string = system_string_allocate(
 			                value_string_size );
 
@@ -2929,7 +3874,7 @@ int info_handle_stream_fprint(
 					resource_name = _SYSTEM_STRING( "DIALOG" );
 					break;
 
-				case LIBWRC_RESOURCE_TYPE_STRING:
+				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					resource_name = _SYSTEM_STRING( "STRINGTABLE" );
 					break;
 
@@ -3013,6 +3958,17 @@ int info_handle_stream_fprint(
 		}
 		else if( value_string_size > 0 )
 		{
+			if( value_string_size > ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( system_character_t ) ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid value string size value out of bounds.",
+				 function );
+
+				goto on_error;
+			}
 			value_string = system_string_allocate(
 			                value_string_size );
 
@@ -3080,7 +4036,7 @@ int info_handle_stream_fprint(
 	 info_handle->notify_stream,
 	 "\n" );
 
-	if( info_handle_version_resource_fprint(
+	if( info_handle_version_information_resource_fprint(
 	     info_handle,
 	     error ) != 1 )
 	{
@@ -3088,7 +4044,7 @@ int info_handle_stream_fprint(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-		 "%s: unable to print version resource.",
+		 "%s: unable to print version information resource.",
 		 function );
 
 		goto on_error;
@@ -3106,7 +4062,7 @@ int info_handle_stream_fprint(
 
 		goto on_error;
 	}
-	if( info_handle_string_resource_fprint(
+	if( info_handle_string_table_resource_fprint(
 	     info_handle,
 	     error ) != 1 )
 	{
@@ -3114,7 +4070,7 @@ int info_handle_stream_fprint(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-		 "%s: unable to print string resource.",
+		 "%s: unable to print string table resource.",
 		 function );
 
 		goto on_error;

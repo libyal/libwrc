@@ -46,13 +46,16 @@ check_PROGRAMS = \
 	wrc_test_io_handle \
 	wrc_test_language_entry \
 	wrc_test_language_table \
+	wrc_test_message_table_resource \
 	wrc_test_mui_values \
 	wrc_test_notify \
 	wrc_test_resource \
 	wrc_test_resource_item \
 	wrc_test_resource_values \
 	wrc_test_stream \
+	wrc_test_string_table_resource \
 	wrc_test_support \
+	wrc_test_version_information_resource \
 	wrc_test_version_values \
 	wrc_test_wevt_channel \
 	wrc_test_wevt_event \
@@ -118,6 +121,18 @@ wrc_test_language_table_SOURCES = \
 	wrc_test_unused.h
 
 wrc_test_language_table_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
+
+wrc_test_message_table_resource_SOURCES = \
+	wrc_test_libcerror.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_memory.c wrc_test_memory.h \
+	wrc_test_message_table_resource.c \
+	wrc_test_unused.h
+
+wrc_test_message_table_resource_LDADD = \
 	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@
 
@@ -213,6 +228,18 @@ wrc_test_stream_LDADD = \
 	@LIBCERROR_LIBADD@ \
 	@PTHREAD_LIBADD@
 
+wrc_test_string_table_resource_SOURCES = \
+	wrc_test_libcerror.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_memory.c wrc_test_memory.h \
+	wrc_test_string_table_resource.c \
+	wrc_test_unused.h
+
+wrc_test_string_table_resource_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
+
 wrc_test_support_SOURCES = \
 	wrc_test_libcerror.h \
 	wrc_test_libwrc.h \
@@ -221,6 +248,18 @@ wrc_test_support_SOURCES = \
 	wrc_test_unused.h
 
 wrc_test_support_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
+
+wrc_test_version_information_resource_SOURCES = \
+	wrc_test_libcerror.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_memory.c wrc_test_memory.h \
+	wrc_test_unused.h \
+	wrc_test_version_information_resource.c
+
+wrc_test_version_information_resource_LDADD = \
 	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@
 

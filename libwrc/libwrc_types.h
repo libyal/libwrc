@@ -34,9 +34,14 @@
 /* The following type definitions hide internal data structures
  */
 #if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
+typedef struct libwrc_manifest_resource {}		libwrc_manifest_resource_t;
+typedef struct libwrc_message_table_resource {}		libwrc_message_table_resource_t;
+typedef struct libwrc_mui_resource {}			libwrc_mui_resource_t;
 typedef struct libwrc_resource {}			libwrc_resource_t;
 typedef struct libwrc_resource_item {}			libwrc_resource_item_t;
 typedef struct libwrc_stream {}				libwrc_stream_t;
+typedef struct libwrc_string_table_resource {}		libwrc_string_table_resource_t;
+typedef struct libwrc_version_information_resource {}	libwrc_version_information_resource_t;
 typedef struct libwrc_wevt_channel {}			libwrc_wevt_channel_t;
 typedef struct libwrc_wevt_event {}			libwrc_wevt_event_t;
 typedef struct libwrc_wevt_keyword {}			libwrc_wevt_keyword_t;
@@ -48,9 +53,14 @@ typedef struct libwrc_wevt_task {}			libwrc_wevt_task_t;
 typedef struct libwrc_wevt_template_definition {}	libwrc_wevt_template_definition_t;
 
 #else
+typedef intptr_t libwrc_manifest_resource_t;
+typedef intptr_t libwrc_message_table_resource_t;
+typedef intptr_t libwrc_mui_resource_t;
 typedef intptr_t libwrc_resource_t;
 typedef intptr_t libwrc_resource_item_t;
 typedef intptr_t libwrc_stream_t;
+typedef intptr_t libwrc_string_table_resource_t;
+typedef intptr_t libwrc_version_information_resource_t;
 typedef intptr_t libwrc_wevt_channel_t;
 typedef intptr_t libwrc_wevt_event_t;
 typedef intptr_t libwrc_wevt_keyword_t;

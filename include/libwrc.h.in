@@ -351,18 +351,6 @@ int libwrc_resource_free(
      libwrc_resource_t **resource,
      libwrc_error_t **error );
 
-/* Reads the resource
- *
- * This function is deprecated
- *
- * Returns 1 if successful or -1 on error
- */
-LIBWRC_DEPRECATED \
-LIBWRC_EXTERN \
-int libwrc_resource_read(
-     libwrc_resource_t *resource,
-     libwrc_error_t **error );
-
 /* Retrieves the resource identifier
  * Returns 1 if successful or -1 on error
  */
@@ -424,8 +412,12 @@ int libwrc_resource_get_type(
      libwrc_error_t **error );
 
 /* Retrieves the number of languages
+ *
+ * This function is deprecated use libwrc_resource_get_number_of_items instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_resource_get_number_of_languages(
      libwrc_resource_t *resource,
@@ -433,8 +425,12 @@ int libwrc_resource_get_number_of_languages(
      libwrc_error_t **error );
 
 /* Retrieves a specific language identifier
+ *
+ * This function is deprecated use libwrc_resource_get_item_by_index instead
+ *
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_resource_get_language_identifier(
      libwrc_resource_t *resource,
@@ -595,9 +591,79 @@ int libwrc_resource_item_get_sub_item_by_index(
  * Manifest resource functions
  * ------------------------------------------------------------------------- */
 
+/* Creates a manifest resource
+ * Make sure the value manifest_resource is referencing, is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_manifest_resource_initialize(
+     libwrc_manifest_resource_t **manifest_resource,
+     libwrc_error_t **error );
+
+/* Frees a manifest
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_manifest_resource_free(
+     libwrc_manifest_resource_t **manifest_resource,
+     libwrc_error_t **error );
+
+/* Reads the manifest resource
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_manifest_resource_read(
+     libwrc_manifest_resource_t *manifest_resource,
+     const uint8_t *data,
+     size_t data_size,
+     libwrc_error_t **error );
+
 /* Retrieves the size of a specific UTF-8 formatted manifest string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_EXTERN \
+int libwrc_manifest_resource_get_utf8_string_size(
+     libwrc_manifest_resource_t *manifest_resource,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves a specific UTF-8 formatted manifest string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_manifest_resource_get_utf8_string(
+     libwrc_manifest_resource_t *manifest_resource,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of a specific UTF-16 formatted manifest string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_manifest_resource_get_utf16_string_size(
+     libwrc_manifest_resource_t *manifest_resource,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves a specific UTF-16 formatted manifest string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_manifest_resource_get_utf16_string(
+     libwrc_manifest_resource_t *manifest_resource,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Manifest functions
+ * ------------------------------------------------------------------------- */
+
+/* Retrieves the size of a specific UTF-8 formatted manifest string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_manifest_get_utf8_string_size(
      libwrc_resource_t *resource,
@@ -608,6 +674,7 @@ int libwrc_manifest_get_utf8_string_size(
 /* Retrieves a specific UTF-8 formatted manifest string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_manifest_get_utf8_string(
      libwrc_resource_t *resource,
@@ -619,6 +686,7 @@ int libwrc_manifest_get_utf8_string(
 /* Retrieves the size of a specific UTF-16 formatted manifest string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_manifest_get_utf16_string_size(
      libwrc_resource_t *resource,
@@ -629,6 +697,7 @@ int libwrc_manifest_get_utf16_string_size(
 /* Retrieves a specific UTF-16 formatted manifest string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_manifest_get_utf16_string(
      libwrc_resource_t *resource,
@@ -638,12 +707,115 @@ int libwrc_manifest_get_utf16_string(
      libwrc_error_t **error );
 
 /* -------------------------------------------------------------------------
- * Message-table resource functions
+ * Message table (MESSAGETABLE) resource functions
+ * ------------------------------------------------------------------------- */
+
+/* Creates a message table resource
+ * Make sure the value message_table_resource is referencing, is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_initialize(
+     libwrc_message_table_resource_t **message_table_resource,
+     libwrc_error_t **error );
+
+/* Frees a message table
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_free(
+     libwrc_message_table_resource_t **message_table_resource,
+     libwrc_error_t **error );
+
+/* Reads the message table resource
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_read(
+     libwrc_message_table_resource_t *message_table_resource,
+     const uint8_t *data,
+     size_t data_size,
+     int ascii_codepage,
+     libwrc_error_t **error );
+
+/* Retrieves the number of messages
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_get_number_of_messages(
+     libwrc_message_table_resource_t *message_table_resource,
+     int *number_of_messages,
+     libwrc_error_t **error );
+
+/* Retrieves a specific message identifier
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_get_identifier(
+     libwrc_message_table_resource_t *message_table_resource,
+     int message_index,
+     uint32_t *message_identifier,
+     libwrc_error_t **error );
+
+/* Retrieves the message index for a specific identifier
+ * Returns 1 if successful, 0 if no such message identifier or -1 on error
+ */
+int libwrc_message_table_resource_get_index_by_identifier(
+     libwrc_message_table_resource_t *message_table_resource,
+     uint32_t message_identifier,
+     int *message_index,
+     libwrc_error_t **error );
+
+/* Retrieves the size of a specific UTF-8 formatted message string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_get_utf8_string_size(
+     libwrc_message_table_resource_t *message_table_resource,
+     int message_index,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves a specific UTF-8 formatted message string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_get_utf8_string(
+     libwrc_message_table_resource_t *message_table_resource,
+     int message_index,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of a specific UTF-16 formatted message string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_get_utf16_string_size(
+     libwrc_message_table_resource_t *message_table_resource,
+     int message_index,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves a specific UTF-16 formatted message string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_message_table_resource_get_utf16_string(
+     libwrc_message_table_resource_t *message_table_resource,
+     int message_index,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Message-table functions
  * ------------------------------------------------------------------------- */
 
 /* Retrieves the number of messages
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_message_table_get_number_of_messages(
      libwrc_resource_t *resource,
@@ -654,6 +826,7 @@ int libwrc_message_table_get_number_of_messages(
 /* Retrieves a specific message identifier
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_message_table_get_identifier(
      libwrc_resource_t *resource,
@@ -665,6 +838,8 @@ int libwrc_message_table_get_identifier(
 /* Retrieves the message index for a specific identifier
  * Returns 1 if successful, 0 if no such message identifier or -1 on error
  */
+LIBWRC_DEPRECATED \
+LIBWRC_EXTERN \
 int libwrc_message_table_get_index_by_identifier(
      libwrc_resource_t *resource,
      uint32_t language_identifier,
@@ -675,6 +850,7 @@ int libwrc_message_table_get_index_by_identifier(
 /* Retrieves the size of a specific UTF-8 formatted message string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_message_table_get_utf8_string_size(
      libwrc_resource_t *resource,
@@ -686,6 +862,7 @@ int libwrc_message_table_get_utf8_string_size(
 /* Retrieves a specific UTF-8 formatted message string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_message_table_get_utf8_string(
      libwrc_resource_t *resource,
@@ -698,6 +875,7 @@ int libwrc_message_table_get_utf8_string(
 /* Retrieves the size of a specific UTF-16 formatted message string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_message_table_get_utf16_string_size(
      libwrc_resource_t *resource,
@@ -709,6 +887,7 @@ int libwrc_message_table_get_utf16_string_size(
 /* Retrieves a specific UTF-16 formatted message string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_message_table_get_utf16_string(
      libwrc_resource_t *resource,
@@ -720,6 +899,10 @@ int libwrc_message_table_get_utf16_string(
 
 /* -------------------------------------------------------------------------
  * MUI resource functions
+ * ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+ * MUI functions
  * ------------------------------------------------------------------------- */
 
 /* Retrieves the file type
@@ -901,12 +1084,116 @@ int libwrc_mui_get_utf16_fallback_language(
      libwrc_error_t **error );
 
 /* -------------------------------------------------------------------------
- * String resource functions
+ * String table (STRINGTABLE) resource functions
+ * ------------------------------------------------------------------------- */
+
+/* Creates a string table resource
+ * Make sure the value string_table_resource is referencing, is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_initialize(
+     libwrc_string_table_resource_t **string_table_resource,
+     libwrc_error_t **error );
+
+/* Frees a string table
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_free(
+     libwrc_string_table_resource_t **string_table_resource,
+     libwrc_error_t **error );
+
+/* Reads the string table resource
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_read(
+     libwrc_string_table_resource_t *string_table_resource,
+     const uint8_t *data,
+     size_t data_size,
+     uint32_t base_identifier,
+     libwrc_error_t **error );
+
+/* Retrieves the number of strings
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_get_number_of_strings(
+     libwrc_string_table_resource_t *string_table_resource,
+     int *number_of_strings,
+     libwrc_error_t **error );
+
+/* Retrieves a specific string identifier
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_get_identifier(
+     libwrc_string_table_resource_t *string_table_resource,
+     int string_index,
+     uint32_t *string_identifier,
+     libwrc_error_t **error );
+
+/* Retrieves the string index for a specific identifier
+ * Returns 1 if successful, 0 if no such string identifier or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_get_index_by_identifier(
+     libwrc_string_table_resource_t *string_table_resource,
+     uint32_t string_identifier,
+     int *string_index,
+     libwrc_error_t **error );
+
+/* Retrieves the size of a specific UTF-8 formatted string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_get_utf8_string_size(
+     libwrc_string_table_resource_t *string_table_resource,
+     int string_index,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves a specific UTF-8 formatted string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_get_utf8_string(
+     libwrc_string_table_resource_t *string_table_resource,
+     int string_index,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of a specific UTF-16 formatted string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_get_utf16_string_size(
+     libwrc_string_table_resource_t *string_table_resource,
+     int string_index,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves a specific UTF-16 formatted string
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_string_table_resource_get_utf16_string(
+     libwrc_string_table_resource_t *string_table_resource,
+     int string_index,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * String functions
  * ------------------------------------------------------------------------- */
 
 /* Retrieves the number of strings
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_string_get_number_of_strings(
      libwrc_resource_t *resource,
@@ -917,6 +1204,7 @@ int libwrc_string_get_number_of_strings(
 /* Retrieves a specific string identifier
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_string_get_identifier(
      libwrc_resource_t *resource,
@@ -928,6 +1216,8 @@ int libwrc_string_get_identifier(
 /* Retrieves the string index for a specific identifier
  * Returns 1 if successful, 0 if no such string identifier or -1 on error
  */
+LIBWRC_DEPRECATED \
+LIBWRC_EXTERN \
 int libwrc_string_get_index_by_identifier(
      libwrc_resource_t *resource,
      uint32_t language_identifier,
@@ -938,6 +1228,7 @@ int libwrc_string_get_index_by_identifier(
 /* Retrieves the size of a specific UTF-8 formatted string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_string_get_utf8_string_size(
      libwrc_resource_t *resource,
@@ -949,6 +1240,7 @@ int libwrc_string_get_utf8_string_size(
 /* Retrieves a specific UTF-8 formatted string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_string_get_utf8_string(
      libwrc_resource_t *resource,
@@ -961,6 +1253,7 @@ int libwrc_string_get_utf8_string(
 /* Retrieves the size of a specific UTF-16 formatted string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_string_get_utf16_string_size(
      libwrc_resource_t *resource,
@@ -972,6 +1265,7 @@ int libwrc_string_get_utf16_string_size(
 /* Retrieves a specific UTF-16 formatted string
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_string_get_utf16_string(
      libwrc_resource_t *resource,
@@ -982,12 +1276,62 @@ int libwrc_string_get_utf16_string(
      libwrc_error_t **error );
 
 /* -------------------------------------------------------------------------
- * Version resource functions
+ * Version information (VERSIONINFO) resource functions
+ * ------------------------------------------------------------------------- */
+
+/* Creates a version information resource
+ * Make sure the value version_information_resource is referencing, is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_version_information_resource_initialize(
+     libwrc_version_information_resource_t **version_information_resource,
+     libwrc_error_t **error );
+
+/* Frees a version information
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_version_information_resource_free(
+     libwrc_version_information_resource_t **version_information_resource,
+     libwrc_error_t **error );
+
+/* Reads the version information resource
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_version_information_resource_read(
+     libwrc_version_information_resource_t *version_information_resource,
+     const uint8_t *data,
+     size_t data_size,
+     libwrc_error_t **error );
+
+/* Retrieves the file version
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_version_information_resource_get_file_version(
+     libwrc_version_information_resource_t *version_information_resource,
+     uint64_t *file_version,
+     libwrc_error_t **error );
+
+/* Retrieves the product version
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_version_information_resource_get_product_version(
+     libwrc_version_information_resource_t *version_information_resource,
+     uint64_t *product_version,
+     libwrc_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Version functions
  * ------------------------------------------------------------------------- */
 
 /* Retrieves the file version
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_version_get_file_version(
      libwrc_resource_t *resource,
@@ -998,6 +1342,7 @@ int libwrc_version_get_file_version(
 /* Retrieves the product version
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_version_get_product_version(
      libwrc_resource_t *resource,

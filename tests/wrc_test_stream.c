@@ -1661,121 +1661,6 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libwrc_stream_get_resource function
- * Returns 1 if successful or 0 if not
- */
-int wrc_test_stream_get_resource(
-     libwrc_stream_t *stream )
-{
-	libcerror_error_t *error    = NULL;
-	libwrc_resource_t *resource = NULL;
-	int result                  = 0;
-
-	/* Test regular cases
-	 */
-	result = libwrc_stream_get_resource(
-	          stream,
-	          0,
-	          &resource,
-	          &error );
-
-	WRC_TEST_ASSERT_NOT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "resource",
-	 resource );
-
-	WRC_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	result = libwrc_resource_free(
-	          &resource,
-	          &error );
-
-	WRC_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	WRC_TEST_ASSERT_IS_NULL(
-	 "resource",
-	 resource );
-
-	WRC_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test error cases
-	 */
-	result = libwrc_stream_get_resource(
-	          NULL,
-	          0,
-	          &resource,
-	          &error );
-
-	WRC_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libwrc_stream_get_resource(
-	          stream,
-	          -1,
-	          &resource,
-	          &error );
-
-	WRC_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libwrc_stream_get_resource(
-	          stream,
-	          0,
-	          NULL,
-	          &error );
-
-	WRC_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
 /* Tests the libwrc_stream_get_resource_by_index function
  * Returns 1 if successful or 0 if not
  */
@@ -2104,11 +1989,6 @@ int main(
 		WRC_TEST_RUN_WITH_ARGS(
 		 "libwrc_stream_get_number_of_resources",
 		 wrc_test_stream_get_number_of_resources,
-		 stream );
-
-		WRC_TEST_RUN_WITH_ARGS(
-		 "libwrc_stream_get_resource",
-		 wrc_test_stream_get_resource,
 		 stream );
 
 		WRC_TEST_RUN_WITH_ARGS(
