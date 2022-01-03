@@ -1600,24 +1600,151 @@ on_error:
 	return( -1 );
 }
 
-/* Prints the MUI values information
+/* Prints a MUI resource item
  * Returns 1 if successful or -1 on error
  */
-int info_handle_mui_values_fprint(
+int info_handle_mui_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *mui_resource,
-     uint32_t language_identifier,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error )
 {
-	system_character_t *value_string = NULL;
-	static char *function            = "info_handle_mui_values_fprint";
-	size_t value_string_size         = 0;
-	uint32_t file_type               = 0;
-	int result                       = 0;
+	libwrc_mui_resource_t *mui_resource = NULL;
+	system_character_t *value_string    = NULL;
+	uint8_t *resource_data              = NULL;
+	static char *function               = "info_handle_mui_resource_item_fprint";
+	size_t value_string_size            = 0;
+	ssize_t read_count                  = 0;
+	uint32_t file_type                  = 0;
+	uint32_t language_identifier        = 0;
+	uint32_t resource_data_size         = 0;
+	int result                          = 0;
 
-	if( libwrc_mui_get_file_type(
+	if( info_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid info handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libwrc_resource_item_get_identifier(
+	     resource_item,
+	     &language_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource item identifier.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tResource %" PRIu32 ": 0x%04" PRIx32 " (%s)\n",
+	 identifier,
+	 language_identifier,
+	 libfwnt_locale_identifier_language_tag_get_identifier(
+	  language_identifier & 0x0000ffffUL ) );
+
+	if( libwrc_resource_item_get_size(
+	     resource_item,
+	     &resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource item size.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > (uint32_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource data size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	resource_data = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * resource_data_size );
+
+	if( resource_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource data.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libwrc_resource_item_read_buffer(
+	              resource_item,
+	              resource_data,
+	              (size_t) resource_data_size,
+	              error );
+
+	if( read_count != (ssize_t) resource_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read from resource item.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_mui_resource_initialize(
+	     &mui_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize MUI resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_mui_resource_read(
 	     mui_resource,
-	     language_identifier,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read MUI resource.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 resource_data );
+
+	resource_data = NULL;
+
+	if( libwrc_mui_resource_get_file_type(
+	     mui_resource,
 	     &file_type,
 	     error ) != 1 )
 	{
@@ -1636,15 +1763,13 @@ int info_handle_mui_values_fprint(
 	 file_type );
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libwrc_mui_get_utf16_main_name_size(
+	result = libwrc_mui_resource_get_utf16_main_name_size(
 		  mui_resource,
-		  language_identifier,
 		  &value_string_size,
 		  error );
 #else
-	result = libwrc_mui_get_utf8_main_name_size(
+	result = libwrc_mui_resource_get_utf8_main_name_size(
 		  mui_resource,
-		  language_identifier,
 		  &value_string_size,
 		  error );
 #endif
@@ -1688,16 +1813,14 @@ int info_handle_mui_values_fprint(
 			goto on_error;
 		}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_mui_get_utf16_main_name(
+		result = libwrc_mui_resource_get_utf16_main_name(
 			  mui_resource,
-		          language_identifier,
 			  (uint16_t *) value_string,
 			  value_string_size,
 			  error );
 #else
-		result = libwrc_mui_get_utf8_main_name(
+		result = libwrc_mui_resource_get_utf8_main_name(
 			  mui_resource,
-		          language_identifier,
 			  (uint8_t *) value_string,
 			  value_string_size,
 			  error );
@@ -1724,15 +1847,13 @@ int info_handle_mui_values_fprint(
 		value_string = NULL;
 	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libwrc_mui_get_utf16_mui_name_size(
+	result = libwrc_mui_resource_get_utf16_mui_name_size(
 		  mui_resource,
-	          language_identifier,
 		  &value_string_size,
 		  error );
 #else
-	result = libwrc_mui_get_utf8_mui_name_size(
+	result = libwrc_mui_resource_get_utf8_mui_name_size(
 		  mui_resource,
-	          language_identifier,
 		  &value_string_size,
 		  error );
 #endif
@@ -1776,16 +1897,14 @@ int info_handle_mui_values_fprint(
 			goto on_error;
 		}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_mui_get_utf16_mui_name(
+		result = libwrc_mui_resource_get_utf16_mui_name(
 			  mui_resource,
-		          language_identifier,
 			  (uint16_t *) value_string,
 			  value_string_size,
 			  error );
 #else
-		result = libwrc_mui_get_utf8_mui_name(
+		result = libwrc_mui_resource_get_utf8_mui_name(
 			  mui_resource,
-		          language_identifier,
 			  (uint8_t *) value_string,
 			  value_string_size,
 			  error );
@@ -1812,15 +1931,13 @@ int info_handle_mui_values_fprint(
 		value_string = NULL;
 	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libwrc_mui_get_utf16_language_size(
+	result = libwrc_mui_resource_get_utf16_language_size(
 		  mui_resource,
-	          language_identifier,
 		  &value_string_size,
 		  error );
 #else
-	result = libwrc_mui_get_utf8_language_size(
+	result = libwrc_mui_resource_get_utf8_language_size(
 		  mui_resource,
-	          language_identifier,
 		  &value_string_size,
 		  error );
 #endif
@@ -1864,16 +1981,14 @@ int info_handle_mui_values_fprint(
 			goto on_error;
 		}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_mui_get_utf16_language(
+		result = libwrc_mui_resource_get_utf16_language(
 			  mui_resource,
-		          language_identifier,
 			  (uint16_t *) value_string,
 			  value_string_size,
 			  error );
 #else
-		result = libwrc_mui_get_utf8_language(
+		result = libwrc_mui_resource_get_utf8_language(
 			  mui_resource,
-		          language_identifier,
 			  (uint8_t *) value_string,
 			  value_string_size,
 			  error );
@@ -1900,15 +2015,13 @@ int info_handle_mui_values_fprint(
 		value_string = NULL;
 	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libwrc_mui_get_utf16_fallback_language_size(
+	result = libwrc_mui_resource_get_utf16_fallback_language_size(
 		  mui_resource,
-	          language_identifier,
 		  &value_string_size,
 		  error );
 #else
-	result = libwrc_mui_get_utf8_fallback_language_size(
+	result = libwrc_mui_resource_get_utf8_fallback_language_size(
 		  mui_resource,
-	          language_identifier,
 		  &value_string_size,
 		  error );
 #endif
@@ -1952,16 +2065,14 @@ int info_handle_mui_values_fprint(
 			goto on_error;
 		}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_mui_get_utf16_fallback_language(
+		result = libwrc_mui_resource_get_utf16_fallback_language(
 			  mui_resource,
-		          language_identifier,
 			  (uint16_t *) value_string,
 			  value_string_size,
 			  error );
 #else
-		result = libwrc_mui_get_utf8_fallback_language(
+		result = libwrc_mui_resource_get_utf8_fallback_language(
 			  mui_resource,
-		          language_identifier,
 			  (uint8_t *) value_string,
 			  value_string_size,
 			  error );
@@ -1991,6 +2102,19 @@ int info_handle_mui_values_fprint(
 	 info_handle->notify_stream,
 	 "\n" );
 
+	if( libwrc_mui_resource_free(
+	     &mui_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free MUI resource.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
 
 on_error:
@@ -1998,6 +2122,17 @@ on_error:
 	{
 		memory_free(
 		 value_string );
+	}
+	if( mui_resource != NULL )
+	{
+		libwrc_mui_resource_free(
+		 &mui_resource,
+		 NULL );
+	}
+	if( resource_data != NULL )
+	{
+		memory_free(
+		 resource_data );
 	}
 	return( -1 );
 }
@@ -2009,12 +2144,16 @@ int info_handle_mui_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libwrc_resource_t *mui_resource = NULL;
-	static char *function           = "info_handle_mui_resource_fprint";
-	uint32_t language_identifier    = 0;
-	int language_index              = 0;
-	int number_of_languages         = 0;
-	int result                      = 0;
+	libwrc_resource_t *resource               = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
+	libwrc_resource_item_t *resource_sub_item = NULL;
+	static char *function                     = "info_handle_mui_resource_fprint";
+	uint32_t identifier                       = 0;
+	int number_of_resource_items              = 0;
+	int number_of_resource_sub_items          = 0;
+	int resource_item_index                   = 0;
+	int resource_sub_item_index               = 0;
+	int result                                = 0;
 
 	if( info_handle == NULL )
 	{
@@ -2031,7 +2170,7 @@ int info_handle_mui_resource_fprint(
 	          info_handle->input_resource_stream,
 	          (uint8_t *) "MUI",
 	          3,
-	          &mui_resource,
+	          &resource,
 	          error );
 
 	if( result == -1 )
@@ -2040,7 +2179,7 @@ int info_handle_mui_resource_fprint(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve MUI resource.",
+		 "%s: unable to retrieve resource.",
 		 function );
 
 		goto on_error;
@@ -2051,81 +2190,143 @@ int info_handle_mui_resource_fprint(
 		 info_handle->notify_stream,
 		 "MUI resources:\n" );
 
-		if( libwrc_resource_get_number_of_languages(
-		     mui_resource,
-		     &number_of_languages,
+		if( libwrc_resource_get_number_of_items(
+		     resource,
+		     &number_of_resource_items,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number of languages.",
+			 "%s: unable to retrieve number of resource items.",
 			 function );
 
 			goto on_error;
 		}
-		fprintf(
-		 info_handle->notify_stream,
-		 "\tnumber of languages\t: %d\n",
-		 number_of_languages );
-
-		fprintf(
-		 info_handle->notify_stream,
-		 "\n" );
-
-		for( language_index = 0;
-		     language_index < number_of_languages;
-		     language_index++ )
+		for( resource_item_index = 0;
+		     resource_item_index < number_of_resource_items;
+		     resource_item_index++ )
 		{
-			if( libwrc_resource_get_language_identifier(
-			     mui_resource,
-			     language_index,
-			     &language_identifier,
+			if( libwrc_resource_get_item_by_index(
+			     resource,
+			     resource_item_index,
+			     &resource_item,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve language identifier: %d.",
+				 "%s: unable to retrieve resource item: %d.",
 				 function,
-				 language_index );
+				 resource_item_index );
 
 				goto on_error;
 			}
-			fprintf(
-			 info_handle->notify_stream,
-			 "\tlanguage identifier\t: 0x%04" PRIx32 " (%s)\n",
-			 language_identifier,
-			 libfwnt_locale_identifier_language_tag_get_identifier(
-			  language_identifier & 0x0000ffffUL ) );
-
-			if( info_handle_mui_values_fprint(
-			     info_handle,
-			     mui_resource,
-			     language_identifier,
+			if( libwrc_resource_item_get_identifier(
+			     resource_item,
+			     &identifier,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print MUI values.",
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve identifier.",
 				 function );
+
+				goto on_error;
+			}
+			if( libwrc_resource_item_get_number_of_sub_items(
+			     resource_item,
+			     &number_of_resource_sub_items,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve number of resource sub items.",
+				 function );
+
+				goto on_error;
+			}
+			for( resource_sub_item_index = 0;
+			     resource_sub_item_index < number_of_resource_sub_items;
+			     resource_sub_item_index++ )
+			{
+				if( libwrc_resource_item_get_sub_item_by_index(
+				     resource_item,
+				     resource_sub_item_index,
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( info_handle_mui_resource_item_fprint(
+				     info_handle,
+				     identifier,
+				     resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+					 "%s: unable to print MUI resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+				if( libwrc_resource_item_free(
+				     &resource_sub_item,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free resource sub item: %d.",
+					 function,
+					 resource_sub_item_index );
+
+					goto on_error;
+				}
+			}
+			if( libwrc_resource_item_free(
+			     &resource_item,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free resource item: %d.",
+				 function,
+				 resource_item_index );
 
 				goto on_error;
 			}
 		}
 		if( libwrc_resource_free(
-		     &mui_resource,
+		     &resource,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free MUI resource.",
+			 "%s: unable to free resource.",
 			 function );
 
 			goto on_error;
@@ -2134,10 +2335,22 @@ int info_handle_mui_resource_fprint(
 	return( 1 );
 
 on_error:
-	if( mui_resource != NULL )
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( resource != NULL )
 	{
 		libwrc_resource_free(
-		 &mui_resource,
+		 &resource,
 		 NULL );
 	}
 	return( -1 );

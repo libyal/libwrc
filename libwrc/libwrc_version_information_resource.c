@@ -1357,7 +1357,6 @@ int libwrc_version_information_resource_read(
 	uint16_t resource_data_size                                                           = 0;
 	uint16_t value_data_size                                                              = 0;
 	uint16_t value_data_type                                                              = 0;
-	int value_index                                                                       = 0;
 
 	if( version_information_resource == NULL )
 	{
@@ -1779,23 +1778,6 @@ int libwrc_version_information_resource_read(
 	data_offset += read_count;
 #endif
 
-/* TODO implement
-	if( libwrc_language_entry_append_value(
-	     language_entry,
-	     &value_index,
-	     (intptr_t *) version_values,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to append version values.",
-		 function );
-
-		goto on_error;
-	}
-*/
 	return( 1 );
 
 on_error:

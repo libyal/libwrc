@@ -1,4 +1,4 @@
-.Dd January  1, 2022
+.Dd January  3, 2022
 .Dt libwrc 3
 .Os libwrc
 .Sh NAME
@@ -153,7 +153,7 @@ Message table (MESSAGETABLE) resource functions
 .Ft int
 .Fn libwrc_message_table_resource_get_identifier "libwrc_message_table_resource_t *message_table_resource" "int message_index" "uint32_t *message_identifier" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_message_table_resource_get_index_by_identifier "libwrc_message_table_resource_t *message_table_resource" "uint32_t message_identifier "int *message_index" "libwrc_error_t **error"
+.Fn libwrc_message_table_resource_get_index_by_identifier "libwrc_message_table_resource_t *message_table_resource" "uint32_t message_identifier" "int *message_index" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_message_table_resource_get_utf8_string_size "libwrc_message_table_resource_t *message_table_resource" "int message_index" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
@@ -163,41 +163,47 @@ Message table (MESSAGETABLE) resource functions
 .Ft int
 .Fn libwrc_message_table_resource_get_utf16_string "libwrc_message_table_resource_t *message_table_resource" "int message_index" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Pp
-MUI functions
+MUI resource functions
 .Ft int
-.Fn libwrc_mui_get_file_type "libwrc_resource_t *resource" "uint32_t language_identifier" "uint32_t *file_type" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_initialize "libwrc_mui_resource_t **mui_resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_main_name_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_free "libwrc_mui_resource_t **mui_resource" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_main_name "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_read "libwrc_mui_resource_t *mui_resource" "const uint8_t *data" "size_t data_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_main_name_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_file_type "libwrc_mui_resource_t *mui_resource" "uint32_t *file_type" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_main_name "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf8_main_name_size "libwrc_mui_resource_t *mui_resource" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_mui_name_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf8_main_name "libwrc_mui_resource_t *mui_resource" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_mui_name "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf16_main_name_size "libwrc_mui_resource_t *mui_resource" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_mui_name_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf16_main_name "libwrc_mui_resource_t *mui_resource" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_mui_name "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf8_mui_name_size "libwrc_mui_resource_t *mui_resource" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_language_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf8_mui_name "libwrc_mui_resource_t *mui_resource" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_language "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf16_mui_name_size "libwrc_mui_resource_t *mui_resource" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_language_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf16_mui_name "libwrc_mui_resource_t *mui_resource" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_language "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf8_language_size "libwrc_mui_resource_t *mui_resource" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_fallback_language_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf8_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf8_language "libwrc_mui_resource_t *mui_resource" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf8_fallback_language "libwrc_resource_t *resource" "uint32_t language_identifier" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf16_language_size "libwrc_mui_resource_t *mui_resource" "size_t *utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_fallback_language_size "libwrc_resource_t *resource" "uint32_t language_identifier" "size_t *utf16_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf16_language "libwrc_mui_resource_t *mui_resource" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_mui_get_utf16_fallback_language "libwrc_resource_t *resource" "uint32_t language_identifier" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
+.Fn libwrc_mui_resource_get_utf8_fallback_language_size "libwrc_mui_resource_t *mui_resource" "size_t *utf8_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_mui_resource_get_utf8_fallback_language "libwrc_mui_resource_t *mui_resource" "uint8_t *utf8_string" "size_t utf8_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_mui_resource_get_utf16_fallback_language_size "libwrc_mui_resource_t *mui_resource" "size_t *utf16_string_size" "libwrc_error_t **error"
+.Ft int
+.Fn libwrc_mui_resource_get_utf16_fallback_language "libwrc_mui_resource_t *mui_resource" "uint16_t *utf16_string" "size_t utf16_string_size" "libwrc_error_t **error"
 .Pp
 String table (STRINGTABLE) resource functions
 .Ft int
@@ -211,7 +217,7 @@ String table (STRINGTABLE) resource functions
 .Ft int
 .Fn libwrc_string_table_resource_get_identifier "libwrc_string_table_resource_t *string_table_resource" "int string_index" "uint32_t *string_identifier" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_string_table_resource_get_index_by_identifier "libwrc_string_table_resource_t *string_table_resource" "uint32_t string_identifier "int *string_index" "libwrc_error_t **error"
+.Fn libwrc_string_table_resource_get_index_by_identifier "libwrc_string_table_resource_t *string_table_resource" "uint32_t string_identifier" "int *string_index" "libwrc_error_t **error"
 .Ft int
 .Fn libwrc_string_table_resource_get_utf8_string_size "libwrc_string_table_resource_t *string_table_resource" "int string_index" "size_t *utf8_string_size" "libwrc_error_t **error"
 .Ft int
@@ -229,9 +235,9 @@ Version information (VERSIONINFO) resource functions
 .Ft int
 .Fn libwrc_version_information_resource_read "libwrc_version_information_resource_t *version_information_resource" "const uint8_t *data" "size_t data_size" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_version_information_resource_get_file_version "libwrc_version_information_resource_t *version_information_resource" "uint32_t language_identifier" "uint64_t *file_version" "libwrc_error_t **error"
+.Fn libwrc_version_information_resource_get_file_version "libwrc_version_information_resource_t *version_information_resource" "uint64_t *file_version" "libwrc_error_t **error"
 .Ft int
-.Fn libwrc_version_information_resource_get_product_version "libwrc_version_information_resource_t *version_information_resource" "uint32_t language_identifier" "uint64_t *product_version" "libwrc_error_t **error"
+.Fn libwrc_version_information_resource_get_product_version "libwrc_version_information_resource_t *version_information_resource" "uint64_t *product_version" "libwrc_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libwrc_get_version

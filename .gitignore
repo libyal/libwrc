@@ -134,7 +134,9 @@ stamp-h[1-9]
 /tests/wrc_test_io_handle
 /tests/wrc_test_language_entry
 /tests/wrc_test_language_table
+/tests/wrc_test_manifest_resource
 /tests/wrc_test_message_table_resource
+/tests/wrc_test_mui_resource
 /tests/wrc_test_mui_values
 /tests/wrc_test_notify
 /tests/wrc_test_resource

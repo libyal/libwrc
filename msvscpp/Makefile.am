@@ -24,7 +24,9 @@ MSVSCPP_FILES = \
 	wrc_test_io_handle/wrc_test_io_handle.vcproj \
 	wrc_test_language_entry/wrc_test_language_entry.vcproj \
 	wrc_test_language_table/wrc_test_language_table.vcproj \
+	wrc_test_manifest_resource/wrc_test_manifest_resource.vcproj \
 	wrc_test_message_table_resource/wrc_test_message_table_resource.vcproj \
+	wrc_test_mui_resource/wrc_test_mui_resource.vcproj \
 	wrc_test_mui_values/wrc_test_mui_values.vcproj \
 	wrc_test_notify/wrc_test_notify.vcproj \
 	wrc_test_resource/wrc_test_resource.vcproj \

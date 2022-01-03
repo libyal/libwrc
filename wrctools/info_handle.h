@@ -121,10 +121,10 @@ int info_handle_message_table_resource_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error );
 
-int info_handle_mui_values_fprint(
+int info_handle_mui_resource_item_fprint(
      info_handle_t *info_handle,
-     libwrc_resource_t *mui_resource,
-     uint32_t language_identifier,
+     uint32_t identifier,
+     libwrc_resource_item_t *resource_item,
      libcerror_error_t **error );
 
 int info_handle_mui_resource_fprint(

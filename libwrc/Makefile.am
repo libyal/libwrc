@@ -53,6 +53,7 @@ libwrc_la_SOURCES = \
 	libwrc_message_table_resource.c libwrc_message_table_resource.h \
 	libwrc_message_table_values.c libwrc_message_table_values.h \
 	libwrc_mui.c libwrc_mui.h \
+	libwrc_mui_resource.c libwrc_mui_resource.h \
 	libwrc_mui_values.c libwrc_mui_values.h \
 	libwrc_notify.c libwrc_notify.h \
 	libwrc_resource.c libwrc_resource.h \

@@ -719,7 +719,7 @@ int libwrc_message_table_resource_initialize(
      libwrc_message_table_resource_t **message_table_resource,
      libwrc_error_t **error );
 
-/* Frees a message table
+/* Frees a message table resource
  * Returns 1 if successful or -1 on error
  */
 LIBWRC_EXTERN \
@@ -760,6 +760,7 @@ int libwrc_message_table_resource_get_identifier(
 /* Retrieves the message index for a specific identifier
  * Returns 1 if successful, 0 if no such message identifier or -1 on error
  */
+LIBWRC_EXTERN \
 int libwrc_message_table_resource_get_index_by_identifier(
      libwrc_message_table_resource_t *message_table_resource,
      uint32_t message_identifier,
@@ -901,6 +902,194 @@ int libwrc_message_table_get_utf16_string(
  * MUI resource functions
  * ------------------------------------------------------------------------- */
 
+/* Creates a MUI resource
+ * Make sure the value mui_resource is referencing, is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_initialize(
+     libwrc_mui_resource_t **mui_resource,
+     libwrc_error_t **error );
+
+/* Frees a MUI resource
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_free(
+     libwrc_mui_resource_t **mui_resource,
+     libwrc_error_t **error );
+
+/* Reads the MUI resource
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_read(
+     libwrc_mui_resource_t *mui_resource,
+     const uint8_t *data,
+     size_t data_size,
+     libwrc_error_t **error );
+
+/* Retrieves the file type
+ * Returns 1 if successful or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_file_type(
+     libwrc_mui_resource_t *mui_resource,
+     uint32_t *file_type,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-8 formatted main name
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf8_main_name_size(
+     libwrc_mui_resource_t *mui_resource,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-8 formatted main name
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf8_main_name(
+     libwrc_mui_resource_t *mui_resource,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-16 formatted main name
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf16_main_name_size(
+     libwrc_mui_resource_t *mui_resource,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-16 formatted main name
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf16_main_name(
+     libwrc_mui_resource_t *mui_resource,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-8 formatted MUI name
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf8_mui_name_size(
+     libwrc_mui_resource_t *mui_resource,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-8 formatted MUI name
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf8_mui_name(
+     libwrc_mui_resource_t *mui_resource,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-16 formatted MUI name
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf16_mui_name_size(
+     libwrc_mui_resource_t *mui_resource,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-16 formatted MUI name
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf16_mui_name(
+     libwrc_mui_resource_t *mui_resource,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-8 formatted language
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf8_language_size(
+     libwrc_mui_resource_t *mui_resource,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-8 formatted language
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf8_language(
+     libwrc_mui_resource_t *mui_resource,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-16 formatted language
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf16_language_size(
+     libwrc_mui_resource_t *mui_resource,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-16 formatted language
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf16_language(
+     libwrc_mui_resource_t *mui_resource,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-8 formatted fallback language
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf8_fallback_language_size(
+     libwrc_mui_resource_t *mui_resource,
+     size_t *utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-8 formatted fallback language
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf8_fallback_language(
+     libwrc_mui_resource_t *mui_resource,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the size of the UTF-16 formatted fallback language
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf16_fallback_language_size(
+     libwrc_mui_resource_t *mui_resource,
+     size_t *utf16_string_size,
+     libwrc_error_t **error );
+
+/* Retrieves the UTF-16 formatted fallback language
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBWRC_EXTERN \
+int libwrc_mui_resource_get_utf16_fallback_language(
+     libwrc_mui_resource_t *mui_resource,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libwrc_error_t **error );
+
 /* -------------------------------------------------------------------------
  * MUI functions
  * ------------------------------------------------------------------------- */
@@ -908,6 +1097,7 @@ int libwrc_message_table_get_utf16_string(
 /* Retrieves the file type
  * Returns 1 if successful or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_file_type(
      libwrc_resource_t *resource,
@@ -918,6 +1108,7 @@ int libwrc_mui_get_file_type(
 /* Retrieves the size of the UTF-8 formatted main name
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf8_main_name_size(
      libwrc_resource_t *resource,
@@ -928,6 +1119,7 @@ int libwrc_mui_get_utf8_main_name_size(
 /* Retrieves the UTF-8 formatted main name
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf8_main_name(
      libwrc_resource_t *resource,
@@ -939,6 +1131,7 @@ int libwrc_mui_get_utf8_main_name(
 /* Retrieves the size of the UTF-16 formatted main name
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf16_main_name_size(
      libwrc_resource_t *resource,
@@ -949,6 +1142,7 @@ int libwrc_mui_get_utf16_main_name_size(
 /* Retrieves the UTF-16 formatted main name
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf16_main_name(
      libwrc_resource_t *resource,
@@ -960,6 +1154,7 @@ int libwrc_mui_get_utf16_main_name(
 /* Retrieves the size of the UTF-8 formatted MUI name
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf8_mui_name_size(
      libwrc_resource_t *resource,
@@ -970,6 +1165,7 @@ int libwrc_mui_get_utf8_mui_name_size(
 /* Retrieves the UTF-8 formatted MUI name
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf8_mui_name(
      libwrc_resource_t *resource,
@@ -981,6 +1177,7 @@ int libwrc_mui_get_utf8_mui_name(
 /* Retrieves the size of the UTF-16 formatted MUI name
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf16_mui_name_size(
      libwrc_resource_t *resource,
@@ -991,6 +1188,7 @@ int libwrc_mui_get_utf16_mui_name_size(
 /* Retrieves the UTF-16 formatted MUI name
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf16_mui_name(
      libwrc_resource_t *resource,
@@ -1002,6 +1200,7 @@ int libwrc_mui_get_utf16_mui_name(
 /* Retrieves the size of the UTF-8 formatted language
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf8_language_size(
      libwrc_resource_t *resource,
@@ -1012,6 +1211,7 @@ int libwrc_mui_get_utf8_language_size(
 /* Retrieves the UTF-8 formatted language
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf8_language(
      libwrc_resource_t *resource,
@@ -1023,6 +1223,7 @@ int libwrc_mui_get_utf8_language(
 /* Retrieves the size of the UTF-16 formatted language
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf16_language_size(
      libwrc_resource_t *resource,
@@ -1033,6 +1234,7 @@ int libwrc_mui_get_utf16_language_size(
 /* Retrieves the UTF-16 formatted language
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf16_language(
      libwrc_resource_t *resource,
@@ -1044,6 +1246,7 @@ int libwrc_mui_get_utf16_language(
 /* Retrieves the size of the UTF-8 formatted fallback language
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf8_fallback_language_size(
      libwrc_resource_t *resource,
@@ -1054,6 +1257,7 @@ int libwrc_mui_get_utf8_fallback_language_size(
 /* Retrieves the UTF-8 formatted fallback language
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf8_fallback_language(
      libwrc_resource_t *resource,
@@ -1065,6 +1269,7 @@ int libwrc_mui_get_utf8_fallback_language(
 /* Retrieves the size of the UTF-16 formatted fallback language
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf16_fallback_language_size(
      libwrc_resource_t *resource,
@@ -1075,6 +1280,7 @@ int libwrc_mui_get_utf16_fallback_language_size(
 /* Retrieves the UTF-16 formatted fallback language
  * Returns 1 if successful, 0 if not available or -1 on error
  */
+LIBWRC_DEPRECATED \
 LIBWRC_EXTERN \
 int libwrc_mui_get_utf16_fallback_language(
      libwrc_resource_t *resource,
@@ -1096,7 +1302,7 @@ int libwrc_string_table_resource_initialize(
      libwrc_string_table_resource_t **string_table_resource,
      libwrc_error_t **error );
 
-/* Frees a string table
+/* Frees a string table resource
  * Returns 1 if successful or -1 on error
  */
 LIBWRC_EXTERN \
@@ -1288,7 +1494,7 @@ int libwrc_version_information_resource_initialize(
      libwrc_version_information_resource_t **version_information_resource,
      libwrc_error_t **error );
 
-/* Frees a version information
+/* Frees a version information resource
  * Returns 1 if successful or -1 on error
  */
 LIBWRC_EXTERN \

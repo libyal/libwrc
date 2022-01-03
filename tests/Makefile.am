@@ -46,7 +46,9 @@ check_PROGRAMS = \
 	wrc_test_io_handle \
 	wrc_test_language_entry \
 	wrc_test_language_table \
+	wrc_test_manifest_resource \
 	wrc_test_message_table_resource \
+	wrc_test_mui_resource \
 	wrc_test_mui_values \
 	wrc_test_notify \
 	wrc_test_resource \
@@ -124,6 +126,18 @@ wrc_test_language_table_LDADD = \
 	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@
 
+wrc_test_manifest_resource_SOURCES = \
+	wrc_test_libcerror.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_manifest_resource.c \
+	wrc_test_memory.c wrc_test_memory.h \
+	wrc_test_unused.h
+
+wrc_test_manifest_resource_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
+
 wrc_test_message_table_resource_SOURCES = \
 	wrc_test_libcerror.h \
 	wrc_test_libwrc.h \
@@ -133,6 +147,18 @@ wrc_test_message_table_resource_SOURCES = \
 	wrc_test_unused.h
 
 wrc_test_message_table_resource_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
+
+wrc_test_mui_resource_SOURCES = \
+	wrc_test_libcerror.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_memory.c wrc_test_memory.h \
+	wrc_test_mui_resource.c \
+	wrc_test_unused.h
+
+wrc_test_mui_resource_LDADD = \
 	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@
 

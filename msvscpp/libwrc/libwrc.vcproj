@@ -226,6 +226,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_mui_resource.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_mui_values.c"
 				>
 			</File>
@@ -437,6 +441,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_mui.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwrc\libwrc_mui_resource.h"
 				>
 			</File>
 			<File
