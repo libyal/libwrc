@@ -31,12 +31,12 @@ extern "C" {
 
 #if !defined( LIBWRC_HAVE_BFIO )
 
-/* Opens a file using a Basic File IO (bfio) handle
+/* Opens a stream using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
 LIBWRC_EXTERN \
-int libwrc_file_open_file_io_handle(
-     libwrc_file_t *file,
+int libwrc_stream_open_file_io_handle(
+     libwrc_stream_t *stream,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libwrc_error_t **error );

@@ -145,6 +145,7 @@ stamp-h[1-9]
 /tests/wrc_test_stream
 /tests/wrc_test_string_table_resource
 /tests/wrc_test_support
+/tests/wrc_test_table_entry
 /tests/wrc_test_version_information_resource
 /tests/wrc_test_version_values
 /tests/wrc_test_wevt_channel

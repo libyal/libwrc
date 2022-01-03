@@ -255,8 +255,8 @@ int libwrc_mui_resource_read(
 
 		return( -1 );
 	}
-	if( ( data_size == 0 )
-	 || ( data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	if( ( data_size < sizeof( wrc_mui_header_t ) )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -381,15 +381,26 @@ int libwrc_mui_resource_read(
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
-	data_offset = sizeof( wrc_mui_header_t );
-
 	if( (size_t) mui_resource_data_size > data_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: data size value out of bounds.",
+		 "%s: invalid MUI resource data size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	data_offset = sizeof( wrc_mui_header_t );
+
+	if( data_offset > ( data_size - 8 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
 		 function );
 
 		goto on_error;
@@ -427,7 +438,7 @@ int libwrc_mui_resource_read(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: value data offset value out of bounds.",
+			 "%s: invalid value data offset value out of bounds.",
 			 function );
 
 			goto on_error;
@@ -581,6 +592,17 @@ int libwrc_mui_resource_read(
 		}
 #endif
 	}
+	if( data_offset > ( data_size - 8 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		goto on_error;
+	}
 	byte_stream_copy_to_uint32_little_endian(
 	 &( data[ data_offset ] ),
 	 value_data_offset );
@@ -642,6 +664,17 @@ int libwrc_mui_resource_read(
 			 0 );
 		}
 #endif
+	}
+	if( data_offset > ( data_size - 8 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		goto on_error;
 	}
 	byte_stream_copy_to_uint32_little_endian(
 	 &( data[ data_offset ] ),
@@ -830,6 +863,17 @@ int libwrc_mui_resource_read(
 		}
 #endif
 	}
+	if( data_offset > ( data_size - 8 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		goto on_error;
+	}
 	byte_stream_copy_to_uint32_little_endian(
 	 &( data[ data_offset ] ),
 	 value_data_offset );
@@ -892,6 +936,17 @@ int libwrc_mui_resource_read(
 		}
 #endif
 	}
+	if( data_offset > ( data_size - 8 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		goto on_error;
+	}
 	byte_stream_copy_to_uint32_little_endian(
 	 &( data[ data_offset ] ),
 	 value_data_offset );
@@ -916,6 +971,17 @@ int libwrc_mui_resource_read(
 #endif
 	data_offset += 8;
 
+	if( data_offset > ( data_size - 8 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid data size value too small.",
+		 function );
+
+		goto on_error;
+	}
 	byte_stream_copy_to_uint32_little_endian(
 	 &( data[ data_offset ] ),
 	 value_data_offset );

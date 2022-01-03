@@ -148,6 +148,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wrc_test_support", "wrc_tes
 		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wrc_test_table_entry", "wrc_test_table_entry\wrc_test_table_entry.vcproj", "{471DFD51-55D1-4C95-959A-E4119AF79E28}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FDE5A4F8-E6CC-49B9-A831-653103367387} = {FDE5A4F8-E6CC-49B9-A831-653103367387}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wrc_test_version_information_resource", "wrc_test_version_information_resource\wrc_test_version_information_resource.vcproj", "{C8EDC3FA-FE6F-474C-9544-199574775197}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FDE5A4F8-E6CC-49B9-A831-653103367387} = {FDE5A4F8-E6CC-49B9-A831-653103367387}
@@ -448,6 +454,10 @@ Global
 		{D02A2F03-D0A2-4FDC-BFD9-F8122D1B09DF}.Release|Win32.Build.0 = Release|Win32
 		{D02A2F03-D0A2-4FDC-BFD9-F8122D1B09DF}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{D02A2F03-D0A2-4FDC-BFD9-F8122D1B09DF}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{471DFD51-55D1-4C95-959A-E4119AF79E28}.Release|Win32.ActiveCfg = Release|Win32
+		{471DFD51-55D1-4C95-959A-E4119AF79E28}.Release|Win32.Build.0 = Release|Win32
+		{471DFD51-55D1-4C95-959A-E4119AF79E28}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{471DFD51-55D1-4C95-959A-E4119AF79E28}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{C8EDC3FA-FE6F-474C-9544-199574775197}.Release|Win32.ActiveCfg = Release|Win32
 		{C8EDC3FA-FE6F-474C-9544-199574775197}.Release|Win32.Build.0 = Release|Win32
 		{C8EDC3FA-FE6F-474C-9544-199574775197}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

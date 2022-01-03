@@ -38,9 +38,9 @@ typedef struct libwrc_internal_string_table_resource libwrc_internal_string_tabl
 
 struct libwrc_internal_string_table_resource
 {
-	/* The values array
+	/* The entries array
 	 */
-	libcdata_array_t *values_array;
+	libcdata_array_t *entries_array;
 };
 
 LIBWRC_EXTERN \

@@ -24,16 +24,18 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libwrc_debug.h"
 #include "libwrc_definitions.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
-#include "libwrc_libfvalue.h"
+#include "libwrc_libuna.h"
 #include "libwrc_version_information_resource.h"
 
 #include "wrc_version_information_resource.h"
 
-uint8_t libwrc_version_information_resource_signature[ 32 ] = \
-	{ 'V', 0, 'S', 0, '_', 0, 'V', 0, 'E', 0, 'R', 0, 'S', 0, 'I', 0, 'O', 0, 'N', 0, '_', 0, 'I', 0, 'N', 0, 'F', 0, 'O', 0, 0, 0 };
+uint8_t libwrc_version_information_resource_signature[ 32 ] = {
+	'V', 0, 'S', 0, '_', 0, 'V', 0, 'E', 0, 'R', 0, 'S', 0, 'I', 0,
+	'O', 0, 'N', 0, '_', 0, 'I', 0, 'N', 0, 'F', 0, 'O', 0, 0, 0 };
 
 /* Creates a version information resource
  * Make sure the value version_information_resource is referencing, is set to NULL
@@ -151,17 +153,17 @@ ssize_t libwrc_internal_version_information_resource_read_string_file_informatio
          size_t data_offset,
          libcerror_error_t **error )
 {
-	uint8_t *value_identifier_string    = NULL;
-	static char *function               = "libwrc_internal_version_information_resource_read_string_file_information";
-	size_t alignment_padding_size       = 0;
-	size_t calculated_value_data_size   = 0;
-	size_t data_start_offset            = 0;
-	size_t trailing_data_size           = 0;
-	size_t value_identifier_string_size = 0;
-	ssize_t read_count                  = 0;
-	uint16_t string_data_size           = 0;
-	uint16_t value_data_size            = 0;
-	uint16_t value_data_type            = 0;
+	const uint8_t *value_identifier_string = NULL;
+	static char *function                  = "libwrc_internal_version_information_resource_read_string_file_information";
+	size_t alignment_padding_size          = 0;
+	size_t calculated_value_data_size      = 0;
+	size_t data_start_offset               = 0;
+	size_t trailing_data_size              = 0;
+	size_t value_identifier_string_size    = 0;
+	ssize_t read_count                     = 0;
+	uint16_t string_data_size              = 0;
+	uint16_t value_data_size               = 0;
+	uint16_t value_data_type               = 0;
 
 	if( internal_version_information_resource == NULL )
 	{
@@ -275,7 +277,7 @@ ssize_t libwrc_internal_version_information_resource_read_string_file_informatio
 			 value_data_type );
 		}
 #endif
-		value_identifier_string      = (uint8_t *) &( data[ data_offset ] );
+		value_identifier_string      = &( data[ data_offset ] );
 		value_identifier_string_size = 0;
 
 		while( ( data_offset + 2 ) < data_size )
@@ -308,6 +310,17 @@ ssize_t libwrc_internal_version_information_resource_read_string_file_informatio
 		{
 			alignment_padding_size = 4 - ( data_offset % 4 );
 
+			if( alignment_padding_size > ( data_size - data_offset ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+				 "%s: invalid data size value too small.",
+				 function );
+
+				return( -1 );
+			}
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -380,17 +393,17 @@ ssize_t libwrc_internal_version_information_resource_read_string_table(
          size_t data_offset,
          libcerror_error_t **error )
 {
-	uint8_t *value_identifier_string    = NULL;
-	static char *function               = "libwrc_internal_version_information_resource_read_string_table";
-	size_t alignment_padding_size       = 0;
-	size_t calculated_value_data_size   = 0;
-	size_t data_start_offset            = 0;
-	size_t trailing_data_size           = 0;
-	size_t value_identifier_string_size = 0;
-	ssize_t read_count                  = 0;
-	uint16_t string_data_size           = 0;
-	uint16_t value_data_size            = 0;
-	uint16_t value_data_type            = 0;
+	const uint8_t *value_identifier_string = NULL;
+	static char *function                  = "libwrc_internal_version_information_resource_read_string_table";
+	size_t alignment_padding_size          = 0;
+	size_t calculated_value_data_size      = 0;
+	size_t data_start_offset               = 0;
+	size_t trailing_data_size              = 0;
+	size_t value_identifier_string_size    = 0;
+	ssize_t read_count                     = 0;
+	uint16_t string_data_size              = 0;
+	uint16_t value_data_size               = 0;
+	uint16_t value_data_type               = 0;
 
 	if( internal_version_information_resource == NULL )
 	{
@@ -494,17 +507,17 @@ ssize_t libwrc_internal_version_information_resource_read_string_table(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: value data size\t\t: %" PRIu16 "\n",
+			 "%s: value data size\t\t\t: %" PRIu16 "\n",
 			 function,
 			 value_data_size );
 
 			libcnotify_printf(
-			 "%s: value data type\t\t: %" PRIu16 "\n",
+			 "%s: value data type\t\t\t: %" PRIu16 "\n",
 			 function,
 			 value_data_type );
 		}
 #endif
-		value_identifier_string      = (uint8_t *) &( data[ data_offset ] );
+		value_identifier_string      = &( data[ data_offset ] );
 		value_identifier_string_size = 0;
 
 		while( ( data_offset + 2 ) < data_size )
@@ -537,6 +550,17 @@ ssize_t libwrc_internal_version_information_resource_read_string_table(
 		{
 			alignment_padding_size = 4 - ( data_offset % 4 );
 
+			if( alignment_padding_size > ( data_size - data_offset ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+				 "%s: invalid data size value too small.",
+				 function );
+
+				return( -1 );
+			}
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -603,6 +627,17 @@ ssize_t libwrc_internal_version_information_resource_read_string_table(
 
 					if( ( data_offset + alignment_padding_size ) < ( data_start_offset + string_data_size ) )
 					{
+						if( alignment_padding_size > ( data_size - data_offset ) )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+							 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+							 "%s: invalid data size value too small.",
+							 function );
+
+							return( -1 );
+						}
 #if defined( HAVE_DEBUG_OUTPUT )
 						if( libcnotify_verbose != 0 )
 						{
@@ -818,6 +853,17 @@ ssize_t libwrc_internal_version_information_resource_read_string(
 /* TODO convert string */
 		if( ( data_offset % 4 ) != 0 )
 		{
+			if( alignment_padding_size > ( data_size - data_offset ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+				 "%s: invalid data size value too small.",
+				 function );
+
+				return( -1 );
+			}
 			alignment_padding_size = 4 - ( data_offset % 4 );
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -1061,6 +1107,17 @@ ssize_t libwrc_internal_version_information_resource_read_variable_file_informat
 		{
 			alignment_padding_size = 4 - ( data_offset % 4 );
 
+			if( alignment_padding_size > ( data_size - data_offset ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+				 "%s: invalid data size value too small.",
+				 function );
+
+				return( -1 );
+			}
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -1299,6 +1356,17 @@ ssize_t libwrc_internal_version_information_resource_read_variable(
 		{
 			alignment_padding_size = 4 - ( data_offset % 4 );
 
+			if( alignment_padding_size > ( data_size - data_offset ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+				 "%s: invalid data size value too small.",
+				 function );
+
+				return( -1 );
+			}
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -1347,11 +1415,12 @@ int libwrc_version_information_resource_read(
      size_t data_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *value_identifier                                                   = NULL;
 	libwrc_internal_version_information_resource_t *internal_version_information_resource = NULL;
+	const uint8_t *value_identifier_string                                                = NULL;
 	static char *function                                                                 = "libwrc_version_information_resource_read";
 	size_t alignment_padding_size                                                         = 0;
 	size_t data_offset                                                                    = 0;
+	size_t value_identifier_string_size                                                   = 0;
 	ssize_t read_count                                                                    = 0;
 	uint32_t value_32bit                                                                  = 0;
 	uint16_t resource_data_size                                                           = 0;
@@ -1443,69 +1512,37 @@ int libwrc_version_information_resource_read(
 
 	data_offset = sizeof( wrc_version_value_header_t );
 
-	if( libfvalue_value_type_initialize(
-	     &value_identifier,
-	     LIBFVALUE_VALUE_TYPE_STRING_UTF16,
-	     error ) != 1 )
+	value_identifier_string      = &( data[ data_offset ] );
+	value_identifier_string_size = 0;
+
+	while( data_offset < ( data_size - 2 ) )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create value identifier value.",
-		 function );
+		value_identifier_string_size += 2;
 
-		goto on_error;
-	}
-	read_count = libfvalue_value_type_set_data_string(
-	              value_identifier,
-	              &( data[ data_offset ] ),
-	              data_size,
-	              LIBFVALUE_CODEPAGE_UTF16_LITTLE_ENDIAN,
-	              LIBFVALUE_VALUE_DATA_FLAG_MANAGED,
-	              error );
+		if( ( data[ data_offset ] == 0 )
+		 && ( data[ data_offset + 1 ] == 0 ) )
+		{
+			data_offset += 2;
 
-	if( read_count == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set data of value identifier value.",
-		 function );
-
-		goto on_error;
+			break;
+		}
+		data_offset += 2;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: value identifier\t\t: ",
+		 "%s: value identifier string data:\n",
 		 function );
-
-		if( libfvalue_value_print(
-		     value_identifier,
-		     0,
-		     0,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print value identifier value.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "\n" );
+		libcnotify_print_data(
+		 value_identifier_string,
+		 value_identifier_string_size,
+		 0 );
 	}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-
-	if( ( read_count != 32 )
+#endif
+	if( ( value_identifier_string_size != 32 )
 	 || ( memory_compare(
-	       &( data[ data_offset ] ),
+	       value_identifier_string,
 	       libwrc_version_information_resource_signature,
 	       32 ) != 0 ) )
 	{
@@ -1516,27 +1553,46 @@ int libwrc_version_information_resource_read(
 		 "%s: unsupported version resource value signature.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
-	if( libfvalue_value_free(
-	     &value_identifier,
-	     error ) != 1 )
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free value identifier value.",
-		 function );
+		if( libwrc_debug_print_utf16_string_value(
+		     function,
+		     "value identifier\t\t",
+		     value_identifier_string,
+		     value_identifier_string_size,
+		     LIBUNA_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print UTF-16 string value.",
+			 function );
 
-		goto on_error;
+			return( -1 );
+		}
 	}
-	data_offset += read_count;
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
 	if( ( data_offset % 4 ) != 0 )
 	{
 		alignment_padding_size = 4 - ( data_offset % 4 );
 
+		if( alignment_padding_size > ( data_size - data_offset ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+			 "%s: invalid data size value too small.",
+			 function );
+
+			return( -1 );
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -1554,16 +1610,17 @@ int libwrc_version_information_resource_read(
 /* TODO refactor to separate function? */
 	if( value_data_size > 0 )
 	{
-		if( value_data_size > data_size )
+		if( ( value_data_size < 52 )
+		 || ( value_data_size > ( data_size - data_offset ) ) )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: value data size value out of bounds.",
+			 "%s: invalid value data size value out of bounds.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -1722,6 +1779,17 @@ int libwrc_version_information_resource_read(
 	{
 		alignment_padding_size = 4 - ( data_offset % 4 );
 
+		if( alignment_padding_size > ( data_size - data_offset ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+			 "%s: invalid data size value too small.",
+			 function );
+
+			return( -1 );
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -1752,7 +1820,7 @@ int libwrc_version_information_resource_read(
 		 "%s: unable to read string file information.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 	data_offset += read_count;
 
@@ -1772,22 +1840,9 @@ int libwrc_version_information_resource_read(
 		 "%s: unable to read variable file information.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	data_offset += read_count;
-#endif
-
 	return( 1 );
-
-on_error:
-	if( value_identifier != NULL )
-	{
-		libfvalue_value_free(
-		 &value_identifier,
-		 NULL );
-	}
-	return( -1 );
 }
 
 /* Retrieves the file version

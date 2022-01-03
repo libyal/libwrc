@@ -35,6 +35,7 @@ MSVSCPP_FILES = \
 	wrc_test_stream/wrc_test_stream.vcproj \
 	wrc_test_string_table_resource/wrc_test_string_table_resource.vcproj \
 	wrc_test_support/wrc_test_support.vcproj \
+	wrc_test_table_entry/wrc_test_table_entry.vcproj \
 	wrc_test_version_information_resource/wrc_test_version_information_resource.vcproj \
 	wrc_test_version_values/wrc_test_version_values.vcproj \
 	wrc_test_wevt_channel/wrc_test_wevt_channel.vcproj \

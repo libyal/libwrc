@@ -343,13 +343,14 @@ int libwrc_io_handle_read_resource_node(
 
 		return( -1 );
 	}
-	if( node_level < 1 )
+	if( ( node_level < 1 )
+	 || ( node_level > LIBWRC_MAXIMUM_RESOURCE_NODE_RECURSION_DEPTH ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: node level value out of bounds.",
+		 "%s: invalid node level value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -601,7 +602,8 @@ int libwrc_io_handle_read_resource_node(
 			 resource_node_entry,
 			 resource_values->offset );
 		}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 		if( node_level == 1 )
 		{
 			if( ( resource_values->identifier & LIBWRC_RESOURCE_IDENTIFIER_FLAG_HAS_NAME ) == 0 )

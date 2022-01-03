@@ -28,8 +28,9 @@
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
-#include "libwrc_libfvalue.h"
+#include "libwrc_libuna.h"
 #include "libwrc_message_table_resource.h"
+#include "libwrc_table_entry.h"
 
 #include "wrc_message_table_resource.h"
 
@@ -98,7 +99,7 @@ int libwrc_message_table_resource_initialize(
 		return( -1 );
 	}
 	if( libcdata_array_initialize(
-	     &( internal_message_table_resource->values_array ),
+	     &( internal_message_table_resource->entries_array ),
 	     0,
 	     error ) != 1 )
 	{
@@ -106,7 +107,7 @@ int libwrc_message_table_resource_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create values array.",
+		 "%s: unable to create entries array.",
 		 function );
 
 		goto on_error;
@@ -152,15 +153,15 @@ int libwrc_message_table_resource_free(
 		*message_table_resource         = NULL;
 
 		if( libcdata_array_free(
-		     &( internal_message_table_resource->values_array ),
-		     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_value_free,
+		     &( internal_message_table_resource->entries_array ),
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_table_entry_free,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free values array.",
+			 "%s: unable to free entries array.",
 			 function );
 
 			result = -1;
@@ -181,22 +182,20 @@ int libwrc_message_table_resource_read(
      int ascii_codepage,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *message_table_value                                    = NULL;
 	libwrc_internal_message_table_resource_t *internal_message_table_resource = NULL;
-	const uint8_t *message_table_string_data                                  = NULL;
+	libwrc_table_entry_t *table_entry                                         = NULL;
 	static char *function                                                     = "libwrc_message_table_resource_read";
 	size_t data_offset                                                        = 0;
 	uint32_t first_message_identifier                                         = 0;
 	uint32_t last_message_identifier                                          = 0;
-	uint32_t message_table_string_offset                                      = 0;
+	uint32_t message_string_offset                                            = 0;
 	uint16_t message_entry_descriptor_index                                   = 0;
-	uint16_t message_table_string_flags                                       = 0;
-	uint16_t message_table_string_size                                        = 0;
+	uint16_t message_string_flags                                             = 0;
+	uint16_t message_string_size                                              = 0;
 	uint16_t number_of_message_entry_descriptors                              = 0;
 	uint16_t string_size                                                      = 0;
-	int result                                                                = 0;
-	int value_encoding                                                        = 0;
 	int entry_index                                                           = 0;
+	int value_encoding                                                        = 0;
 
 	if( message_table_resource == NULL )
 	{
@@ -302,25 +301,25 @@ int libwrc_message_table_resource_read(
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (wrc_message_table_entry_descriptor_t *) &( data[ data_offset ] ) )->offset,
-		 message_table_string_offset );
+		 message_string_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: first message identifier\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: first message identifier\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 first_message_identifier );
 
 			libcnotify_printf(
-			 "%s: last message identifier\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: last message identifier\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 last_message_identifier );
 
 			libcnotify_printf(
-			 "%s: first message string offset\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: first message string offset\t\t: 0x%08" PRIx32 "\n",
 			 function,
-			 message_table_string_offset );
+			 message_string_offset );
 
 			libcnotify_printf(
 			 "\n" );
@@ -342,8 +341,8 @@ int libwrc_message_table_resource_read(
 		}
 		while( first_message_identifier <= last_message_identifier )
 		{
-			if( ( message_table_string_offset < data_offset )
-			 || ( message_table_string_offset >= data_size ) )
+			if( ( message_string_offset < data_offset )
+			 || ( message_string_offset >= ( data_size - sizeof( wrc_message_table_string_t ) ) ) )
 			{
 				libcerror_error_set(
 				 error,
@@ -354,8 +353,6 @@ int libwrc_message_table_resource_read(
 
 				goto on_error;
 			}
-			message_table_string_data = &( data[ message_table_string_offset ] );
-
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -364,91 +361,52 @@ int libwrc_message_table_resource_read(
 				 function,
 				 first_message_identifier );
 				libcnotify_print_data(
-				 message_table_string_data,
+				 &( data[ message_string_offset ] ),
 				 sizeof( wrc_message_table_string_t ),
 				 0 );
 			}
 #endif
 			byte_stream_copy_to_uint16_little_endian(
-			 ( (wrc_message_table_string_t *) message_table_string_data )->size,
-			 message_table_string_size );
+			 ( (wrc_message_table_string_t *) &( data[ message_string_offset ] ) )->size,
+			 message_string_size );
 
 			byte_stream_copy_to_uint16_little_endian(
-			 ( (wrc_message_table_string_t *) message_table_string_data )->flags,
-			 message_table_string_flags );
+			 ( (wrc_message_table_string_t *) &( data[ message_string_offset ] ) )->flags,
+			 message_string_flags );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: message string: 0x%08" PRIx32 " size\t\t: %" PRIu16 "\n",
+				 "%s: message string: 0x%08" PRIx32 " size\t: %" PRIu16 "\n",
 				 function,
 				 first_message_identifier,
-				 message_table_string_size );
+				 message_string_size );
 
 				libcnotify_printf(
-				 "%s: message string: 0x%08" PRIx32 " flags\t\t: 0x%04" PRIx16 "\n",
+				 "%s: message string: 0x%08" PRIx32 " flags\t: 0x%04" PRIx16 "\n",
 				 function,
 				 first_message_identifier,
-				 message_table_string_flags );
+				 message_string_flags );
 			}
 #endif
-			if( message_table_string_size > sizeof( wrc_message_table_string_t ) )
+			if( ( message_string_size < sizeof( wrc_message_table_string_t ) )
+			 || ( message_string_size > ( data_size - message_string_offset ) ) )
 			{
-				message_table_string_data   += sizeof( wrc_message_table_string_t );
-				message_table_string_offset += sizeof( wrc_message_table_string_t );
-				message_table_string_size   -= sizeof( wrc_message_table_string_t );
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid message string size value out of bounds.",
+				 function );
 
-				if( ( message_table_string_flags & 0x0001 ) == 0 )
-				{
-					result = libfvalue_value_type_initialize(
-					          &message_table_value,
-					          LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM,
-					          error );
-				}
-				else
-				{
-					result = libfvalue_value_type_initialize(
-					          &message_table_value,
-					          LIBFVALUE_VALUE_TYPE_STRING_UTF16,
-					          error );
-				}
-				if( result != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-					 "%s: unable to create string value.",
-					 function );
+				goto on_error;
+			}
+			message_string_offset += sizeof( wrc_message_table_string_t );
+			message_string_size   -= sizeof( wrc_message_table_string_t );
 
-					goto on_error;
-				}
-				if( libfvalue_value_set_identifier(
-				     message_table_value,
-				     (uint8_t *) &first_message_identifier,
-				     4,
-				     LIBFVALUE_VALUE_IDENTIFIER_FLAG_MANAGED,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-					 "%s: unable to set identifier of message table value.",
-					 function );
-
-					goto on_error;
-				}
-				if( ( message_table_string_flags & 0x0001 ) == 0 )
-				{
-					value_encoding = ascii_codepage;
-				}
-				else
-				{
-					value_encoding = LIBFVALUE_CODEPAGE_UTF16_LITTLE_ENDIAN;
-				}
-/* TODO data bounds check */
+			if( message_string_size > 0 )
+			{
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libcnotify_verbose != 0 )
 				{
@@ -457,22 +415,22 @@ int libwrc_message_table_resource_read(
 					 function,
 					 first_message_identifier );
 					libcnotify_print_data(
-					 message_table_string_data,
-					 (size_t) message_table_string_size,
+					 &( data[ message_string_offset ] ),
+					 (size_t) message_string_size,
 					 0 );
 				}
 #endif
 				/* Strip off trailing 0-byte values
 				 */
-				string_size = message_table_string_size;
+				string_size = message_string_size;
 
-				if( ( message_table_string_flags & 0x0001 ) == 0 )
+				if( ( message_string_flags & 0x0001 ) == 0 )
 				{
 					while( string_size > 0 )
 					{
 						string_size -= 1;
 
-						if( message_table_string_data[ string_size ] != 0 )
+						if( data[ message_string_offset + string_size ] != 0 )
 						{
 							break;
 						}
@@ -481,62 +439,87 @@ int libwrc_message_table_resource_read(
 				}
 				else
 				{
+					if( ( message_string_size % 2 ) != 0 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+						 "%s: invalid message string: 0x%08" PRIx32 " size value not a multitude of 2.",
+						 function,
+						 first_message_identifier );
+
+						goto on_error;
+					}
 					while( string_size > 1 )
 					{
 						string_size -= 2;
 
-						if( ( message_table_string_data[ string_size ] != 0 )
-						 || ( message_table_string_data[ string_size + 1 ] != 0 ) )
+						if( ( data[ message_string_offset + string_size ] != 0 )
+						 || ( data[ message_string_offset + string_size + 1 ] != 0 ) )
 						{
 							break;
 						}
 					}
 					string_size += 2;
 				}
-				if( libfvalue_value_set_data(
-				     message_table_value,
-				     message_table_string_data,
+				if( libwrc_table_entry_initialize(
+				     &table_entry,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+					 "%s: unable to create table entry.",
+					 function );
+
+					goto on_error;
+				}
+				if( ( message_string_flags & 0x0001 ) == 0 )
+				{
+					value_encoding = ascii_codepage;
+				}
+				else
+				{
+					value_encoding = LIBUNA_CODEPAGE_UTF16_LITTLE_ENDIAN;
+				}
+				if( libwrc_table_entry_set_string(
+				     table_entry,
+				     &( data[ message_string_offset ] ),
 				     (size_t) string_size,
 				     value_encoding,
-				     LIBFVALUE_VALUE_DATA_FLAG_MANAGED,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-					 "%s: unable to set data of string value.",
+					 "%s: unable to set data of table entry.",
 					 function );
 
 					goto on_error;
 				}
-#if defined( HAVE_DEBUG_OUTPUT )
-				if( libcnotify_verbose != 0 )
+				table_entry->identifier = first_message_identifier;
+
+				if( libcdata_array_append_entry(
+				     internal_message_table_resource->entries_array,
+				     &entry_index,
+				     (intptr_t *) table_entry,
+				     error ) != 1 )
 				{
-					libcnotify_printf(
-					 "%s: message string: 0x%08" PRIx32 " value\t\t: ",
-					 function,
-					 first_message_identifier );
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append table entry to array.",
+					 function );
 
-					if( libfvalue_value_print(
-					     message_table_value,
-					     0,
-					     0,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-						 "%s: unable to print string value.",
-						 function );
-
-						goto on_error;
-					}
-					libcnotify_printf(
-					 "\n" );
+					goto on_error;
 				}
-#endif
+				table_entry = NULL;
+
+				message_string_offset += message_string_size;
 			}
 #if defined( HAVE_DEBUG_OUTPUT )
 			else if( libcnotify_verbose != 0 )
@@ -545,36 +528,16 @@ int libwrc_message_table_resource_read(
 				 "\n" );
 			}
 #endif
-			message_table_string_data   += message_table_string_size;
-			message_table_string_offset += message_table_string_size;
-
-			if( libcdata_array_append_entry(
-			     internal_message_table_resource->values_array,
-			     &entry_index,
-			     (intptr_t *) message_table_value,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append message table value to array.",
-				 function );
-
-				goto on_error;
-			}
-			message_table_value = NULL;
-
 			first_message_identifier++;
 		}
 	}
 	return( 1 );
 
 on_error:
-	if( message_table_value != NULL )
+	if( table_entry != NULL )
 	{
-		libfvalue_value_free(
-		 &message_table_value,
+		libwrc_table_entry_free(
+		 &table_entry,
 		 NULL );
 	}
 	return( -1 );
@@ -605,7 +568,7 @@ int libwrc_message_table_resource_get_number_of_messages(
 	internal_message_table_resource = (libwrc_internal_message_table_resource_t *) message_table_resource;
 
 	if( libcdata_array_get_number_of_entries(
-	     internal_message_table_resource->values_array,
+	     internal_message_table_resource->entries_array,
 	     number_of_messages,
 	     error ) != 1 )
 	{
@@ -613,7 +576,7 @@ int libwrc_message_table_resource_get_number_of_messages(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of entries from values array.",
+		 "%s: unable to retrieve number of entries from array.",
 		 function );
 
 		return( -1 );
@@ -630,11 +593,9 @@ int libwrc_message_table_resource_get_identifier(
      uint32_t *message_identifier,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *message_table_value                                    = NULL;
 	libwrc_internal_message_table_resource_t *internal_message_table_resource = NULL;
-	uint8_t *message_table_value_identifier                                   = NULL;
+	libwrc_table_entry_t *table_entry                                         = NULL;
 	static char *function                                                     = "libwrc_message_table_resource_get_identifier";
-	size_t message_table_value_identifier_size                                = 0;
 
 	if( message_table_resource == NULL )
 	{
@@ -661,62 +622,34 @@ int libwrc_message_table_resource_get_identifier(
 		return( -1 );
 	}
 	if( libcdata_array_get_entry_by_index(
-	     internal_message_table_resource->values_array,
+	     internal_message_table_resource->entries_array,
 	     message_index,
-	     (intptr_t **) &message_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 message_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_get_identifier(
-	     message_table_value,
-	     &message_table_value_identifier,
-	     &message_table_value_identifier_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table value: %d identifier.",
-		 function,
-		 message_index );
-
-		return( -1 );
-	}
-	if( message_table_value_identifier == NULL )
+	if( table_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing message table value identifier.",
-		 function );
+		 "%s: missing table entry: %d.",
+		 function,
+		 message_index );
 
 		return( -1 );
 	}
-	if( message_table_value_identifier_size != 4 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid message table value identifier size value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	byte_stream_copy_to_uint32_little_endian(
-	 message_table_value_identifier,
-	 *message_identifier );
+	*message_identifier = table_entry->identifier;
 
 	return( 1 );
 }
@@ -730,12 +663,9 @@ int libwrc_message_table_resource_get_index_by_identifier(
      int *message_index,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *message_table_value                                    = NULL;
 	libwrc_internal_message_table_resource_t *internal_message_table_resource = NULL;
-	uint8_t *message_table_value_identifier                                   = NULL;
+	libwrc_table_entry_t *table_entry                                         = NULL;
 	static char *function                                                     = "libwrc_message_table_resource_get_index_by_identifier";
-	size_t message_table_value_identifier_size                                = 0;
-	uint32_t identifier                                                       = 0;
 	int number_of_messages                                                    = 0;
 	int safe_message_index                                                    = 0;
 
@@ -764,7 +694,7 @@ int libwrc_message_table_resource_get_index_by_identifier(
 		return( -1 );
 	}
 	if( libcdata_array_get_number_of_entries(
-	     internal_message_table_resource->values_array,
+	     internal_message_table_resource->entries_array,
 	     &number_of_messages,
 	     error ) != 1 )
 	{
@@ -772,7 +702,7 @@ int libwrc_message_table_resource_get_index_by_identifier(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of entries from values array.",
+		 "%s: unable to retrieve number of entries from array.",
 		 function );
 
 		return( -1 );
@@ -782,64 +712,34 @@ int libwrc_message_table_resource_get_index_by_identifier(
 	     safe_message_index++ )
 	{
 		if( libcdata_array_get_entry_by_index(
-		     internal_message_table_resource->values_array,
+		     internal_message_table_resource->entries_array,
 		     safe_message_index,
-		     (intptr_t **) &message_table_value,
+		     (intptr_t **) &table_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message table value: %d.",
+			 "%s: unable to retrieve table entry: %d.",
 			 function,
 			 safe_message_index );
 
 			return( -1 );
 		}
-		if( libfvalue_value_get_identifier(
-		     message_table_value,
-		     &message_table_value_identifier,
-		     &message_table_value_identifier_size,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message table value: %d identifier.",
-			 function,
-			 safe_message_index );
-
-			return( -1 );
-		}
-		if( message_table_value_identifier == NULL )
+		if( table_entry == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing message table value identifier.",
-			 function );
+			 "%s: missing table entry: %d.",
+			 function,
+			 safe_message_index );
 
 			return( -1 );
 		}
-		if( message_table_value_identifier_size != 4 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: invalid message table value identifier size value out of bounds.",
-			 function );
-
-			return( -1 );
-		}
-		byte_stream_copy_to_uint32_little_endian(
-		 message_table_value_identifier,
-		 identifier );
-
-		if( identifier == message_identifier )
+		if( message_identifier == table_entry->identifier )
 		{
 			*message_index = safe_message_index;
 
@@ -858,8 +758,8 @@ int libwrc_message_table_resource_get_utf8_string_size(
      size_t *utf8_string_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *message_table_value                                    = NULL;
 	libwrc_internal_message_table_resource_t *internal_message_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                         = NULL;
 	static char *function                                                     = "libwrc_message_table_resource_get_utf8_string_size";
 
 	if( message_table_resource == NULL )
@@ -876,24 +776,23 @@ int libwrc_message_table_resource_get_utf8_string_size(
 	internal_message_table_resource = (libwrc_internal_message_table_resource_t *) message_table_resource;
 
 	if( libcdata_array_get_entry_by_index(
-	     internal_message_table_resource->values_array,
+	     internal_message_table_resource->entries_array,
 	     message_index,
-	     (intptr_t **) &message_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 message_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_get_utf8_string_size(
-	     message_table_value,
-	     0,
+	if( libwrc_table_entry_get_utf8_string_size(
+	     table_entry,
 	     utf8_string_size,
 	     error ) != 1 )
 	{
@@ -901,7 +800,7 @@ int libwrc_message_table_resource_get_utf8_string_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-8 string size of message table value: %d.",
+		 "%s: unable to retrieve UTF-8 string size of table entry: %d.",
 		 function,
 		 message_index );
 
@@ -920,8 +819,8 @@ int libwrc_message_table_resource_get_utf8_string(
      size_t utf8_string_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *message_table_value                                    = NULL;
 	libwrc_internal_message_table_resource_t *internal_message_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                         = NULL;
 	static char *function                                                     = "libwrc_message_table_resource_get_utf8_string";
 
 	if( message_table_resource == NULL )
@@ -938,24 +837,23 @@ int libwrc_message_table_resource_get_utf8_string(
 	internal_message_table_resource = (libwrc_internal_message_table_resource_t *) message_table_resource;
 
 	if( libcdata_array_get_entry_by_index(
-	     internal_message_table_resource->values_array,
+	     internal_message_table_resource->entries_array,
 	     message_index,
-	     (intptr_t **) &message_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 message_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_copy_to_utf8_string(
-	     message_table_value,
-	     0,
+	if( libwrc_table_entry_get_utf8_string(
+	     table_entry,
 	     utf8_string,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -964,7 +862,7 @@ int libwrc_message_table_resource_get_utf8_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy message table value: %d to UTF-8 string.",
+		 "%s: unable to copy table entry: %d to UTF-8 string.",
 		 function,
 		 message_index );
 
@@ -982,8 +880,8 @@ int libwrc_message_table_resource_get_utf16_string_size(
      size_t *utf16_string_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *message_table_value                                    = NULL;
 	libwrc_internal_message_table_resource_t *internal_message_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                         = NULL;
 	static char *function                                                     = "libwrc_message_table_resource_get_utf16_string_size";
 
 	if( message_table_resource == NULL )
@@ -1000,24 +898,23 @@ int libwrc_message_table_resource_get_utf16_string_size(
 	internal_message_table_resource = (libwrc_internal_message_table_resource_t *) message_table_resource;
 
 	if( libcdata_array_get_entry_by_index(
-	     internal_message_table_resource->values_array,
+	     internal_message_table_resource->entries_array,
 	     message_index,
-	     (intptr_t **) &message_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 message_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_get_utf16_string_size(
-	     message_table_value,
-	     0,
+	if( libwrc_table_entry_get_utf16_string_size(
+	     table_entry,
 	     utf16_string_size,
 	     error ) != 1 )
 	{
@@ -1025,7 +922,7 @@ int libwrc_message_table_resource_get_utf16_string_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-16 string size of message table value: %d.",
+		 "%s: unable to retrieve UTF-16 string size of table entry: %d.",
 		 function,
 		 message_index );
 
@@ -1044,8 +941,8 @@ int libwrc_message_table_resource_get_utf16_string(
      size_t utf16_string_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *message_table_value                                    = NULL;
 	libwrc_internal_message_table_resource_t *internal_message_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                         = NULL;
 	static char *function                                                     = "libwrc_message_table_resource_get_utf16_string";
 
 	if( message_table_resource == NULL )
@@ -1062,24 +959,23 @@ int libwrc_message_table_resource_get_utf16_string(
 	internal_message_table_resource = (libwrc_internal_message_table_resource_t *) message_table_resource;
 
 	if( libcdata_array_get_entry_by_index(
-	     internal_message_table_resource->values_array,
+	     internal_message_table_resource->entries_array,
 	     message_index,
-	     (intptr_t **) &message_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 message_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_copy_to_utf16_string(
-	     message_table_value,
-	     0,
+	if( libwrc_table_entry_get_utf16_string(
+	     table_entry,
 	     utf16_string,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -1088,7 +984,7 @@ int libwrc_message_table_resource_get_utf16_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy message table value: %d to UTF-16 string.",
+		 "%s: unable to copy table entry: %d to UTF-16 string.",
 		 function,
 		 message_index );
 

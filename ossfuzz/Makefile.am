@@ -12,7 +12,36 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@
 
 bin_PROGRAMS = \
-	stream_fuzzer
+	manifest_resource_fuzzer \
+	message_table_resource_fuzzer \
+	mui_resource_fuzzer \
+	stream_fuzzer \
+	string_table_resource_fuzzer \
+	version_information_resource_fuzzer
+
+manifest_resource_fuzzer_SOURCES = \
+	manifest_resource_fuzzer.cc \
+	ossfuzz_libwrc.h
+
+manifest_resource_fuzzer_LDADD = \
+	@LIB_FUZZING_ENGINE@ \
+	../libwrc/libwrc.la
+
+message_table_resource_fuzzer_SOURCES = \
+	message_table_resource_fuzzer.cc \
+	ossfuzz_libwrc.h
+
+message_table_resource_fuzzer_LDADD = \
+	@LIB_FUZZING_ENGINE@ \
+	../libwrc/libwrc.la
+
+mui_resource_fuzzer_SOURCES = \
+	mui_resource_fuzzer.cc \
+	ossfuzz_libwrc.h
+
+mui_resource_fuzzer_LDADD = \
+	@LIB_FUZZING_ENGINE@ \
+	../libwrc/libwrc.la
 
 stream_fuzzer_SOURCES = \
 	ossfuzz_libbfio.h \
@@ -31,6 +60,22 @@ stream_fuzzer_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
+
+string_table_resource_fuzzer_SOURCES = \
+	ossfuzz_libwrc.h \
+	string_table_resource_fuzzer.cc
+
+string_table_resource_fuzzer_LDADD = \
+	@LIB_FUZZING_ENGINE@ \
+	../libwrc/libwrc.la
+
+version_information_resource_fuzzer_SOURCES = \
+	ossfuzz_libwrc.h \
+	version_information_resource_fuzzer.cc
+
+version_information_resource_fuzzer_LDADD = \
+	@LIB_FUZZING_ENGINE@ \
+	../libwrc/libwrc.la
 endif
 
 MAINTAINERCLEANFILES = \

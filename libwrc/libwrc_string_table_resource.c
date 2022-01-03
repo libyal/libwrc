@@ -27,8 +27,9 @@
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
-#include "libwrc_libfvalue.h"
+#include "libwrc_libuna.h"
 #include "libwrc_string_table_resource.h"
+#include "libwrc_table_entry.h"
 
 /* Creates a string table resource
  * Make sure the value string_table_resource is referencing, is set to NULL
@@ -95,7 +96,7 @@ int libwrc_string_table_resource_initialize(
 		return( -1 );
 	}
 	if( libcdata_array_initialize(
-	     &( internal_string_table_resource->values_array ),
+	     &( internal_string_table_resource->entries_array ),
 	     0,
 	     error ) != 1 )
 	{
@@ -103,7 +104,7 @@ int libwrc_string_table_resource_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create values array.",
+		 "%s: unable to create entries array.",
 		 function );
 
 		goto on_error;
@@ -149,15 +150,15 @@ int libwrc_string_table_resource_free(
 		*string_table_resource         = NULL;
 
 		if( libcdata_array_free(
-		     &( internal_string_table_resource->values_array ),
-		     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_value_free,
+		     &( internal_string_table_resource->entries_array ),
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_table_entry_free,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free values array.",
+			 "%s: unable to free entries array.",
 			 function );
 
 			result = -1;
@@ -178,11 +179,10 @@ int libwrc_string_table_resource_read(
      uint32_t base_identifier,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *string_value                                         = NULL;
 	libwrc_internal_string_table_resource_t *internal_string_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                       = NULL;
 	static char *function                                                   = "libwrc_string_table_resource_read";
 	size_t data_offset                                                      = 0;
-	uint32_t string_identifier                                              = 0;
 	uint32_t string_index                                                   = 0;
 	uint32_t string_size                                                    = 0;
 	int entry_index                                                         = 0;
@@ -247,7 +247,7 @@ int libwrc_string_table_resource_read(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: string: %02" PRIu32 " length\t\t\t\t: %" PRIu32 "\n",
+			 "%s: string: %02" PRIu32 " length\t\t\t: %" PRIu32 "\n",
 			 function,
 			 string_index,
 			 string_size );
@@ -255,51 +255,19 @@ int libwrc_string_table_resource_read(
 #endif
 		if( string_size > 0 )
 		{
-			string_identifier = ( ( base_identifier - 1 ) << 4 ) | string_index;
-
 			if( string_size > ( ( data_size - data_offset ) / 2 ) )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-				 "%s: string size value out of bound.",
+				 "%s: invalid string size value out of bound.",
 				 function );
 
 				goto on_error;
 			}
 			string_size *= 2;
 
-			if( libfvalue_value_type_initialize(
-			     &string_value,
-			     LIBFVALUE_VALUE_TYPE_STRING_UTF16,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create string value.",
-				 function );
-
-				goto on_error;
-			}
-			if( libfvalue_value_set_identifier(
-			     string_value,
-			     (uint8_t *) &string_identifier,
-			     4,
-			     LIBFVALUE_VALUE_IDENTIFIER_FLAG_MANAGED,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to set identifier of string value.",
-				 function );
-
-				goto on_error;
-			}
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -313,69 +281,55 @@ int libwrc_string_table_resource_read(
 				 0 );
 			}
 #endif
-			if( libfvalue_value_set_data(
-			     string_value,
+			if( libwrc_table_entry_initialize(
+			     &table_entry,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create table entry.",
+				 function );
+
+				goto on_error;
+			}
+			if( libwrc_table_entry_set_string(
+			     table_entry,
 			     &( data[ data_offset ] ),
 			     (size_t) string_size,
-			     LIBFVALUE_CODEPAGE_UTF16_LITTLE_ENDIAN,
-			     LIBFVALUE_VALUE_DATA_FLAG_MANAGED,
+			     LIBUNA_CODEPAGE_UTF16_LITTLE_ENDIAN,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set data of string value.",
+				 "%s: unable to set data of table entry.",
 				 function );
 
 				goto on_error;
 			}
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "%s: string: %02" PRIu32 " value\t\t\t\t: ",
-				 function,
-				 string_index );
-
-				if( libfvalue_value_print(
-				     string_value,
-				     0,
-				     0,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-					 "%s: unable to print string value.",
-					 function );
-
-					goto on_error;
-				}
-				libcnotify_printf(
-				 "\n" );
-			}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-
-			data_offset += (size_t) string_size;
+			table_entry->identifier = ( ( base_identifier - 1 ) << 4 ) | string_index;
 
 			if( libcdata_array_append_entry(
-			     internal_string_table_resource->values_array,
+			     internal_string_table_resource->entries_array,
 			     &entry_index,
-			     (intptr_t *) string_value,
+			     (intptr_t *) table_entry,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append string value to array.",
+				 "%s: unable to append table entry to array.",
 				 function );
 
 				goto on_error;
 			}
-			string_value = NULL;
+			table_entry = NULL;
+
+			data_offset += (size_t) string_size;
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		else if( libcnotify_verbose != 0 )
@@ -391,10 +345,10 @@ int libwrc_string_table_resource_read(
 	return( 1 );
 
 on_error:
-	if( string_value != NULL )
+	if( table_entry != NULL )
 	{
-		libfvalue_value_free(
-		 &string_value,
+		libwrc_table_entry_free(
+		 &table_entry,
 		 NULL );
 	}
 	return( -1 );
@@ -425,7 +379,7 @@ int libwrc_string_table_resource_get_number_of_strings(
 	internal_string_table_resource = (libwrc_internal_string_table_resource_t *) string_table_resource;
 
 	if( libcdata_array_get_number_of_entries(
-	     internal_string_table_resource->values_array,
+	     internal_string_table_resource->entries_array,
 	     number_of_strings,
 	     error ) != 1 )
 	{
@@ -433,7 +387,7 @@ int libwrc_string_table_resource_get_number_of_strings(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of entries from values array.",
+		 "%s: unable to retrieve number of entries from array.",
 		 function );
 
 		return( -1 );
@@ -450,11 +404,9 @@ int libwrc_string_table_resource_get_identifier(
      uint32_t *string_identifier,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *string_table_value                                   = NULL;
 	libwrc_internal_string_table_resource_t *internal_string_table_resource = NULL;
-	uint8_t *string_table_value_identifier                                  = NULL;
+	libwrc_table_entry_t *table_entry                                       = NULL;
 	static char *function                                                   = "libwrc_string_table_resource_get_identifier";
-	size_t string_table_value_identifier_size                               = 0;
 
 	if( string_table_resource == NULL )
 	{
@@ -481,62 +433,34 @@ int libwrc_string_table_resource_get_identifier(
 		return( -1 );
 	}
 	if( libcdata_array_get_entry_by_index(
-	     internal_string_table_resource->values_array,
+	     internal_string_table_resource->entries_array,
 	     string_index,
-	     (intptr_t **) &string_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 string_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_get_identifier(
-	     string_table_value,
-	     &string_table_value_identifier,
-	     &string_table_value_identifier_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string table value: %d identifier.",
-		 function,
-		 string_index );
-
-		return( -1 );
-	}
-	if( string_table_value_identifier == NULL )
+	if( table_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing string table value identifier.",
-		 function );
+		 "%s: missing table entry: %d.",
+		 function,
+		 string_index );
 
 		return( -1 );
 	}
-	if( string_table_value_identifier_size != 4 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid string table value identifier size value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	byte_stream_copy_to_uint32_little_endian(
-	 string_table_value_identifier,
-	 *string_identifier );
+	*string_identifier = table_entry->identifier;
 
 	return( 1 );
 }
@@ -550,12 +474,9 @@ int libwrc_string_table_resource_get_index_by_identifier(
      int *string_index,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *string_table_value                                   = NULL;
 	libwrc_internal_string_table_resource_t *internal_string_table_resource = NULL;
-	uint8_t *string_table_value_identifier                                  = NULL;
+	libwrc_table_entry_t *table_entry                                       = NULL;
 	static char *function                                                   = "libwrc_string_table_resource_get_index_by_identifier";
-	size_t string_table_value_identifier_size                               = 0;
-	uint32_t identifier                                                     = 0;
 	int number_of_strings                                                   = 0;
 	int safe_string_index                                                   = 0;
 
@@ -584,7 +505,7 @@ int libwrc_string_table_resource_get_index_by_identifier(
 		return( -1 );
 	}
 	if( libcdata_array_get_number_of_entries(
-	     internal_string_table_resource->values_array,
+	     internal_string_table_resource->entries_array,
 	     &number_of_strings,
 	     error ) != 1 )
 	{
@@ -592,7 +513,7 @@ int libwrc_string_table_resource_get_index_by_identifier(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of entries from values array.",
+		 "%s: unable to retrieve number of entries from array.",
 		 function );
 
 		return( -1 );
@@ -602,64 +523,34 @@ int libwrc_string_table_resource_get_index_by_identifier(
 	     safe_string_index++ )
 	{
 		if( libcdata_array_get_entry_by_index(
-		     internal_string_table_resource->values_array,
+		     internal_string_table_resource->entries_array,
 		     safe_string_index,
-		     (intptr_t **) &string_table_value,
+		     (intptr_t **) &table_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve string table value: %d.",
+			 "%s: unable to retrieve table entry: %d.",
 			 function,
 			 safe_string_index );
 
 			return( -1 );
 		}
-		if( libfvalue_value_get_identifier(
-		     string_table_value,
-		     &string_table_value_identifier,
-		     &string_table_value_identifier_size,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve string table value: %d identifier.",
-			 function,
-			 safe_string_index );
-
-			return( -1 );
-		}
-		if( string_table_value_identifier == NULL )
+		if( table_entry == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing string table value identifier.",
-			 function );
+			 "%s: missing table entry: %d.",
+			 function,
+			 safe_string_index );
 
 			return( -1 );
 		}
-		if( string_table_value_identifier_size != 4 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: invalid string table value identifier size value out of bounds.",
-			 function );
-
-			return( -1 );
-		}
-		byte_stream_copy_to_uint32_little_endian(
-		 string_table_value_identifier,
-		 identifier );
-
-		if( identifier == string_identifier )
+		if( string_identifier == table_entry->identifier )
 		{
 			*string_index = safe_string_index;
 
@@ -678,8 +569,8 @@ int libwrc_string_table_resource_get_utf8_string_size(
      size_t *utf8_string_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *string_table_value                                   = NULL;
 	libwrc_internal_string_table_resource_t *internal_string_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                       = NULL;
 	static char *function                                                   = "libwrc_string_table_resource_get_utf8_string_size";
 
 	if( string_table_resource == NULL )
@@ -696,24 +587,23 @@ int libwrc_string_table_resource_get_utf8_string_size(
 	internal_string_table_resource = (libwrc_internal_string_table_resource_t *) string_table_resource;
 
 	if( libcdata_array_get_entry_by_index(
-	     internal_string_table_resource->values_array,
+	     internal_string_table_resource->entries_array,
 	     string_index,
-	     (intptr_t **) &string_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 string_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_get_utf8_string_size(
-	     string_table_value,
-	     0,
+	if( libwrc_table_entry_get_utf8_string_size(
+	     table_entry,
 	     utf8_string_size,
 	     error ) != 1 )
 	{
@@ -721,7 +611,7 @@ int libwrc_string_table_resource_get_utf8_string_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-8 string size of string table value: %d.",
+		 "%s: unable to retrieve UTF-8 string size of table entry: %d.",
 		 function,
 		 string_index );
 
@@ -740,8 +630,8 @@ int libwrc_string_table_resource_get_utf8_string(
      size_t utf8_string_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *string_table_value                                   = NULL;
 	libwrc_internal_string_table_resource_t *internal_string_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                       = NULL;
 	static char *function                                                   = "libwrc_string_table_resource_get_utf8_string";
 
 	if( string_table_resource == NULL )
@@ -758,24 +648,23 @@ int libwrc_string_table_resource_get_utf8_string(
 	internal_string_table_resource = (libwrc_internal_string_table_resource_t *) string_table_resource;
 
 	if( libcdata_array_get_entry_by_index(
-	     internal_string_table_resource->values_array,
+	     internal_string_table_resource->entries_array,
 	     string_index,
-	     (intptr_t **) &string_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 string_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_copy_to_utf8_string(
-	     string_table_value,
-	     0,
+	if( libwrc_table_entry_get_utf8_string(
+	     table_entry,
 	     utf8_string,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -784,7 +673,7 @@ int libwrc_string_table_resource_get_utf8_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy string table value: %d to UTF-8 string.",
+		 "%s: unable to copy table entry: %d to UTF-8 string.",
 		 function,
 		 string_index );
 
@@ -802,8 +691,8 @@ int libwrc_string_table_resource_get_utf16_string_size(
      size_t *utf16_string_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *string_table_value                                   = NULL;
 	libwrc_internal_string_table_resource_t *internal_string_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                       = NULL;
 	static char *function                                                   = "libwrc_string_table_resource_get_utf16_string_size";
 
 	if( string_table_resource == NULL )
@@ -820,24 +709,23 @@ int libwrc_string_table_resource_get_utf16_string_size(
 	internal_string_table_resource = (libwrc_internal_string_table_resource_t *) string_table_resource;
 
 	if( libcdata_array_get_entry_by_index(
-	     internal_string_table_resource->values_array,
+	     internal_string_table_resource->entries_array,
 	     string_index,
-	     (intptr_t **) &string_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 string_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_get_utf16_string_size(
-	     string_table_value,
-	     0,
+	if( libwrc_table_entry_get_utf16_string_size(
+	     table_entry,
 	     utf16_string_size,
 	     error ) != 1 )
 	{
@@ -845,7 +733,7 @@ int libwrc_string_table_resource_get_utf16_string_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-16 string size of string table value: %d.",
+		 "%s: unable to retrieve UTF-16 string size of table entry: %d.",
 		 function,
 		 string_index );
 
@@ -864,8 +752,8 @@ int libwrc_string_table_resource_get_utf16_string(
      size_t utf16_string_size,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *string_table_value                                   = NULL;
 	libwrc_internal_string_table_resource_t *internal_string_table_resource = NULL;
+	libwrc_table_entry_t *table_entry                                       = NULL;
 	static char *function                                                   = "libwrc_string_table_resource_get_utf16_string";
 
 	if( string_table_resource == NULL )
@@ -882,24 +770,23 @@ int libwrc_string_table_resource_get_utf16_string(
 	internal_string_table_resource = (libwrc_internal_string_table_resource_t *) string_table_resource;
 
 	if( libcdata_array_get_entry_by_index(
-	     internal_string_table_resource->values_array,
+	     internal_string_table_resource->entries_array,
 	     string_index,
-	     (intptr_t **) &string_table_value,
+	     (intptr_t **) &table_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve string table value: %d.",
+		 "%s: unable to retrieve table entry: %d.",
 		 function,
 		 string_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_copy_to_utf16_string(
-	     string_table_value,
-	     0,
+	if( libwrc_table_entry_get_utf16_string(
+	     table_entry,
 	     utf16_string,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -908,7 +795,7 @@ int libwrc_string_table_resource_get_utf16_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy string table value: %d to UTF-16 string.",
+		 "%s: unable to copy table entry: %d to UTF-16 string.",
 		 function,
 		 string_index );
 

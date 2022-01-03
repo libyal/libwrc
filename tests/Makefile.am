@@ -57,6 +57,7 @@ check_PROGRAMS = \
 	wrc_test_stream \
 	wrc_test_string_table_resource \
 	wrc_test_support \
+	wrc_test_table_entry \
 	wrc_test_version_information_resource \
 	wrc_test_version_values \
 	wrc_test_wevt_channel \
@@ -274,6 +275,18 @@ wrc_test_support_SOURCES = \
 	wrc_test_unused.h
 
 wrc_test_support_LDADD = \
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
+
+wrc_test_table_entry_SOURCES = \
+	wrc_test_libcerror.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_memory.c wrc_test_memory.h \
+	wrc_test_table_entry.c \
+	wrc_test_unused.h
+
+wrc_test_table_entry_LDADD = \
 	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@
 

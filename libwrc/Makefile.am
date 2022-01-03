@@ -64,6 +64,7 @@ libwrc_la_SOURCES = \
 	libwrc_string.c libwrc_string.h \
 	libwrc_string_table_resource.c libwrc_string_table_resource.h \
 	libwrc_string_values.c libwrc_string_values.h \
+	libwrc_table_entry.c libwrc_table_entry.h \
 	libwrc_types.h \
 	libwrc_unused.h \
 	libwrc_version.c libwrc_version.h \

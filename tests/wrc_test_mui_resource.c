@@ -58,14 +58,14 @@ uint8_t wrc_test_mui_resource_data1[ 232 ] = {
 int wrc_test_mui_resource_initialize(
      void )
 {
-	libcerror_error_t *error                      = NULL;
+	libcerror_error_t *error            = NULL;
 	libwrc_mui_resource_t *mui_resource = NULL;
-	int result                                    = 0;
+	int result                          = 0;
 
 #if defined( HAVE_WRC_TEST_MEMORY )
-	int number_of_malloc_fail_tests               = 1;
-	int number_of_memset_fail_tests               = 1;
-	int test_number                               = 0;
+	int number_of_malloc_fail_tests     = 1;
+	int number_of_memset_fail_tests     = 1;
+	int test_number                     = 0;
 #endif
 
 	/* Test regular cases
@@ -291,9 +291,9 @@ on_error:
 int wrc_test_mui_resource_read(
      void )
 {
-	libcerror_error_t *error                      = NULL;
+	libcerror_error_t *error            = NULL;
 	libwrc_mui_resource_t *mui_resource = NULL;
-	int result                                    = 0;
+	int result                          = 0;
 
 	/* Initialize test
 	 */
