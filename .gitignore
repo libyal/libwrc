@@ -141,6 +141,7 @@ stamp-h[1-9]
 /tests/wrc_test_notify
 /tests/wrc_test_resource
 /tests/wrc_test_resource_item
+/tests/wrc_test_resource_node_header
 /tests/wrc_test_resource_values
 /tests/wrc_test_stream
 /tests/wrc_test_string_table_resource

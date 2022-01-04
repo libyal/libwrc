@@ -57,8 +57,8 @@ const char *libwrc_debug_get_resource_identifier(
 		case LIBWRC_RESOURCE_IDENTIFIER_DIALOG:
 			return( "Dialog" );
 
-		case LIBWRC_RESOURCE_IDENTIFIER_STRING:
-			return( "String" );
+		case LIBWRC_RESOURCE_IDENTIFIER_STRING_TABLE:
+			return( "String table" );
 
 		case LIBWRC_RESOURCE_IDENTIFIER_FONT_DIRECTORY:
 			return( "Font Directory" );
@@ -81,8 +81,8 @@ const char *libwrc_debug_get_resource_identifier(
 		case LIBWRC_RESOURCE_IDENTIFIER_GROUP_ICON:
 			return( "Group Icon" );
 
-		case LIBWRC_RESOURCE_IDENTIFIER_VERSION:
-			return( "Version" );
+		case LIBWRC_RESOURCE_IDENTIFIER_VERSION_INFORMATION:
+			return( "Version information" );
 
 		case LIBWRC_RESOURCE_IDENTIFIER_DIALOG_INCLUDE:
 			return( "Dialog Include" );

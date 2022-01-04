@@ -1280,88 +1280,25 @@ int libwrc_stream_get_resource_by_identifier(
 
 		return( -1 );
 	}
-	if( libcdata_tree_node_get_number_of_sub_nodes(
-	     internal_stream->resources_root_node,
-	     &number_of_resources,
-	     error ) != 1 )
+	if( internal_stream->resources_root_node != NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of resources.",
-		 function );
-
-		return( -1 );
-	}
-	if( libcdata_tree_node_get_sub_node_by_index(
-	     internal_stream->resources_root_node,
-	     0,
-	     &resource_node,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve first resource node.",
-		 function );
-
-		return( -1 );
-	}
-	for( resource_index = 0;
-	     resource_index < number_of_resources;
-	     resource_index++ )
-	{
-		if( libcdata_tree_node_get_value(
-		     resource_node,
-		     (intptr_t **) &resource_values,
+		if( libcdata_tree_node_get_number_of_sub_nodes(
+		     internal_stream->resources_root_node,
+		     &number_of_resources,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value of resource node: %d.",
-			 function,
-			 resource_index );
+			 "%s: unable to retrieve number of resources.",
+			 function );
 
 			return( -1 );
 		}
-		if( resource_values == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing resource values: %d.",
-			 function,
-			 resource_index );
-
-			return( -1 );
-		}
-		if( identifier == resource_values->identifier )
-		{
-			if( libwrc_resource_initialize(
-			     resource,
-			     internal_stream->io_handle,
-			     internal_stream->file_io_handle,
-			     resource_node,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create resource.",
-				 function );
-
-				return( -1 );
-			}
-			return( 1 );
-		}
-		if( libcdata_tree_node_get_next_node(
-		     resource_node,
+		if( libcdata_tree_node_get_sub_node_by_index(
+		     internal_stream->resources_root_node,
+		     0,
 		     &resource_node,
 		     error ) != 1 )
 		{
@@ -1369,11 +1306,77 @@ int libwrc_stream_get_resource_by_identifier(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve next node of resource node: %d.",
-			 function,
-			 resource_index );
+			 "%s: unable to retrieve first resource node.",
+			 function );
 
 			return( -1 );
+		}
+		for( resource_index = 0;
+		     resource_index < number_of_resources;
+		     resource_index++ )
+		{
+			if( libcdata_tree_node_get_value(
+			     resource_node,
+			     (intptr_t **) &resource_values,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve value of resource node: %d.",
+				 function,
+				 resource_index );
+
+				return( -1 );
+			}
+			if( resource_values == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: missing resource values: %d.",
+				 function,
+				 resource_index );
+
+				return( -1 );
+			}
+			if( identifier == resource_values->identifier )
+			{
+				if( libwrc_resource_initialize(
+				     resource,
+				     internal_stream->io_handle,
+				     internal_stream->file_io_handle,
+				     resource_node,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+					 "%s: unable to create resource.",
+					 function );
+
+					return( -1 );
+				}
+				return( 1 );
+			}
+			if( libcdata_tree_node_get_next_node(
+			     resource_node,
+			     &resource_node,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve next node of resource node: %d.",
+				 function,
+				 resource_index );
+
+				return( -1 );
+			}
 		}
 	}
 	return( 0 );

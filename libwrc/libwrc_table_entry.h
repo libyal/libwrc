@@ -25,7 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 
 #if defined( __cplusplus )

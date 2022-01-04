@@ -222,7 +222,7 @@ int libwrc_message_table_resource_read(
 		return( -1 );
 	}
 	if( ( data_size < 4 )
-	 || ( data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,

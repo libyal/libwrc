@@ -183,9 +183,9 @@ int libwrc_string_table_resource_read(
 	libwrc_table_entry_t *table_entry                                       = NULL;
 	static char *function                                                   = "libwrc_string_table_resource_read";
 	size_t data_offset                                                      = 0;
-	uint32_t string_index                                                   = 0;
 	uint32_t string_size                                                    = 0;
 	int entry_index                                                         = 0;
+	int string_index                                                        = 0;
 
 	if( string_table_resource == NULL )
 	{
@@ -212,7 +212,7 @@ int libwrc_string_table_resource_read(
 		return( -1 );
 	}
 	if( ( data_size < 2 )
-	 || ( data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -247,7 +247,7 @@ int libwrc_string_table_resource_read(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: string: %02" PRIu32 " length\t\t\t: %" PRIu32 "\n",
+			 "%s: string: %02d length\t\t\t: %" PRIu32 "\n",
 			 function,
 			 string_index,
 			 string_size );
@@ -272,7 +272,7 @@ int libwrc_string_table_resource_read(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: string: %02" PRIu32 " data:\n",
+				 "%s: string: %02 data:\n",
 				 function,
 				 string_index );
 				libcnotify_print_data(
@@ -310,7 +310,7 @@ int libwrc_string_table_resource_read(
 
 				goto on_error;
 			}
-			table_entry->identifier = ( ( base_identifier - 1 ) << 4 ) | string_index;
+			table_entry->identifier = ( ( base_identifier - 1 ) << 4 ) | (uint32_t) string_index;
 
 			if( libcdata_array_append_entry(
 			     internal_string_table_resource->entries_array,
@@ -340,8 +340,6 @@ int libwrc_string_table_resource_read(
 #endif
 		string_index++;
 	}
-/* TODO validate if number of strings is 16 ? */
-
 	return( 1 );
 
 on_error:
@@ -351,6 +349,11 @@ on_error:
 		 &table_entry,
 		 NULL );
 	}
+	libcdata_array_empty(
+	 internal_string_table_resource->entries_array,
+	 (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_table_entry_free,
+	 error );
+
 	return( -1 );
 }
 

@@ -2713,7 +2713,7 @@ int info_handle_string_table_resource_fprint(
 	}
 	result = libwrc_stream_get_resource_by_identifier(
 	          info_handle->input_resource_stream,
-	          LIBWRC_RESOURCE_IDENTIFIER_STRING,
+	          LIBWRC_RESOURCE_IDENTIFIER_STRING_TABLE,
 	          &resource,
 	          error );
 
@@ -3151,7 +3151,7 @@ int info_handle_version_information_resource_fprint(
 	}
 	result = libwrc_stream_get_resource_by_identifier(
 	          info_handle->input_resource_stream,
-	          LIBWRC_RESOURCE_IDENTIFIER_VERSION,
+	          LIBWRC_RESOURCE_IDENTIFIER_VERSION_INFORMATION,
 	          &resource,
 	          error );
 

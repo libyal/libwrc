@@ -267,7 +267,7 @@ int libwrc_resource_read_value(
 	}
 	switch( internal_resource->resource_values->type )
 	{
-		case LIBWRC_RESOURCE_TYPE_STRING:
+		case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 			resource_type_string = "string";
 
 			result = libwrc_language_table_initialize(
@@ -311,7 +311,7 @@ int libwrc_resource_read_value(
 
 			break;
 
-		case LIBWRC_RESOURCE_TYPE_VERSION:
+		case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
 			resource_type_string = "version";
 
 			result = libwrc_language_table_initialize(
@@ -380,7 +380,7 @@ int libwrc_resource_read_value(
 		goto on_error;
 	}
 	if( ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE )
-	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_VERSION )
+	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION )
 	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_MANIFEST )
 	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_MUI )
 	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE ) )
@@ -522,7 +522,7 @@ int libwrc_resource_read_value(
 
 			switch( internal_resource->resource_values->type )
 			{
-				case LIBWRC_RESOURCE_TYPE_STRING:
+				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					result = libwrc_language_table_get_entry_by_identifier(
 						  (libwrc_language_table_t *) internal_resource->value,
 						  leaf_resource_values->identifier,
@@ -601,7 +601,7 @@ int libwrc_resource_read_value(
 					}
 					break;
 
-				case LIBWRC_RESOURCE_TYPE_VERSION:
+				case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
 					if( libwrc_language_entry_initialize(
 					     &language_entry,
 					     leaf_resource_values->identifier,
@@ -641,7 +641,7 @@ int libwrc_resource_read_value(
 #if defined( HAVE_DEBUG_OUTPUT )
 			switch( internal_resource->resource_values->type )
 			{
-				case LIBWRC_RESOURCE_TYPE_STRING:
+				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					if( libcnotify_verbose != 0 )
 					{
 						libcnotify_printf(
@@ -657,7 +657,7 @@ int libwrc_resource_read_value(
 				case LIBWRC_RESOURCE_TYPE_MANIFEST:
 				case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
 				case LIBWRC_RESOURCE_TYPE_MUI:
-				case LIBWRC_RESOURCE_TYPE_VERSION:
+				case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
 				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
 					if( libcnotify_verbose != 0 )
 					{
@@ -675,7 +675,7 @@ int libwrc_resource_read_value(
 
 			switch( internal_resource->resource_values->type )
 			{
-				case LIBWRC_RESOURCE_TYPE_STRING:
+				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					result = libwrc_string_values_read(
 					          language_entry,
 					          internal_resource->io_handle,
@@ -712,7 +712,7 @@ int libwrc_resource_read_value(
 					          error );
 					break;
 
-				case LIBWRC_RESOURCE_TYPE_VERSION:
+				case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
 					result = libwrc_version_values_read(
 					          language_entry,
 					          internal_resource->io_handle,
@@ -754,7 +754,7 @@ int libwrc_resource_read_value(
 			}
 			switch( internal_resource->resource_values->type )
 			{
-				case LIBWRC_RESOURCE_TYPE_STRING:
+				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					if( result != 1 )
 					{
 						libcerror_error_set(
@@ -795,7 +795,7 @@ int libwrc_resource_read_value(
 				case LIBWRC_RESOURCE_TYPE_MANIFEST:
 				case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
 				case LIBWRC_RESOURCE_TYPE_MUI:
-				case LIBWRC_RESOURCE_TYPE_VERSION:
+				case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
 				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
 					if( result != 1 )
 					{

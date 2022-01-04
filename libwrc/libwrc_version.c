@@ -48,7 +48,7 @@ int libwrc_version_get_file_version(
 
 	if( libwrc_resource_get_value_by_language_identifier(
 	     resource,
-	     LIBWRC_RESOURCE_TYPE_VERSION,
+	     LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION,
 	     language_identifier,
 	     0,
 	     (intptr_t **) &version_values,
@@ -94,7 +94,7 @@ int libwrc_version_get_product_version(
 
 	if( libwrc_resource_get_value_by_language_identifier(
 	     resource,
-	     LIBWRC_RESOURCE_TYPE_VERSION,
+	     LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION,
 	     language_identifier,
 	     0,
 	     (intptr_t **) &version_values,

@@ -133,7 +133,7 @@ int libwrc_string_get_identifier(
 
 	if( libwrc_resource_get_value_by_language_identifier(
 	     resource,
-	     LIBWRC_RESOURCE_TYPE_STRING,
+	     LIBWRC_RESOURCE_TYPE_STRING_TABLE,
 	     language_identifier,
 	     string_index,
 	     (intptr_t **) &string_values,
@@ -391,7 +391,7 @@ int libwrc_string_get_utf8_string_size(
 
 	if( libwrc_resource_get_value_by_language_identifier(
 	     resource,
-	     LIBWRC_RESOURCE_TYPE_STRING,
+	     LIBWRC_RESOURCE_TYPE_STRING_TABLE,
 	     language_identifier,
 	     string_index,
 	     (intptr_t **) &string_values,
@@ -441,7 +441,7 @@ int libwrc_string_get_utf8_string(
 
 	if( libwrc_resource_get_value_by_language_identifier(
 	     resource,
-	     LIBWRC_RESOURCE_TYPE_STRING,
+	     LIBWRC_RESOURCE_TYPE_STRING_TABLE,
 	     language_identifier,
 	     string_index,
 	     (intptr_t **) &string_values,
@@ -491,7 +491,7 @@ int libwrc_string_get_utf16_string_size(
 
 	if( libwrc_resource_get_value_by_language_identifier(
 	     resource,
-	     LIBWRC_RESOURCE_TYPE_STRING,
+	     LIBWRC_RESOURCE_TYPE_STRING_TABLE,
 	     language_identifier,
 	     string_index,
 	     (intptr_t **) &string_values,
@@ -541,7 +541,7 @@ int libwrc_string_get_utf16_string(
 
 	if( libwrc_resource_get_value_by_language_identifier(
 	     resource,
-	     LIBWRC_RESOURCE_TYPE_STRING,
+	     LIBWRC_RESOURCE_TYPE_STRING_TABLE,
 	     language_identifier,
 	     string_index,
 	     (intptr_t **) &string_values,

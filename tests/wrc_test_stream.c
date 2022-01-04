@@ -1776,6 +1776,220 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libwrc_stream_get_resource_by_identifier function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_stream_get_resource_by_identifier(
+     libwrc_stream_t *stream )
+{
+	libcerror_error_t *error    = NULL;
+	libwrc_resource_t *resource = NULL;
+	int result                  = 0;
+
+	/* Test regular cases
+	 */
+	result = libwrc_stream_get_resource_by_identifier(
+	          stream,
+	          0x0000038eUL,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	if( result == 0 )
+	{
+		WRC_TEST_ASSERT_IS_NULL(
+		 "resource",
+		 resource );
+	}
+	else
+	{
+		WRC_TEST_ASSERT_IS_NOT_NULL(
+		 "resource",
+		 resource );
+	}
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	if( resource != NULL )
+	{
+		result = libwrc_resource_free(
+		          &resource,
+		          &error );
+
+		WRC_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		WRC_TEST_ASSERT_IS_NULL(
+		 "resource",
+		 resource );
+
+		WRC_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	/* Test error cases
+	 */
+	result = libwrc_stream_get_resource_by_identifier(
+	          NULL,
+	          0x0000038eUL,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_stream_get_resource_by_identifier(
+	          stream,
+	          0x0000038eUL,
+	          NULL,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libwrc_stream_get_resource_by_type function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_stream_get_resource_by_type(
+     libwrc_stream_t *stream )
+{
+	libcerror_error_t *error    = NULL;
+	libwrc_resource_t *resource = NULL;
+	int result                  = 0;
+
+	/* Test regular cases
+	 */
+	result = libwrc_stream_get_resource_by_type(
+	          stream,
+	          0x0000038eUL,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	if( result == 0 )
+	{
+		WRC_TEST_ASSERT_IS_NULL(
+		 "resource",
+		 resource );
+	}
+	else
+	{
+		WRC_TEST_ASSERT_IS_NOT_NULL(
+		 "resource",
+		 resource );
+	}
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	if( resource != NULL )
+	{
+		result = libwrc_resource_free(
+		          &resource,
+		          &error );
+
+		WRC_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		WRC_TEST_ASSERT_IS_NULL(
+		 "resource",
+		 resource );
+
+		WRC_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	/* Test error cases
+	 */
+	result = libwrc_stream_get_resource_by_type(
+	          NULL,
+	          0x0000038eUL,
+	          &resource,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_stream_get_resource_by_type(
+	          stream,
+	          0x0000038eUL,
+	          NULL,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1996,9 +2210,15 @@ int main(
 		 wrc_test_stream_get_resource_by_index,
 		 stream );
 
-		/* TODO: add tests for libwrc_stream_get_resource_by_identifier */
+		WRC_TEST_RUN_WITH_ARGS(
+		 "libwrc_stream_get_resource_by_identifier",
+		 wrc_test_stream_get_resource_by_identifier,
+		 stream );
 
-		/* TODO: add tests for libwrc_stream_get_resource_by_type */
+		WRC_TEST_RUN_WITH_ARGS(
+		 "libwrc_stream_get_resource_by_type",
+		 wrc_test_stream_get_resource_by_type,
+		 stream );
 
 		/* TODO: add tests for libwrc_stream_get_resource_by_utf8_name */
 

@@ -1452,7 +1452,7 @@ int libwrc_version_information_resource_read(
 		return( -1 );
 	}
 	if( ( data_size < sizeof( wrc_version_value_header_t ) )
-	 || ( data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,

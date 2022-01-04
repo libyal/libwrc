@@ -37,6 +37,7 @@
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
 #include "libwrc_libuna.h"
+#include "libwrc_resource_node_header.h"
 #include "libwrc_resource_values.h"
 #include "libwrc_unused.h"
 
@@ -306,30 +307,25 @@ int libwrc_io_handle_read_resource_node(
      libcerror_error_t **error )
 {
 	uint8_t resource_name_size_data[ 2 ];
-	wrc_resource_node_header_t resource_node_header;
 
-	libcdata_tree_node_t *sub_node                = NULL;
-	libwrc_resource_values_t *resource_values     = NULL;
-	libwrc_resource_values_t *sub_resource_values = NULL;
-	uint8_t *resource_node_data                   = NULL;
-	static char *function                         = "libwrc_io_handle_read_resource_node";
-	size_t name_string_size                       = 0;
-	size_t resource_node_data_offset              = 0;
-	size_t resource_node_data_size                = 0;
-	ssize_t read_count                            = 0;
-	uint32_t flags                                = 0;
-	uint16_t number_of_named_entries              = 0;
-	uint16_t number_of_unnamed_entries            = 0;
-	int number_of_sub_nodes                       = 0;
-	int resource_node_entry                       = 0;
-	int sub_node_index                            = 0;
+	libcdata_tree_node_t *sub_node                      = NULL;
+	libwrc_resource_node_header_t *resource_node_header = NULL;
+	libwrc_resource_values_t *resource_values           = NULL;
+	libwrc_resource_values_t *sub_resource_values       = NULL;
+	uint8_t *resource_node_data                         = NULL;
+	static char *function                               = "libwrc_io_handle_read_resource_node";
+	size_t name_string_size                             = 0;
+	size_t resource_node_data_offset                    = 0;
+	size_t resource_node_data_size                      = 0;
+	ssize_t read_count                                  = 0;
+	int number_of_sub_nodes                             = 0;
+	int resource_node_entry                             = 0;
+	int sub_node_index                                  = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t *value_string              = NULL;
-	size_t value_string_size                      = 0;
-	uint32_t value_32bit                          = 0;
-	uint16_t value_16bit                          = 0;
-	int result                                    = 0;
+	system_character_t *value_string                    = NULL;
+	size_t value_string_size                            = 0;
+	int result                                          = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -366,24 +362,24 @@ int libwrc_io_handle_read_resource_node(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
+	if( libwrc_resource_node_header_initialize(
+	     &resource_node_header,
+	     error ) == -1 )
 	{
-		libcnotify_printf(
-		 "%s: reading resource node header at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-		 function,
-		 file_offset,
-		 file_offset );
-	}
-#endif
-	read_count = libbfio_handle_read_buffer_at_offset(
-	              file_io_handle,
-	              (uint8_t *) &resource_node_header,
-	              sizeof( wrc_resource_node_header_t ),
-	              file_offset,
-	              error );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create resource node header.",
+		 function );
 
-	if( read_count != (ssize_t) sizeof( wrc_resource_node_header_t ) )
+		goto on_error;
+	}
+	if( libwrc_resource_node_header_read_file_io_handle(
+	     resource_node_header,
+	     file_io_handle,
+	     file_offset,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -396,91 +392,21 @@ int libwrc_io_handle_read_resource_node(
 
 		goto on_error;
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: resource node header data:\n",
-		 function );
-		libcnotify_print_data(
-		 (uint8_t *) &resource_node_header,
-		 sizeof( wrc_resource_node_header_t ),
-		 0 );
-	}
-#endif
-	byte_stream_copy_to_uint32_little_endian(
-	 resource_node_header.flags,
-	 flags );
+	resource_node_data_size = ( (size_t) resource_node_header->number_of_named_entries + (size_t) resource_node_header->number_of_unnamed_entries ) * 8;
 
-	byte_stream_copy_to_uint16_little_endian(
-	 resource_node_header.number_of_named_entries,
-	 number_of_named_entries );
-
-	byte_stream_copy_to_uint16_little_endian(
-	 resource_node_header.number_of_unnamed_entries,
-	 number_of_unnamed_entries );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: flags\t\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint32_little_endian(
-		 resource_node_header.flags,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: creation time\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint16_little_endian(
-		 resource_node_header.major_version,
-		 value_16bit );
-		libcnotify_printf(
-		 "%s: major version\t\t\t\t: %" PRIu16 "\n",
-		 function,
-		 value_16bit );
-
-		byte_stream_copy_to_uint16_little_endian(
-		 resource_node_header.minor_version,
-		 value_16bit );
-		libcnotify_printf(
-		 "%s: minor version\t\t\t\t: %" PRIu16 "\n",
-		 function,
-		 value_16bit );
-
-		libcnotify_printf(
-		 "%s: number of named entries\t\t\t: %" PRIu16 "\n",
-		 function,
-		 number_of_named_entries );
-
-		libcnotify_printf(
-		 "%s: number of unnamed entries\t\t\t: %" PRIu16 "\n",
-		 function,
-		 number_of_unnamed_entries );
-
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-
-	if( flags != 0 )
+	if( libwrc_resource_node_header_free(
+	     &resource_node_header,
+	     error ) == -1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags: 0x%08" PRIx32 ".",
-		 function,
-		 flags );
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free resource node header.",
+		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	resource_node_data_size = ( (size_t) number_of_named_entries + (size_t) number_of_unnamed_entries ) * 8;
-
 	if( ( resource_node_data_size == 0 )
 	 || ( resource_node_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{

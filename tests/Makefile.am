@@ -58,6 +58,7 @@ check_PROGRAMS = \
 	wrc_test_notify \
 	wrc_test_resource \
 	wrc_test_resource_item \
+	wrc_test_resource_node_header \
 	wrc_test_resource_values \
 	wrc_test_stream \
 	wrc_test_string_table_resource \
@@ -215,6 +216,28 @@ wrc_test_resource_item_SOURCES = \
 	wrc_test_unused.h
 
 wrc_test_resource_item_LDADD = \
+	@LIBCDATA_LIBADD@ \
+	../libwrc/libwrc.la \
+	@LIBCERROR_LIBADD@
+
+wrc_test_resource_node_header_SOURCES = \
+	wrc_test_functions.c wrc_test_functions.h \
+	wrc_test_libbfio.h \
+	wrc_test_libcerror.h \
+	wrc_test_libwrc.h \
+	wrc_test_macros.h \
+	wrc_test_memory.c wrc_test_memory.h \
+	wrc_test_resource_node_header.c \
+	wrc_test_unused.h
+
+wrc_test_resource_node_header_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@
