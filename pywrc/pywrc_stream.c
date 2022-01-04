@@ -1556,15 +1556,15 @@ PyObject *pywrc_stream_get_resource_by_identifier(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	libwrc_resource_t *resource  = NULL;
-	PyObject *resource_object    = NULL;
-	PyTypeObject *type_object    = NULL;
-	static char *keyword_list[]  = { "resource_identifier", NULL };
-	static char *function        = "pywrc_stream_get_resource_by_identifier";
-	uint32_t resource_identifier = 0;
-	int resource_type            = 0;
-	int result                   = 0;
+	PyObject *resource_object         = NULL;
+	PyTypeObject *type_object         = NULL;
+	libcerror_error_t *error          = NULL;
+	libwrc_resource_t *resource       = NULL;
+	static char *function             = "pywrc_stream_get_resource_by_identifier";
+	static char *keyword_list[]       = { "resource_identifier", NULL };
+	unsigned long resource_identifier = 0;
+	int resource_type                 = 0;
+	int result                        = 0;
 
 	if( pywrc_stream == NULL )
 	{
@@ -1588,7 +1588,7 @@ PyObject *pywrc_stream_get_resource_by_identifier(
 
 	result = libwrc_stream_get_resource_by_identifier(
 	          pywrc_stream->stream,
-	          resource_identifier,
+	          (uint32_t) resource_identifier,
 	          &resource,
 	          &error );
 
@@ -1601,7 +1601,7 @@ PyObject *pywrc_stream_get_resource_by_identifier(
 		 PyExc_IOError,
 		 "%s: unable to retrieve resource: %" PRIu32 ".",
 		 function,
-		 resource_identifier );
+		 (uint32_t) resource_identifier );
 
 		libcerror_error_free(
 		 &error );
@@ -1631,7 +1631,7 @@ PyObject *pywrc_stream_get_resource_by_identifier(
 		 PyExc_IOError,
 		 "%s: unable to retrieve resource: %" PRIu32 " type.",
 		 function,
-		 resource_identifier );
+		 (uint32_t) resource_identifier );
 
 		libcerror_error_free(
 		 &error );

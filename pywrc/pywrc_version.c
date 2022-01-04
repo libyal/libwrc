@@ -166,14 +166,21 @@ PyObject *pywrc_version_get_file_version(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *integer_object     = NULL;
-	static char *keyword_list[]  = { "language_identifier", NULL };
-	static char *function        = "pywrc_version_get_file_version";
-	uint64_t file_version        = 0;
-	uint32_t language_identifier = 0;
-	int result                   = 0;
+	PyObject *integer_object          = NULL;
+	libcerror_error_t *error          = NULL;
+	static char *function             = "pywrc_version_get_file_version";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	uint64_t file_version             = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_file_version",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -196,7 +203,7 @@ PyObject *pywrc_version_get_file_version(
 
 	result = libwrc_version_get_file_version(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &file_version,
 	          &error );
 
@@ -229,14 +236,21 @@ PyObject *pywrc_version_get_product_version(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *integer_object     = NULL;
-	static char *keyword_list[]  = { "language_identifier", NULL };
-	static char *function        = "pywrc_version_get_product_version";
-	uint64_t product_version     = 0;
-	uint32_t language_identifier = 0;
-	int result                   = 0;
+	PyObject *integer_object          = NULL;
+	libcerror_error_t *error          = NULL;
+	static char *function             = "pywrc_version_get_product_version";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	uint64_t product_version          = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_product_version",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -259,7 +273,7 @@ PyObject *pywrc_version_get_product_version(
 
 	result = libwrc_version_get_product_version(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &product_version,
 	          &error );
 

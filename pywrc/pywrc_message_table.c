@@ -180,14 +180,21 @@ PyObject *pywrc_message_table_get_number_of_messages(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *integer_object     = NULL;
-	static char *keyword_list[]  = { "language_identifier", NULL };
-	static char *function        = "pywrc_message_table_get_number_of_messages";
-	uint32_t language_identifier = 0;
-	int number_of_messages       = 0;
-	int result                   = 0;
+	PyObject *integer_object          = NULL;
+	libcerror_error_t *error          = NULL;
+	static char *function             = "pywrc_message_table_get_number_of_messages";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	int number_of_messages            = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_number_of_messages",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -210,7 +217,7 @@ PyObject *pywrc_message_table_get_number_of_messages(
 
 	result = libwrc_message_table_get_number_of_messages(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &number_of_messages,
 	          &error );
 
@@ -247,15 +254,22 @@ PyObject *pywrc_message_table_get_message_identifier(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *integer_object     = NULL;
-	static char *keyword_list[]  = { "language_identifier", "message_index", NULL };
-	static char *function        = "pywrc_message_table_get_message_identifier";
-	uint32_t language_identifier = 0;
-	uint32_t message_identifier  = 0;
-	int message_index            = 0;
-	int result                   = 0;
+	PyObject *integer_object          = NULL;
+	libcerror_error_t *error          = NULL;
+	static char *function             = "pywrc_message_table_get_message_identifier";
+	static char *keyword_list[]       = { "language_identifier", "message_index", NULL };
+	unsigned long language_identifier = 0;
+	uint32_t message_identifier       = 0;
+	int message_index                 = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_message_identifier",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -279,7 +293,7 @@ PyObject *pywrc_message_table_get_message_identifier(
 
 	result = libwrc_message_table_get_identifier(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          message_index,
 	          &message_identifier,
 	          &error );
@@ -314,17 +328,24 @@ PyObject *pywrc_message_table_get_string(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *string_object      = NULL;
-	uint8_t *string              = NULL;
-	static char *keyword_list[]  = { "language_identifier", "message_index", NULL };
-	const char *errors           = NULL;
-	static char *function        = "pywrc_message_table_get_string";
-	size_t string_size           = 0;
-	uint32_t language_identifier = 0;
-	int message_index            = 0;
-	int result                   = 0;
+	PyObject *string_object           = NULL;
+	libcerror_error_t *error          = NULL;
+	uint8_t *string                   = NULL;
+	const char *errors                = NULL;
+	static char *function             = "pywrc_message_table_get_string";
+	static char *keyword_list[]       = { "language_identifier", "message_index", NULL };
+	unsigned long language_identifier = 0;
+	size_t string_size                = 0;
+	int message_index                 = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_string",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -348,7 +369,7 @@ PyObject *pywrc_message_table_get_string(
 
 	result = libwrc_message_table_get_utf8_string_size(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          message_index,
 	          &string_size,
 	          &error );
@@ -385,7 +406,7 @@ PyObject *pywrc_message_table_get_string(
 
 	result = libwrc_message_table_get_utf8_string(
 		  pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 		  message_index,
 		  string,
 		  string_size,
@@ -438,18 +459,25 @@ PyObject *pywrc_message_table_get_string_by_message_identifier(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *string_object      = NULL;
-	uint8_t *string              = NULL;
-	static char *keyword_list[]  = { "language_identifier", "message_identifier", NULL };
-	const char *errors           = NULL;
-	static char *function        = "pywrc_message_table_get_string_by_message_identifier";
-	size_t string_size           = 0;
-	uint32_t language_identifier = 0;
-	uint32_t message_identifier  = 0;
-	int result                   = 0;
-	int message_index            = 0;
+	PyObject *string_object           = NULL;
+	libcerror_error_t *error          = NULL;
+	uint8_t *string                   = NULL;
+	const char *errors                = NULL;
+	static char *function             = "pywrc_message_table_get_string_by_message_identifier";
+	static char *keyword_list[]       = { "language_identifier", "message_identifier", NULL };
+	unsigned long language_identifier = 0;
+	unsigned long message_identifier  = 0;
+	size_t string_size                = 0;
+	int message_index                 = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_string_by_message_identifier",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -473,8 +501,8 @@ PyObject *pywrc_message_table_get_string_by_message_identifier(
 
 	result = libwrc_message_table_get_index_by_identifier(
 	          pywrc_resource->resource,
-	          language_identifier,
-	          message_identifier,
+	          (uint32_t) language_identifier,
+	          (uint32_t) message_identifier,
 	          &message_index,
 	          &error );
 
@@ -504,7 +532,7 @@ PyObject *pywrc_message_table_get_string_by_message_identifier(
 
 	result = libwrc_message_table_get_utf8_string_size(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          message_index,
 	          &string_size,
 	          &error );
@@ -541,7 +569,7 @@ PyObject *pywrc_message_table_get_string_by_message_identifier(
 
 	result = libwrc_message_table_get_utf8_string(
 		  pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 		  message_index,
 		  string,
 		  string_size,

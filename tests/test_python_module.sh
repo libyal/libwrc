@@ -7,7 +7,7 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-TEST_FUNCTIONS="support";
+TEST_FUNCTIONS="manifest_resource message_table_resource mui_resource string_table_resource support version_information_resource";
 TEST_FUNCTIONS_WITH_INPUT="stream";
 OPTION_SETS="";
 

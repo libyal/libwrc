@@ -33,8 +33,11 @@
 #include "pywrc_libcerror.h"
 #include "pywrc_libwrc.h"
 #include "pywrc_manifest.h"
+#include "pywrc_manifest_resource.h"
 #include "pywrc_message_table.h"
+#include "pywrc_message_table_resource.h"
 #include "pywrc_mui.h"
+#include "pywrc_mui_resource.h"
 #include "pywrc_python.h"
 #include "pywrc_resource.h"
 #include "pywrc_resource_item.h"
@@ -42,8 +45,10 @@
 #include "pywrc_resources.h"
 #include "pywrc_stream.h"
 #include "pywrc_string.h"
+#include "pywrc_string_table_resource.h"
 #include "pywrc_unused.h"
 #include "pywrc_version.h"
+#include "pywrc_version_information_resource.h"
 
 /* The pywrc module methods
  */
@@ -316,6 +321,23 @@ PyMODINIT_FUNC initpywrc(
 	 "manifest",
 	 (PyObject *) &pywrc_manifest_type_object );
 
+	/* Setup the manifest resource type object
+	 */
+	pywrc_manifest_resource_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_manifest_resource_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_manifest_resource_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "manifest_resource",
+	 (PyObject *) &pywrc_manifest_resource_type_object );
+
 	/* Setup the message table type object
 	 */
 	pywrc_message_table_type_object.tp_new = PyType_GenericNew;
@@ -333,6 +355,23 @@ PyMODINIT_FUNC initpywrc(
 	 "message_table",
 	 (PyObject *) &pywrc_message_table_type_object );
 
+	/* Setup the message table resource type object
+	 */
+	pywrc_message_table_resource_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_message_table_resource_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_message_table_resource_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "message_table_resource",
+	 (PyObject *) &pywrc_message_table_resource_type_object );
+
 	/* Setup the MUI type object
 	 */
 	pywrc_mui_type_object.tp_new = PyType_GenericNew;
@@ -349,6 +388,23 @@ PyMODINIT_FUNC initpywrc(
 	 module,
 	 "mui",
 	 (PyObject *) &pywrc_mui_type_object );
+
+	/* Setup the MUI resource type object
+	 */
+	pywrc_mui_resource_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_mui_resource_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_mui_resource_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "mui_resource",
+	 (PyObject *) &pywrc_mui_resource_type_object );
 
 	/* Setup the resource type object
 	 */
@@ -452,6 +508,23 @@ PyMODINIT_FUNC initpywrc(
 	 "string",
 	 (PyObject *) &pywrc_string_type_object );
 
+	/* Setup the string table resource type object
+	 */
+	pywrc_string_table_resource_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_string_table_resource_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_string_table_resource_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "string_table_resource",
+	 (PyObject *) &pywrc_string_table_resource_type_object );
+
 	/* Setup the version type object
 	 */
 	pywrc_version_type_object.tp_new = PyType_GenericNew;
@@ -468,6 +541,23 @@ PyMODINIT_FUNC initpywrc(
 	 module,
 	 "version",
 	 (PyObject *) &pywrc_version_type_object );
+
+	/* Setup the version information resource type object
+	 */
+	pywrc_version_information_resource_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pywrc_version_information_resource_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pywrc_version_information_resource_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "version_information_resource",
+	 (PyObject *) &pywrc_version_information_resource_type_object );
 
 	PyGILState_Release(
 	 gil_state );

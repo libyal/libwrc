@@ -187,14 +187,21 @@ PyObject *pywrc_mui_get_file_type(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *integer_object     = NULL;
-	static char *keyword_list[]  = { "language_identifier", NULL };
-	static char *function        = "pywrc_mui_get_file_type";
-	uint32_t file_type           = 0;
-	uint32_t language_identifier = 0;
-	int result                   = 0;
+	PyObject *integer_object          = NULL;
+	libcerror_error_t *error          = NULL;
+	static char *function             = "pywrc_mui_get_file_type";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	uint32_t file_type                = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_file_type",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -217,7 +224,7 @@ PyObject *pywrc_mui_get_file_type(
 
 	result = libwrc_mui_get_file_type(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &file_type,
 	          &error );
 
@@ -250,16 +257,23 @@ PyObject *pywrc_mui_get_main_name(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *string_object      = NULL;
-	static char *keyword_list[]  = { "language_identifier", NULL };
-	const char *errors           = NULL;
-	uint8_t *main_name           = NULL;
-	static char *function        = "pywrc_mui_get_main_name";
-	size_t main_name_size        = 0;
-	uint32_t language_identifier = 0;
-	int result                   = 0;
+	PyObject *string_object           = NULL;
+	libcerror_error_t *error          = NULL;
+	uint8_t *main_name                = NULL;
+	const char *errors                = NULL;
+	static char *function             = "pywrc_mui_get_main_name";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	size_t main_name_size             = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_main_name",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -282,7 +296,7 @@ PyObject *pywrc_mui_get_main_name(
 
 	result = libwrc_mui_get_utf8_main_name_size(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &main_name_size,
 	          &error );
 
@@ -325,7 +339,7 @@ PyObject *pywrc_mui_get_main_name(
 
 	result = libwrc_mui_get_utf8_main_name(
 		  pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 		  main_name,
 		  main_name_size,
 		  &error );
@@ -376,16 +390,23 @@ PyObject *pywrc_mui_get_mui_name(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *string_object      = NULL;
-	static char *keyword_list[]  = { "language_identifier", NULL };
-	const char *errors           = NULL;
-	uint8_t *mui_name            = NULL;
-	static char *function        = "pywrc_mui_get_mui_name";
-	size_t mui_name_size         = 0;
-	uint32_t language_identifier = 0;
-	int result                   = 0;
+	PyObject *string_object           = NULL;
+	libcerror_error_t *error          = NULL;
+	uint8_t *mui_name                 = NULL;
+	const char *errors                = NULL;
+	static char *function             = "pywrc_mui_get_mui_name";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	size_t mui_name_size              = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_mui_name",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -408,7 +429,7 @@ PyObject *pywrc_mui_get_mui_name(
 
 	result = libwrc_mui_get_utf8_mui_name_size(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &mui_name_size,
 	          &error );
 
@@ -451,7 +472,7 @@ PyObject *pywrc_mui_get_mui_name(
 
 	result = libwrc_mui_get_utf8_mui_name(
 		  pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 		  mui_name,
 		  mui_name_size,
 		  &error );
@@ -502,16 +523,23 @@ PyObject *pywrc_mui_get_language(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *string_object      = NULL;
-	static char *keyword_list[]  = { "language_identifier", NULL };
-	const char *errors           = NULL;
-	uint8_t *language            = NULL;
-	static char *function        = "pywrc_mui_get_language";
-	size_t language_size         = 0;
-	uint32_t language_identifier = 0;
-	int result                   = 0;
+	PyObject *string_object           = NULL;
+	libcerror_error_t *error          = NULL;
+	uint8_t *language                 = NULL;
+	const char *errors                = NULL;
+	static char *function             = "pywrc_mui_get_language";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	size_t language_size              = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_language",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -534,7 +562,7 @@ PyObject *pywrc_mui_get_language(
 
 	result = libwrc_mui_get_utf8_language_size(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &language_size,
 	          &error );
 
@@ -577,7 +605,7 @@ PyObject *pywrc_mui_get_language(
 
 	result = libwrc_mui_get_utf8_language(
 		  pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 		  language,
 		  language_size,
 		  &error );
@@ -628,16 +656,23 @@ PyObject *pywrc_mui_get_fallback_language(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error      = NULL;
-	PyObject *string_object       = NULL;
-	static char *keyword_list[]   = { "language_identifier", NULL };
-	const char *errors            = NULL;
-	uint8_t *fallback_language    = NULL;
-	static char *function         = "pywrc_mui_get_fallback_language";
-	size_t fallback_language_size = 0;
-	uint32_t language_identifier  = 0;
-	int result                    = 0;
+	PyObject *string_object           = NULL;
+	libcerror_error_t *error          = NULL;
+	uint8_t *fallback_language        = NULL;
+	const char *errors                = NULL;
+	static char *function             = "pywrc_mui_get_fallback_language";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	size_t fallback_language_size     = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_fallback_language",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -660,7 +695,7 @@ PyObject *pywrc_mui_get_fallback_language(
 
 	result = libwrc_mui_get_utf8_fallback_language_size(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &fallback_language_size,
 	          &error );
 
@@ -703,7 +738,7 @@ PyObject *pywrc_mui_get_fallback_language(
 
 	result = libwrc_mui_get_utf8_fallback_language(
 		  pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 		  fallback_language,
 		  fallback_language_size,
 		  &error );

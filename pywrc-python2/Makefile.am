@@ -32,8 +32,11 @@ BUILT_SOURCES = \
 	pywrc_libclocale.h \
 	pywrc_libwrc.h \
 	pywrc_manifest.c pywrc_manifest.h \
+	pywrc_manifest_resource.c pywrc_manifest_resource.h \
 	pywrc_message_table.c pywrc_message_table.h \
+	pywrc_message_table_resource.c pywrc_message_table_resource.h \
 	pywrc_mui.c pywrc_mui.h \
+	pywrc_mui_resource.c pywrc_mui_resource.h \
 	pywrc_python.h \
 	pywrc_resource.c pywrc_resource.h \
 	pywrc_resource_item.c pywrc_resource_item.h \
@@ -41,8 +44,10 @@ BUILT_SOURCES = \
 	pywrc_resources.c pywrc_resources.h \
 	pywrc_stream.c pywrc_stream.h \
 	pywrc_string.c pywrc_string.h \
+	pywrc_string_table_resource.c pywrc_string_table_resource.h \
 	pywrc_unused.h \
-	pywrc_version.c pywrc_version.h
+	pywrc_version.c pywrc_version.h \
+	pywrc_version_information_resource.c pywrc_version_information_resource.h
 
 pyexec_LTLIBRARIES = pywrc.la
 

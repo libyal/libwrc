@@ -567,6 +567,13 @@ PyObject *pywrc_resource_get_number_of_languages(
 
 	PYWRC_UNREFERENCED_PARAMETER( arguments )
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_number_of_languages",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -671,6 +678,13 @@ PyObject *pywrc_resource_get_language_identifier(
 	static char *keyword_list[]   = { "language_identifier_index", NULL };
 	int language_identifier_index = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_language_identifier",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
@@ -700,6 +714,13 @@ PyObject *pywrc_resource_get_language_identifiers(
 
 	PYWRC_UNREFERENCED_PARAMETER( arguments )
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_language_identifiers",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(

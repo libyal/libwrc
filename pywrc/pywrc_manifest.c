@@ -158,16 +158,23 @@ PyObject *pywrc_manifest_get_string(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	PyObject *string_object      = NULL;
-	static char *keyword_list[]  = { "language_identifier", NULL };
-	const char *errors           = NULL;
-	uint8_t *string              = NULL;
-	static char *function        = "pywrc_manifest_get_string";
-	size_t string_size           = 0;
-	uint32_t language_identifier = 0;
-	int result                   = 0;
+	PyObject *string_object           = NULL;
+	libcerror_error_t *error          = NULL;
+	uint8_t *string                   = NULL;
+	const char *errors                = NULL;
+	static char *function             = "pywrc_manifest_get_string";
+	static char *keyword_list[]       = { "language_identifier", NULL };
+	unsigned long language_identifier = 0;
+	size_t string_size                = 0;
+	int result                        = 0;
 
+	if( PyErr_WarnEx(
+	     PyExc_DeprecationWarning,
+	     "Call to deprecated function: get_string",
+	     1 ) < 0 )
+	{
+		return( NULL );
+	}
 	if( pywrc_resource == NULL )
 	{
 		PyErr_Format(
@@ -190,7 +197,7 @@ PyObject *pywrc_manifest_get_string(
 
 	result = libwrc_manifest_get_utf8_string_size(
 	          pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 	          &string_size,
 	          &error );
 
@@ -233,7 +240,7 @@ PyObject *pywrc_manifest_get_string(
 
 	result = libwrc_manifest_get_utf8_string(
 		  pywrc_resource->resource,
-	          language_identifier,
+	          (uint32_t) language_identifier,
 		  string,
 		  string_size,
 		  &error );
