@@ -212,7 +212,7 @@ int libwrc_resource_node_header_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: flags\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 resource_node_header->flags );
 
@@ -222,7 +222,7 @@ int libwrc_resource_node_header_read_data(
 		 ( (wrc_resource_node_header_t *) data )->flags,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: creation time\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: creation time\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
@@ -230,7 +230,7 @@ int libwrc_resource_node_header_read_data(
 		 ( (wrc_resource_node_header_t *) data )->major_version,
 		 value_16bit );
 		libcnotify_printf(
-		 "%s: major version\t\t\t\t: %" PRIu16 "\n",
+		 "%s: major version\t\t\t: %" PRIu16 "\n",
 		 function,
 		 value_16bit );
 
@@ -238,17 +238,17 @@ int libwrc_resource_node_header_read_data(
 		 ( (wrc_resource_node_header_t *) data )->minor_version,
 		 value_16bit );
 		libcnotify_printf(
-		 "%s: minor version\t\t\t\t: %" PRIu16 "\n",
+		 "%s: minor version\t\t\t: %" PRIu16 "\n",
 		 function,
 		 value_16bit );
 
 		libcnotify_printf(
-		 "%s: number of named entries\t\t\t: %" PRIu16 "\n",
+		 "%s: number of named entries\t\t: %" PRIu16 "\n",
 		 function,
 		 resource_node_header->number_of_named_entries );
 
 		libcnotify_printf(
-		 "%s: number of unnamed entries\t\t\t: %" PRIu16 "\n",
+		 "%s: number of unnamed entries\t: %" PRIu16 "\n",
 		 function,
 		 resource_node_header->number_of_unnamed_entries );
 

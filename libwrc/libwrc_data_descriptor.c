@@ -20,11 +20,16 @@
  */
 
 #include <common.h>
+#include <byte_stream.h>
 #include <memory.h>
 #include <types.h>
 
 #include "libwrc_data_descriptor.h"
+#include "libwrc_libbfio.h"
 #include "libwrc_libcerror.h"
+#include "libwrc_libcnotify.h"
+
+#include "wrc_data_descriptor.h"
 
 /* Creates a data descriptor
  * Make sure the value data_descriptor is referencing, is set to NULL
@@ -125,6 +130,165 @@ int libwrc_data_descriptor_free(
 		 *data_descriptor );
 
 		*data_descriptor = NULL;
+	}
+	return( 1 );
+}
+
+/* Reads the data descriptor data
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_data_descriptor_read_data(
+     libwrc_data_descriptor_t *data_descriptor,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error )
+{
+	static char *function = "libwrc_data_descriptor_read_data";
+
+	if( data_descriptor == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data descriptor.",
+		 function );
+
+		return( -1 );
+	}
+	if( data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( data_size < 8 )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: data descriptor data:\n",
+		 function );
+		libcnotify_print_data(
+		 data,
+		 sizeof( wrc_data_descriptor_t ),
+		 0 );
+	}
+#endif
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (wrc_data_descriptor_t *) data )->virtual_address,
+	 data_descriptor->virtual_address );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (wrc_data_descriptor_t *) data )->size,
+	 data_descriptor->size );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: virtual address\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 data_descriptor->virtual_address );
+
+		libcnotify_printf(
+		 "%s: size\t\t\t\t: %" PRIu32 "\n",
+		 function,
+		 data_descriptor->size );
+
+		libcnotify_printf(
+		 "\n" );
+	}
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+	return( 1 );
+}
+
+/* Reads the data descriptor
+ * Returns 1 if successful or -1 on error
+ */
+int libwrc_data_descriptor_read_file_io_handle(
+     libwrc_data_descriptor_t *data_descriptor,
+     libbfio_handle_t *file_io_handle,
+     off64_t file_offset,
+     libcerror_error_t **error )
+{
+	uint8_t data_descriptor_data[ sizeof( wrc_data_descriptor_t ) ];
+
+	static char *function = "libwrc_data_descriptor_read_file_io_handle";
+	ssize_t read_count    = 0;
+
+	if( data_descriptor == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data descriptor.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: reading data descriptor at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 function,
+		 file_offset,
+		 file_offset );
+	}
+#endif
+	read_count = libbfio_handle_read_buffer_at_offset(
+	              file_io_handle,
+	              data_descriptor_data,
+	              sizeof( wrc_data_descriptor_t ),
+	              file_offset,
+	              error );
+
+	if( read_count != (ssize_t) sizeof( wrc_data_descriptor_t ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read data descriptor data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_offset,
+		 file_offset );
+
+		return( -1 );
+	}
+	if( libwrc_data_descriptor_read_data(
+	     data_descriptor,
+	     data_descriptor_data,
+	     sizeof( wrc_data_descriptor_t ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read data descriptor.",
+		 function );
+
+		return( -1 );
 	}
 	return( 1 );
 }

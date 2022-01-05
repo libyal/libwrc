@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #endif
 
+#include "wrc_test_functions.h"
+#include "wrc_test_libbfio.h"
 #include "wrc_test_libcerror.h"
 #include "wrc_test_libwrc.h"
 #include "wrc_test_macros.h"
@@ -34,6 +36,9 @@
 #include "wrc_test_unused.h"
 
 #include "../libwrc/libwrc_data_descriptor.h"
+
+uint8_t wrc_test_data_descriptor_data1[ 8 ] = {
+	0x06, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x80 };
 
 #if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
@@ -270,6 +275,409 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libwrc_data_descriptor_read_data function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_data_descriptor_read_data(
+     void )
+{
+	libcerror_error_t *error                  = NULL;
+	libwrc_data_descriptor_t *data_descriptor = NULL;
+	int result                                = 0;
+
+	/* Initialize test
+	 */
+	result = libwrc_data_descriptor_initialize(
+	          &data_descriptor,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "data_descriptor",
+	 data_descriptor );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libwrc_data_descriptor_read_data(
+	          data_descriptor,
+	          wrc_test_data_descriptor_data1,
+	          8,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libwrc_data_descriptor_read_data(
+	          NULL,
+	          wrc_test_data_descriptor_data1,
+	          8,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_data_descriptor_read_data(
+	          data_descriptor,
+	          NULL,
+	          8,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_data_descriptor_read_data(
+	          data_descriptor,
+	          wrc_test_data_descriptor_data1,
+	          0,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_data_descriptor_read_data(
+	          data_descriptor,
+	          wrc_test_data_descriptor_data1,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_WRC_TEST_MEMORY )
+
+	/* Test wrc_test_data_descriptor_read_data with memcpy failing
+	 */
+	wrc_test_memcpy_attempts_before_fail = 0;
+
+	result = libwrc_data_descriptor_read_data(
+	          data_descriptor,
+	          wrc_test_data_descriptor_data1,
+	          8,
+	          &error );
+
+	if( wrc_test_memcpy_attempts_before_fail != -1 )
+	{
+		wrc_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		WRC_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		WRC_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_WRC_TEST_MEMORY ) */
+
+	/* Clean up
+	 */
+	result = libwrc_data_descriptor_free(
+	          &data_descriptor,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "data_descriptor",
+	 data_descriptor );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( data_descriptor != NULL )
+	{
+		libwrc_data_descriptor_free(
+		 &data_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libwrc_data_descriptor_read_file_io_handle function
+ * Returns 1 if successful or 0 if not
+ */
+int wrc_test_data_descriptor_read_file_io_handle(
+     void )
+{
+	libbfio_handle_t *file_io_handle          = NULL;
+	libcerror_error_t *error                  = NULL;
+	libwrc_data_descriptor_t *data_descriptor = NULL;
+	int result                                = 0;
+
+	/* Initialize test
+	 */
+	result = libwrc_data_descriptor_initialize(
+	          &data_descriptor,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "data_descriptor",
+	 data_descriptor );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize file IO handle
+	 */
+	result = wrc_test_open_file_io_handle(
+	          &file_io_handle,
+	          wrc_test_data_descriptor_data1,
+	          16,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libwrc_data_descriptor_read_file_io_handle(
+	          data_descriptor,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libwrc_data_descriptor_read_file_io_handle(
+	          NULL,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwrc_data_descriptor_read_file_io_handle(
+	          data_descriptor,
+	          NULL,
+	          0,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up file IO handle
+	 */
+	result = wrc_test_close_file_io_handle(
+	          &file_io_handle,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test data too small
+	 */
+	result = wrc_test_open_file_io_handle(
+	          &file_io_handle,
+	          wrc_test_data_descriptor_data1,
+	          4,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwrc_data_descriptor_read_file_io_handle(
+	          data_descriptor,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WRC_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = wrc_test_close_file_io_handle(
+	          &file_io_handle,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libwrc_data_descriptor_free(
+	          &data_descriptor,
+	          &error );
+
+	WRC_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "data_descriptor",
+	 data_descriptor );
+
+	WRC_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	if( data_descriptor != NULL )
+	{
+		libwrc_data_descriptor_free(
+		 &data_descriptor,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 /* The main program
@@ -297,11 +705,23 @@ int main(
 	 "libwrc_data_descriptor_free",
 	 wrc_test_data_descriptor_free );
 
+	WRC_TEST_RUN(
+	 "libwrc_data_descriptor_read_data",
+	 wrc_test_data_descriptor_read_data );
+
+	WRC_TEST_RUN(
+	 "libwrc_data_descriptor_read_file_io_handle",
+	 wrc_test_data_descriptor_read_file_io_handle );
+
 #endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
+
 on_error:
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 }
 

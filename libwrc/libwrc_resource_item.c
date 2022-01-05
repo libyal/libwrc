@@ -28,7 +28,7 @@
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_resource_item.h"
-#include "libwrc_resource_values.h"
+#include "libwrc_resource_node_entry.h"
 
 /* Creates a resource item
  * Make sure the value resource_item is referencing, is set to NULL
@@ -42,7 +42,7 @@ int libwrc_resource_item_initialize(
      libcerror_error_t **error )
 {
 	libwrc_internal_resource_item_t *internal_resource_item = NULL;
-	libwrc_resource_values_t *resource_values               = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry       = NULL;
 	static char *function                                   = "libwrc_resource_item_initialize";
 
 	if( resource_item == NULL )
@@ -69,25 +69,25 @@ int libwrc_resource_item_initialize(
 	}
 	if( libcdata_tree_node_get_value(
 	     resource_node,
-	     (intptr_t **) &resource_values,
+	     (intptr_t **) &resource_node_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value of resource node.",
+		 "%s: unable to retrieve resource node entry.",
 		 function );
 
 		goto on_error;
 	}
-	if( resource_values == NULL )
+	if( resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource values.",
+		 "%s: invalid resource node entry.",
 		 function );
 
 		goto on_error;
@@ -123,10 +123,10 @@ int libwrc_resource_item_initialize(
 
 		return( -1 );
 	}
-	internal_resource_item->io_handle       = io_handle;
-	internal_resource_item->file_io_handle  = file_io_handle;
-	internal_resource_item->resource_node   = resource_node;
-	internal_resource_item->resource_values = resource_values;
+	internal_resource_item->io_handle           = io_handle;
+	internal_resource_item->file_io_handle      = file_io_handle;
+	internal_resource_item->resource_node       = resource_node;
+	internal_resource_item->resource_node_entry = resource_node_entry;
 
 	*resource_item = (libwrc_resource_item_t *) internal_resource_item;
 
@@ -197,8 +197,8 @@ int libwrc_resource_item_get_identifier(
 	}
 	internal_resource_item = (libwrc_internal_resource_item_t *) resource_item;
 
-	if( libwrc_resource_values_get_identifier(
-	     internal_resource_item->resource_values,
+	if( libwrc_resource_node_entry_get_identifier(
+	     internal_resource_item->resource_node_entry,
 	     identifier,
 	     error ) != 1 )
 	{
@@ -240,8 +240,8 @@ int libwrc_resource_item_get_utf8_name_size(
 	}
 	internal_resource_item = (libwrc_internal_resource_item_t *) resource_item;
 
-	result = libwrc_resource_values_get_utf8_name_size(
-	          internal_resource_item->resource_values,
+	result = libwrc_resource_node_entry_get_utf8_name_size(
+	          internal_resource_item->resource_node_entry,
 	          utf8_string_size,
 	          error );
 
@@ -286,8 +286,8 @@ int libwrc_resource_item_get_utf8_name(
 	}
 	internal_resource_item = (libwrc_internal_resource_item_t *) resource_item;
 
-	result = libwrc_resource_values_get_utf8_name(
-	          internal_resource_item->resource_values,
+	result = libwrc_resource_node_entry_get_utf8_name(
+	          internal_resource_item->resource_node_entry,
 	          utf8_string,
 	          utf8_string_size,
 	          error );
@@ -332,8 +332,8 @@ int libwrc_resource_item_get_utf16_name_size(
 	}
 	internal_resource_item = (libwrc_internal_resource_item_t *) resource_item;
 
-	result = libwrc_resource_values_get_utf16_name_size(
-	          internal_resource_item->resource_values,
+	result = libwrc_resource_node_entry_get_utf16_name_size(
+	          internal_resource_item->resource_node_entry,
 	          utf16_string_size,
 	          error );
 
@@ -378,8 +378,8 @@ int libwrc_resource_item_get_utf16_name(
 	}
 	internal_resource_item = (libwrc_internal_resource_item_t *) resource_item;
 
-	result = libwrc_resource_values_get_utf16_name(
-	          internal_resource_item->resource_values,
+	result = libwrc_resource_node_entry_get_utf16_name(
+	          internal_resource_item->resource_node_entry,
 	          utf16_string,
 	          utf16_string_size,
 	          error );
@@ -436,24 +436,24 @@ ssize_t libwrc_resource_item_read_buffer(
 
 		return( -1 );
 	}
-	if( internal_resource_item->resource_values == NULL )
+	if( internal_resource_item->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource item - missing resource values.",
+		 "%s: invalid resource item - missing resource node entry.",
 		 function );
 
 		return( -1 );
 	}
-	if( internal_resource_item->resource_values->data_descriptor == NULL )
+	if( internal_resource_item->resource_node_entry->data_descriptor == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource item - invalid resource values - missing data descriptor.",
+		 "%s: invalid resource item - invalid resource node entry - missing data descriptor.",
 		 function );
 
 		return( -1 );
@@ -491,16 +491,16 @@ ssize_t libwrc_resource_item_read_buffer(
 
 		return( -1 );
 	}
-	if( internal_resource_item->current_offset >= (off64_t) internal_resource_item->resource_values->data_descriptor->size )
+	if( internal_resource_item->current_offset >= (off64_t) internal_resource_item->resource_node_entry->data_descriptor->size )
 	{
 		return( 0 );
 	}
-	if( ( size > (size64_t) internal_resource_item->resource_values->data_descriptor->size )
-	 || ( (size64_t) internal_resource_item->current_offset > ( (size64_t) internal_resource_item->resource_values->data_descriptor->size - size ) ) )
+	if( ( size > (size64_t) internal_resource_item->resource_node_entry->data_descriptor->size )
+	 || ( (size64_t) internal_resource_item->current_offset > ( (size64_t) internal_resource_item->resource_node_entry->data_descriptor->size - size ) ) )
 	{
-		size = (size_t)( (off64_t) internal_resource_item->resource_values->data_descriptor->size - internal_resource_item->current_offset );
+		size = (size_t)( (off64_t) internal_resource_item->resource_node_entry->data_descriptor->size - internal_resource_item->current_offset );
 	}
-	data_offset  = internal_resource_item->resource_values->data_descriptor->virtual_address;
+	data_offset  = internal_resource_item->resource_node_entry->data_descriptor->virtual_address;
 	data_offset -= internal_resource_item->io_handle->virtual_address;
 	data_offset += internal_resource_item->current_offset;
 
@@ -600,24 +600,24 @@ off64_t libwrc_resource_item_seek_offset(
 	}
 	internal_resource_item = (libwrc_internal_resource_item_t *) resource_item;
 
-	if( internal_resource_item->resource_values == NULL )
+	if( internal_resource_item->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource item - missing resource values.",
+		 "%s: invalid resource item - missing resource node entry.",
 		 function );
 
 		return( -1 );
 	}
-	if( internal_resource_item->resource_values->data_descriptor == NULL )
+	if( internal_resource_item->resource_node_entry->data_descriptor == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource item - invalid resource values - missing data descriptor.",
+		 "%s: invalid resource item - invalid resource node entry - missing data descriptor.",
 		 function );
 
 		return( -1 );
@@ -652,7 +652,7 @@ off64_t libwrc_resource_item_seek_offset(
 	}
 	else if( whence == SEEK_END )
 	{
-		offset += internal_resource_item->resource_values->data_descriptor->size;
+		offset += internal_resource_item->resource_node_entry->data_descriptor->size;
 	}
 	if( offset < 0 )
 	{
@@ -694,24 +694,24 @@ int libwrc_resource_item_get_offset(
 	}
 	internal_resource_item = (libwrc_internal_resource_item_t *) resource_item;
 
-	if( internal_resource_item->resource_values == NULL )
+	if( internal_resource_item->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource item - missing resource values.",
+		 "%s: invalid resource item - missing resource node entry.",
 		 function );
 
 		return( -1 );
 	}
-	if( internal_resource_item->resource_values->data_descriptor == NULL )
+	if( internal_resource_item->resource_node_entry->data_descriptor == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource item - invalid resource values - missing data descriptor.",
+		 "%s: invalid resource item - invalid resource node entry - missing data descriptor.",
 		 function );
 
 		return( -1 );
@@ -757,13 +757,13 @@ int libwrc_resource_item_get_size(
 	}
 	internal_resource_item = (libwrc_internal_resource_item_t *) resource_item;
 
-	if( internal_resource_item->resource_values == NULL )
+	if( internal_resource_item->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource item - missing resource values.",
+		 "%s: invalid resource item - missing resource node entry.",
 		 function );
 
 		return( -1 );
@@ -779,9 +779,9 @@ int libwrc_resource_item_get_size(
 
 		return( -1 );
 	}
-	if( internal_resource_item->resource_values->data_descriptor != NULL )
+	if( internal_resource_item->resource_node_entry->data_descriptor != NULL )
 	{
-		safe_size = (uint32_t) internal_resource_item->resource_values->data_descriptor->size;
+		safe_size = (uint32_t) internal_resource_item->resource_node_entry->data_descriptor->size;
 	}
 	*size = safe_size;
 

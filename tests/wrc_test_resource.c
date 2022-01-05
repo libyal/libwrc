@@ -36,7 +36,7 @@
 #include "wrc_test_unused.h"
 
 #include "../libwrc/libwrc_resource.h"
-#include "../libwrc/libwrc_resource_values.h"
+#include "../libwrc/libwrc_resource_node_entry.h"
 
 #if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
@@ -46,22 +46,22 @@
 int wrc_test_resource_initialize(
      void )
 {
-	libcdata_tree_node_t *resource_node       = NULL;
-	libcerror_error_t *error                  = NULL;
-	libwrc_resource_t *resource               = NULL;
-	libwrc_resource_values_t *resource_values = NULL;
-	int result                                = 0;
+	libcdata_tree_node_t *resource_node               = NULL;
+	libcerror_error_t *error                          = NULL;
+	libwrc_resource_t *resource                       = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry = NULL;
+	int result                                        = 0;
 
 #if defined( HAVE_WRC_TEST_MEMORY )
-	int number_of_malloc_fail_tests           = 1;
-	int number_of_memset_fail_tests           = 1;
-	int test_number                           = 0;
+	int number_of_malloc_fail_tests                   = 1;
+	int number_of_memset_fail_tests                   = 1;
+	int test_number                                   = 0;
 #endif
 
 	/* Initialize test
 	 */
-	result = libwrc_resource_values_initialize(
-	          &resource_values,
+	result = libwrc_resource_node_entry_initialize(
+	          &resource_node_entry,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -70,8 +70,8 @@ int wrc_test_resource_initialize(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "resource_values",
-	 resource_values );
+	 "resource_node_entry",
+	 resource_node_entry );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -96,7 +96,7 @@ int wrc_test_resource_initialize(
 
 	result = libcdata_tree_node_set_value(
 	          resource_node,
-	          (intptr_t *) resource_values,
+	          (intptr_t *) resource_node_entry,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -108,7 +108,7 @@ int wrc_test_resource_initialize(
 	 "error",
 	 error );
 
-	resource_values = NULL;
+	resource_node_entry = NULL;
 
 	/* Test regular cases
 	 */
@@ -310,7 +310,7 @@ int wrc_test_resource_initialize(
 	 */
 	result = libcdata_tree_node_free(
 	          &resource_node,
-	          (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_values_free,
+	          (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_node_entry_free,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -344,13 +344,13 @@ on_error:
 	{
 		libcdata_tree_node_free(
 		 &resource_node,
-		 (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_values_free,
+		 (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_node_entry_free,
 		 NULL );
 	}
-	if( resource_values != NULL )
+	if( resource_node_entry != NULL )
 	{
-		libwrc_resource_values_free(
-		 &resource_values,
+		libwrc_resource_node_entry_free(
+		 &resource_node_entry,
 		 NULL );
 	}
 	return( 0 );
@@ -1135,11 +1135,11 @@ int main(
 {
 #if defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT )
 
-	libcdata_tree_node_t *resource_node       = NULL;
-	libcerror_error_t *error                  = NULL;
-	libwrc_resource_t *resource               = NULL;
-	libwrc_resource_values_t *resource_values = NULL;
-	int result                                = 0;
+	libcdata_tree_node_t *resource_node               = NULL;
+	libcerror_error_t *error                          = NULL;
+	libwrc_resource_t *resource                       = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry = NULL;
+	int result                                        = 0;
 
 #endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */
 
@@ -1163,8 +1163,8 @@ int main(
 
 	/* Initialize resource for tests
 	 */
-	result = libwrc_resource_values_initialize(
-	          &resource_values,
+	result = libwrc_resource_node_entry_initialize(
+	          &resource_node_entry,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1173,15 +1173,15 @@ int main(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "resource_values",
-	 resource_values );
+	 "resource_node_entry",
+	 resource_node_entry );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	result = libwrc_resource_values_set_name_string(
-	          resource_values,
+	result = libwrc_resource_node_entry_set_name_string(
+	          resource_node_entry,
 	          (uint8_t *) "t\0e\0s\0t\0\0\0",
 	          10,
 	          &error );
@@ -1214,7 +1214,7 @@ int main(
 
 	result = libcdata_tree_node_set_value(
 	          resource_node,
-	          (intptr_t *) resource_values,
+	          (intptr_t *) resource_node_entry,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1226,10 +1226,10 @@ int main(
 	 "error",
 	 error );
 
-	resource_values = NULL;
+	resource_node_entry = NULL;
 
-	result = libwrc_resource_values_initialize(
-	          &resource_values,
+	result = libwrc_resource_node_entry_initialize(
+	          &resource_node_entry,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1238,8 +1238,8 @@ int main(
 	 1 );
 
 	WRC_TEST_ASSERT_IS_NOT_NULL(
-	 "resource_values",
-	 resource_values );
+	 "resource_node_entry",
+	 resource_node_entry );
 
 	WRC_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1247,7 +1247,7 @@ int main(
 
 	result = libcdata_tree_node_append_value(
 	          resource_node,
-	          (intptr_t *) resource_values,
+	          (intptr_t *) resource_node_entry,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1259,7 +1259,7 @@ int main(
 	 "error",
 	 error );
 
-	resource_values = NULL;
+	resource_node_entry = NULL;
 
 	result = libwrc_resource_initialize(
 	          &resource,
@@ -1354,7 +1354,7 @@ int main(
 
 	result = libcdata_tree_node_free(
 	          &resource_node,
-	          (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_values_free,
+	          (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_node_entry_free,
 	          &error );
 
 	WRC_TEST_ASSERT_EQUAL_INT(
@@ -1392,13 +1392,13 @@ on_error:
 	{
 		libcdata_tree_node_free(
 		 &resource_node,
-		 (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_values_free,
+		 (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_node_entry_free,
 		 NULL );
 	}
-	if( resource_values != NULL )
+	if( resource_node_entry != NULL )
 	{
-		libwrc_resource_values_free(
-		 &resource_values,
+		libwrc_resource_node_entry_free(
+		 &resource_node_entry,
 		 NULL );
 	}
 #endif /* defined( __GNUC__ ) && !defined( LIBWRC_DLL_IMPORT ) */

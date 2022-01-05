@@ -246,11 +246,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_resource_node_header.c"
+				RelativePath="..\..\libwrc\libwrc_resource_node_entry.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_resource_values.c"
+				RelativePath="..\..\libwrc\libwrc_resource_node_header.c"
 				>
 			</File>
 			<File
@@ -472,11 +472,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_resource_node_header.h"
+				RelativePath="..\..\libwrc\libwrc_resource_node_entry.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_resource_values.h"
+				RelativePath="..\..\libwrc\libwrc_resource_node_header.h"
 				>
 			</File>
 			<File

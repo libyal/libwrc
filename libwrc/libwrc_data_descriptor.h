@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "libwrc_libbfio.h"
 #include "libwrc_libcerror.h"
 
 #if defined( __cplusplus )
@@ -50,6 +51,18 @@ int libwrc_data_descriptor_initialize(
 
 int libwrc_data_descriptor_free(
      libwrc_data_descriptor_t **data_descriptor,
+     libcerror_error_t **error );
+
+int libwrc_data_descriptor_read_data(
+     libwrc_data_descriptor_t *data_descriptor,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error );
+
+int libwrc_data_descriptor_read_file_io_handle(
+     libwrc_data_descriptor_t *data_descriptor,
+     libbfio_handle_t *file_io_handle,
+     off64_t file_offset,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

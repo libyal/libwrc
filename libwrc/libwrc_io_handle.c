@@ -22,10 +22,7 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
-#include <narrow_string.h>
-#include <system_string.h>
 #include <types.h>
-#include <wide_string.h>
 
 #include "libwrc_codepage.h"
 #include "libwrc_data_descriptor.h"
@@ -37,11 +34,10 @@
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
 #include "libwrc_libuna.h"
+#include "libwrc_resource_node_entry.h"
 #include "libwrc_resource_node_header.h"
-#include "libwrc_resource_values.h"
 #include "libwrc_unused.h"
 
-#include "wrc_data_descriptor.h"
 #include "wrc_resource_node.h"
 
 uint8_t libwrc_resource_name_mui[ 6 ] = {
@@ -289,7 +285,7 @@ on_error:
 	{
 		libcdata_tree_node_free(
 		 root_node,
-		 (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_values_free,
+		 (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_node_entry_free,
 		 NULL );
 	}
 	return( -1 );
@@ -306,27 +302,17 @@ int libwrc_io_handle_read_resource_node(
      libcdata_tree_node_t *node,
      libcerror_error_t **error )
 {
-	uint8_t resource_name_size_data[ 2 ];
-
-	libcdata_tree_node_t *sub_node                      = NULL;
-	libwrc_resource_node_header_t *resource_node_header = NULL;
-	libwrc_resource_values_t *resource_values           = NULL;
-	libwrc_resource_values_t *sub_resource_values       = NULL;
-	uint8_t *resource_node_data                         = NULL;
-	static char *function                               = "libwrc_io_handle_read_resource_node";
-	size_t name_string_size                             = 0;
-	size_t resource_node_data_offset                    = 0;
-	size_t resource_node_data_size                      = 0;
-	ssize_t read_count                                  = 0;
-	int number_of_sub_nodes                             = 0;
-	int resource_node_entry                             = 0;
-	int sub_node_index                                  = 0;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t *value_string                    = NULL;
-	size_t value_string_size                            = 0;
-	int result                                          = 0;
-#endif
+	libcdata_tree_node_t *sub_node                        = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry     = NULL;
+	libwrc_resource_node_entry_t *sub_resource_node_entry = NULL;
+	libwrc_resource_node_header_t *resource_node_header   = NULL;
+	static char *function                                 = "libwrc_io_handle_read_resource_node";
+	uint32_t entry_index                                  = 0;
+	uint32_t number_of_entries                            = 0;
+	int number_of_sub_nodes                               = 0;
+	int resource_node_entry_index                         = 0;
+	int result                                            = 0;
+	int sub_node_index                                    = 0;
 
 	if( io_handle == NULL )
 	{
@@ -392,7 +378,9 @@ int libwrc_io_handle_read_resource_node(
 
 		goto on_error;
 	}
-	resource_node_data_size = ( (size_t) resource_node_header->number_of_named_entries + (size_t) resource_node_header->number_of_unnamed_entries ) * 8;
+	file_offset += sizeof( wrc_resource_node_header_t );
+
+	number_of_entries = (uint32_t) resource_node_header->number_of_named_entries + (uint32_t) resource_node_header->number_of_unnamed_entries;
 
 	if( libwrc_resource_node_header_free(
 	     &resource_node_header,
@@ -407,424 +395,178 @@ int libwrc_io_handle_read_resource_node(
 
 		goto on_error;
 	}
-	if( ( resource_node_data_size == 0 )
-	 || ( resource_node_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	for( entry_index = 0;
+	     entry_index < number_of_entries;
+	     entry_index++ )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid resource node data size value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	resource_node_data = (uint8_t *) memory_allocate(
-	                                  sizeof( uint8_t ) * resource_node_data_size );
-
-	if( resource_node_data == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create resource node data.",
-		 function );
-
-		goto on_error;
-	}
-	read_count = libbfio_handle_read_buffer(
-	              file_io_handle,
-	              resource_node_data,
-	              resource_node_data_size,
-	              error );
-
-	if( read_count != (ssize_t) resource_node_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read resource node data.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: resource node data:\n",
-		 function );
-		libcnotify_print_data(
-		 resource_node_data,
-		 resource_node_data_size,
-		 0 );
-	}
-#endif
-	while( ( resource_node_data_offset + 8 ) <= resource_node_data_size )
-	{
-		if( libwrc_resource_values_initialize(
-		     &resource_values,
+		if( libwrc_resource_node_entry_initialize(
+		     &resource_node_entry,
 		     error ) == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create resource values: %d.",
-			 function,
-			 resource_node_entry );
+			 "%s: unable to create resource node entry.",
+			 function );
 
 			goto on_error;
 		}
-		if( resource_values == NULL )
+		if( libwrc_resource_node_entry_read_file_io_handle(
+		     resource_node_entry,
+		     file_io_handle,
+		     file_offset,
+		     node_level,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid resource values: %d.",
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read resource node entry at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 			 function,
-			 resource_node_entry );
+			 file_offset,
+			 file_offset );
 
 			goto on_error;
 		}
-		byte_stream_copy_to_uint32_little_endian(
-		 &( resource_node_data[ resource_node_data_offset ] ),
-		 resource_values->identifier );
+		file_offset += sizeof( wrc_resource_node_entry_t );
 
-		resource_node_data_offset += 4;
+		result = libwrc_resource_node_entry_read_name_file_io_handle(
+		          resource_node_entry,
+		          file_io_handle,
+		          error );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 &( resource_node_data[ resource_node_data_offset ] ),
-		 resource_values->offset );
-
-		resource_node_data_offset += 4;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+		if( result == -1 )
 		{
-			libcnotify_printf(
-			 "%s: resource node entry: %03d identifier\t: 0x%08" PRIx32 "",
-			 function,
-			 resource_node_entry,
-			 resource_values->identifier );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read resource node name.",
+			 function );
 
-			if( ( node_level == 1 )
-			 && ( ( resource_values->identifier & LIBWRC_RESOURCE_IDENTIFIER_FLAG_HAS_NAME ) == 0 ) )
-			{
-				libcnotify_printf(
-				 " (%s)",
-				 libwrc_debug_get_resource_identifier(
-				  resource_values->identifier ) );
-			}
-			libcnotify_printf(
-			 "\n" );
-
-			libcnotify_printf(
-			 "%s: resource node entry: %03d offset\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 resource_node_entry,
-			 resource_values->offset );
+			goto on_error;
 		}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-
 		if( node_level == 1 )
 		{
-			if( ( resource_values->identifier & LIBWRC_RESOURCE_IDENTIFIER_FLAG_HAS_NAME ) == 0 )
+			if( ( resource_node_entry->identifier & LIBWRC_RESOURCE_IDENTIFIER_FLAG_HAS_NAME ) == 0 )
 			{
-				switch( resource_values->identifier )
+				switch( resource_node_entry->identifier )
 				{
 					case LIBWRC_RESOURCE_IDENTIFIER_CURSOR:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_CURSOR;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_CURSOR;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_BITMAP:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_BITMAP;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_BITMAP;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_ICON:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_ICON;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_ICON;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_MENU:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_MENU;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_MENU;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_DIALOG:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_DIALOG;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_DIALOG;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_STRING:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_STRING;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_STRING;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_FONT_DIRECTORY:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_FONT_DIRECTORY;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_FONT_DIRECTORY;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_FONT:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_FONT;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_FONT;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_ACCELERATOR:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_ACCELERATOR;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_ACCELERATOR;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_RAW_DATA:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_RAW_DATA;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_RAW_DATA;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_MESSAGE_TABLE:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_GROUP_CURSOR:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_GROUP_CURSOR;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_GROUP_CURSOR;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_GROUP_ICON:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_GROUP_ICON;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_GROUP_ICON;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_VERSION:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_VERSION;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_VERSION;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_DIALOG_INCLUDE:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_DIALOG_INCLUDE;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_DIALOG_INCLUDE;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_PLUG_AND_PLAY:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_PLUG_AND_PLAY;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_PLUG_AND_PLAY;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_VXD:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_VXD;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_VXD;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_ANIMATED_CURSOR:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_ANIMATED_CURSOR;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_ANIMATED_CURSOR;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_ANIMATED_ICON:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_ANIMATED_ICON;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_ANIMATED_ICON;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_HTML:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_HTML;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_HTML;
 						break;
 
 					case LIBWRC_RESOURCE_IDENTIFIER_MANIFEST:
-						resource_values->type = LIBWRC_RESOURCE_TYPE_MANIFEST;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_MANIFEST;
 						break;
 				}
 			}
 			else
 			{
-				read_count = libbfio_handle_read_buffer_at_offset(
-					      file_io_handle,
-					      resource_name_size_data,
-					      2,
-					      (off64_t) ( resource_values->identifier & 0x7fffffffUL ),
-					      error );
-
-				if( read_count != (ssize_t) 2 )
+				if( resource_node_entry->name_string_size == 6 )
 				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read resource name string size at offset: %" PRIi64 " (0x%08" PRIx64 ").",
-					 function,
-					 (off64_t) ( resource_values->identifier & 0x7fffffffUL ),
-					 (off64_t) ( resource_values->identifier & 0x7fffffffUL ) );
-
-					goto on_error;
-				}
-				byte_stream_copy_to_uint16_little_endian(
-				 resource_name_size_data,
-				 name_string_size );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-				if( libcnotify_verbose != 0 )
-				{
-					libcnotify_printf(
-					 "%s: resource node entry: %03d name string size\t: %" PRIzd "\n",
-					 function,
-					 resource_node_entry,
-					 name_string_size );
-
-				}
-#endif
-				name_string_size *= 2;
-
-				if( ( name_string_size == 0 )
-				 || ( name_string_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-					 "%s: invalid name string size value out of bounds.",
-					 function );
-
-					goto on_error;
-				}
-				resource_values->name_string = (uint8_t *) memory_allocate(
-				                                            sizeof( uint8_t ) * name_string_size );
-
-				if( resource_values->name_string == NULL )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_MEMORY,
-					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create resource node name string.",
-					 function );
-
-					goto on_error;
-				}
-				resource_values->name_string_size = name_string_size;
-
-				read_count = libbfio_handle_read_buffer(
-					      file_io_handle,
-					      resource_values->name_string,
-					      name_string_size,
-					      error );
-
-				if( read_count != (ssize_t) name_string_size )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read resource node name string.",
-					 function );
-
-					goto on_error;
-				}
-#if defined( HAVE_DEBUG_OUTPUT )
-				if( libcnotify_verbose != 0 )
-				{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-					result = libuna_utf16_string_size_from_utf16_stream(
-						  resource_values->name_string,
-						  resource_values->name_string_size,
-						  LIBUNA_ENDIAN_LITTLE,
-						  &value_string_size,
-						  error );
-#else
-					result = libuna_utf8_string_size_from_utf16_stream(
-						  resource_values->name_string,
-						  resource_values->name_string_size,
-						  LIBUNA_ENDIAN_LITTLE,
-						  &value_string_size,
-						  error );
-#endif
-					if( result != 1 )
+					if( memory_compare(
+					     resource_node_entry->name_string,
+					     libwrc_resource_name_mui,
+					     6 ) == 0 )
 					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to determine size of data string.",
-						 function );
-
-						goto on_error;
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_MUI;
 					}
-					if( value_string_size > ( (size_t) SSIZE_MAX / sizeof( system_character_t ) ) )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-						 "%s: invalid data string size value exceeds maximum.",
-						 function );
-
-						goto on_error;
-					}
-					value_string = system_string_allocate(
-							value_string_size );
-
-					if( value_string == NULL )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_MEMORY,
-						 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-						 "%s: unable to create data string.",
-						 function );
-
-						goto on_error;
-					}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-					result = libuna_utf16_string_copy_from_utf16_stream(
-						  (libuna_utf16_character_t *) value_string,
-						  value_string_size,
-						  resource_values->name_string,
-						  resource_values->name_string_size,
-						  LIBUNA_ENDIAN_LITTLE,
-						  error );
-#else
-					result = libuna_utf8_string_copy_from_utf16_stream(
-						  (libuna_utf8_character_t *) value_string,
-						  value_string_size,
-						  resource_values->name_string,
-						  resource_values->name_string_size,
-						  LIBUNA_ENDIAN_LITTLE,
-						  error );
-#endif
-					if( result != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-						 "%s: unable to set data string.",
-						 function );
-
-						goto on_error;
-					}
-					libcnotify_printf(
-					 "%s: resource node entry: %03d name string\t: %" PRIs_SYSTEM "\n",
-					 function,
-					 resource_node_entry,
-					 value_string );
-
-					memory_free(
-					 value_string );
-
-					value_string = NULL;
 				}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-			}
-			if( resource_values->name_string_size == 6 )
-			{
-				if( memory_compare(
-				     resource_values->name_string,
-				     libwrc_resource_name_mui,
-				     6 ) == 0 )
+				else if( resource_node_entry->name_string_size == 26 )
 				{
-					resource_values->type = LIBWRC_RESOURCE_TYPE_MUI;
-				}
-			}
-			else if( resource_values->name_string_size == 26 )
-			{
-				if( memory_compare(
-				     resource_values->name_string,
-				     libwrc_resource_name_wevt_template,
-				     26 ) == 0 )
-				{
-					resource_values->type = LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE;
+					if( memory_compare(
+					     resource_node_entry->name_string,
+					     libwrc_resource_name_wevt_template,
+					     26 ) == 0 )
+					{
+						resource_node_entry->type = LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE;
+					}
 				}
 			}
 		}
 		if( libcdata_tree_node_insert_value(
 		     node,
-		     (intptr_t *) resource_values,
-		     (int (*)(intptr_t *, intptr_t *, libcerror_error_t **)) &libwrc_resource_values_compare,
+		     (intptr_t *) resource_node_entry,
+		     (int (*)(intptr_t *, intptr_t *, libcerror_error_t **)) &libwrc_resource_node_entry_compare,
 		     LIBCDATA_INSERT_FLAG_NON_UNIQUE_ENTRIES,
 		     error ) == -1 )
 		{
@@ -834,13 +576,13 @@ int libwrc_io_handle_read_resource_node(
 			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to insert resource node: %d.",
 			 function,
-			 resource_node_entry );
+			 resource_node_entry_index );
 
 			goto on_error;
 		}
-		resource_values = NULL;
+		resource_node_entry = NULL;
 
-		resource_node_entry++;
+		resource_node_entry_index++;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -850,11 +592,6 @@ int libwrc_io_handle_read_resource_node(
 		}
 #endif
 	}
-	memory_free(
-	 resource_node_data );
-
-	resource_node_data = NULL;
-
 	if( libcdata_tree_node_get_number_of_sub_nodes(
 	     node,
 	     &number_of_sub_nodes,
@@ -890,37 +627,37 @@ int libwrc_io_handle_read_resource_node(
 	{
 		if( libcdata_tree_node_get_value(
 		     sub_node,
-		     (intptr_t **) &sub_resource_values,
+		     (intptr_t **) &sub_resource_node_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value of sub node: %d.",
+			 "%s: unable to retrieve resource sub node: %d entry.",
 			 function,
 			 sub_node_index );
 
 			goto on_error;
 		}
-		if( sub_resource_values == NULL )
+		if( sub_resource_node_entry == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid sub resource values: %d.",
+			 "%s: invalid resource sub node: %d entry.",
 			 function,
 			 sub_node_index );
 
 			goto on_error;
 		}
-		if( ( sub_resource_values->offset & 0x80000000UL ) != 0 )
+		if( ( sub_resource_node_entry->offset & 0x80000000UL ) != 0 )
 		{
 			if( libwrc_io_handle_read_resource_node(
 			     io_handle,
 			     file_io_handle,
-			     (off64_t) ( sub_resource_values->offset & 0x7fffffffUL ),
+			     (off64_t) ( sub_resource_node_entry->offset & 0x7fffffffUL ),
 			     node_level + 1,
 			     sub_node,
 			     error ) != 1 )
@@ -929,10 +666,11 @@ int libwrc_io_handle_read_resource_node(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_IO,
 				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read sub resource node: %d at offset: 0x%08" PRIx32 ".",
+				 "%s: unable to read sub resource node: %d at offset: %" PRIu32 " (0x%08" PRIx32 ").",
 				 function,
 				 sub_node_index,
-				 sub_resource_values->offset );
+				 sub_resource_node_entry->offset,
+				 sub_resource_node_entry->offset );
 
 				goto on_error;
 			}
@@ -940,7 +678,7 @@ int libwrc_io_handle_read_resource_node(
 		else
 		{
 			if( libwrc_data_descriptor_initialize(
-			     &( sub_resource_values->data_descriptor ),
+			     &( sub_resource_node_entry->data_descriptor ),
 			     error ) == -1 )
 			{
 				libcerror_error_set(
@@ -953,21 +691,46 @@ int libwrc_io_handle_read_resource_node(
 
 				goto on_error;
 			}
-			if( libwrc_io_handle_read_data_descriptor(
-			     io_handle,
+			if( libwrc_data_descriptor_read_file_io_handle(
+			     sub_resource_node_entry->data_descriptor,
 			     file_io_handle,
-			     (off64_t) sub_resource_values->offset,
-			     sub_resource_values->data_descriptor,
+			     (off64_t) sub_resource_node_entry->offset,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_IO,
 				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read data descriptor: %d at offset: 0x%08" PRIx32 ".",
+				 "%s: unable to read data descriptor: %d at offset: %" PRIu32 " (0x%08" PRIx32 ").",
 				 function,
 				 sub_node_index,
-				 sub_resource_values->offset );
+				 sub_resource_node_entry->offset,
+				 sub_resource_node_entry->offset );
+
+				goto on_error;
+			}
+			if( ( sub_resource_node_entry->data_descriptor->virtual_address < io_handle->virtual_address )
+			 || ( (size64_t) sub_resource_node_entry->data_descriptor->virtual_address >= ( io_handle->virtual_address + io_handle->stream_size ) ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid data descriptor: %d - virtual address out of bounds.",
+				 function,
+				 sub_node_index );
+
+				goto on_error;
+			}
+			if( (size64_t) ( sub_resource_node_entry->data_descriptor->virtual_address + sub_resource_node_entry->data_descriptor->size ) > ( io_handle->virtual_address + io_handle->stream_size ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid data descriptor: %d - size out of bounds.",
+				 function,
+				 sub_node_index );
 
 				goto on_error;
 			}
@@ -991,154 +754,18 @@ int libwrc_io_handle_read_resource_node(
 	return( 1 );
 
 on_error:
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( value_string != NULL )
+	if( resource_node_entry != NULL )
 	{
-		memory_free(
-		 value_string );
-	}
-#endif
-	if( resource_values != NULL )
-	{
-		libwrc_resource_values_free(
-		 &resource_values,
+		libwrc_resource_node_entry_free(
+		 &resource_node_entry,
 		 NULL );
 	}
-	if( resource_node_data != NULL )
+	if( resource_node_header != NULL )
 	{
-		memory_free(
-		 resource_node_data );
+		libwrc_resource_node_header_free(
+		 &resource_node_header,
+		 NULL );
 	}
 	return( -1 );
-}
-
-/* Reads a data descriptor
- * Returns 1 if successful or -1 on error
- */
-int libwrc_io_handle_read_data_descriptor(
-     libwrc_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     off64_t file_offset,
-     libwrc_data_descriptor_t *data_descriptor,
-     libcerror_error_t **error )
-{
-	wrc_data_descriptor_t data_descriptor_data;
-
-	static char *function = "libwrc_io_handle_read_data_descriptor";
-	ssize_t read_count    = 0;
-
-	if( io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( data_descriptor == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid data descriptor.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading data descriptor at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-		 function,
-		 file_offset,
-		 file_offset );
-	}
-#endif
-	read_count = libbfio_handle_read_buffer_at_offset(
-	              file_io_handle,
-	              (uint8_t *) &data_descriptor_data,
-	              sizeof( wrc_data_descriptor_t ),
-	              file_offset,
-	              error );
-
-	if( read_count != (ssize_t) sizeof( wrc_data_descriptor_t ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read data descriptor at offset: %" PRIi64 " (0x%08" PRIx64 ").",
-		 function,
-		 file_offset,
-		 file_offset );
-
-		return( -1 );
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: data descriptor data:\n",
-		 function );
-		libcnotify_print_data(
-		 (uint8_t *) &data_descriptor_data,
-		 sizeof( wrc_data_descriptor_t ),
-		 0 );
-	}
-#endif
-	byte_stream_copy_to_uint32_little_endian(
-	 data_descriptor_data.virtual_address,
-	 data_descriptor->virtual_address );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 data_descriptor_data.size,
-	 data_descriptor->size );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: virtual address\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 data_descriptor->virtual_address );
-
-		libcnotify_printf(
-		 "%s: size\t\t\t\t: %" PRIu32 "\n",
-		 function,
-		 data_descriptor->size );
-
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif
-	if( ( data_descriptor->virtual_address < io_handle->virtual_address )
-	 || ( (size64_t) data_descriptor->virtual_address >= ( io_handle->virtual_address + io_handle->stream_size ) ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: virtual address out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	if( (size64_t) ( data_descriptor->virtual_address + data_descriptor->size ) > ( io_handle->virtual_address + io_handle->stream_size ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: size out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	return( 1 );
 }
 

@@ -31,8 +31,8 @@ MSVSCPP_FILES = \
 	wrc_test_notify/wrc_test_notify.vcproj \
 	wrc_test_resource/wrc_test_resource.vcproj \
 	wrc_test_resource_item/wrc_test_resource_item.vcproj \
+	wrc_test_resource_node_entry/wrc_test_resource_node_entry.vcproj \
 	wrc_test_resource_node_header/wrc_test_resource_node_header.vcproj \
-	wrc_test_resource_values/wrc_test_resource_values.vcproj \
 	wrc_test_stream/wrc_test_stream.vcproj \
 	wrc_test_string_table_resource/wrc_test_string_table_resource.vcproj \
 	wrc_test_support/wrc_test_support.vcproj \

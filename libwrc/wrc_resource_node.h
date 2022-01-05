@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _WRC_RECORD_NODE_H )
-#define _WRC_RECORD_NODE_H
+#if !defined( _WRC_RESOURCE_NODE_H )
+#define _WRC_RESOURCE_NODE_H
 
 #include <common.h>
 #include <types.h>
@@ -65,9 +65,24 @@ struct wrc_resource_node_header
 	uint8_t number_of_unnamed_entries[ 2 ];
 };
 
+typedef struct wrc_resource_node_entry wrc_resource_node_entry_t;
+
+struct wrc_resource_node_entry
+{
+	/* The identifier
+	 * Consists of 4 bytes
+	 */
+	uint8_t identifier[ 4 ];
+
+	/* The offset
+	 * Consists of 4 bytes
+	 */
+	uint8_t offset[ 4 ];
+};
+
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _WRC_RECORD_NODE_H ) */
+#endif /* !defined( _WRC_RESOURCE_NODE_H ) */
 

@@ -39,7 +39,7 @@
 #include "libwrc_mui_values.h"
 #include "libwrc_resource.h"
 #include "libwrc_resource_item.h"
-#include "libwrc_resource_values.h"
+#include "libwrc_resource_node_entry.h"
 #include "libwrc_string_values.h"
 #include "libwrc_version_values.h"
 #include "libwrc_wevt_template_values.h"
@@ -55,9 +55,9 @@ int libwrc_resource_initialize(
      libcdata_tree_node_t *resource_node,
      libcerror_error_t **error )
 {
-	libwrc_internal_resource_t *internal_resource = NULL;
-	libwrc_resource_values_t *resource_values     = NULL;
-	static char *function                         = "libwrc_resource_initialize";
+	libwrc_internal_resource_t *internal_resource     = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry = NULL;
+	static char *function                             = "libwrc_resource_initialize";
 
 	if( resource == NULL )
 	{
@@ -83,25 +83,25 @@ int libwrc_resource_initialize(
 	}
 	if( libcdata_tree_node_get_value(
 	     resource_node,
-	     (intptr_t **) &resource_values,
+	     (intptr_t **) &resource_node_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value of resource node.",
+		 "%s: unable to retrieve resource node entry.",
 		 function );
 
 		goto on_error;
 	}
-	if( resource_values == NULL )
+	if( resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource values.",
+		 "%s: invalid resource node entry.",
 		 function );
 
 		goto on_error;
@@ -137,10 +137,10 @@ int libwrc_resource_initialize(
 
 		return( -1 );
 	}
-	internal_resource->io_handle       = io_handle;
-	internal_resource->file_io_handle  = file_io_handle;
-	internal_resource->resource_node   = resource_node;
-	internal_resource->resource_values = resource_values;
+	internal_resource->io_handle           = io_handle;
+	internal_resource->file_io_handle      = file_io_handle;
+	internal_resource->resource_node       = resource_node;
+	internal_resource->resource_node_entry = resource_node_entry;
 
 	*resource = (libwrc_resource_t *) internal_resource;
 
@@ -182,7 +182,7 @@ int libwrc_resource_free(
 		internal_resource = (libwrc_internal_resource_t *) *resource;
 		*resource         = NULL;
 
-		/* The io_handle, file_io_handle, resource_node and resource_values references are freed elsewhere
+		/* The io_handle, file_io_handle, resource_node and resource_node_entry references are freed elsewhere
 		 */
 		if( internal_resource->value != NULL )
 		{
@@ -216,21 +216,21 @@ int libwrc_resource_read_value(
      libwrc_internal_resource_t *internal_resource,
      libcerror_error_t **error )
 {
-	libcdata_tree_node_t *leaf_node                  = NULL;
-	libcdata_tree_node_t *sub_node                   = NULL;
-	libwrc_data_descriptor_t *data_descriptor        = NULL;
-	libwrc_language_entry_t *existing_language_entry = NULL;
-	libwrc_language_entry_t *language_entry          = NULL;
-	libwrc_resource_values_t *leaf_resource_values   = NULL;
-	libwrc_resource_values_t *sub_resource_values    = NULL;
-	const char *resource_type_string                 = NULL;
-	static char *function                            = "libwrc_resource_read_value";
-	int entry_index                                  = 0;
-	int leaf_node_index                              = 0;
-	int number_of_leaf_nodes                         = 0;
-	int number_of_sub_nodes                          = 0;
-	int result                                       = 0;
-	int sub_node_index                               = 0;
+	libcdata_tree_node_t *leaf_node                        = NULL;
+	libcdata_tree_node_t *sub_node                         = NULL;
+	libwrc_data_descriptor_t *data_descriptor              = NULL;
+	libwrc_language_entry_t *existing_language_entry       = NULL;
+	libwrc_language_entry_t *language_entry                = NULL;
+	libwrc_resource_node_entry_t *leaf_resource_node_entry = NULL;
+	libwrc_resource_node_entry_t *sub_resource_node_entry  = NULL;
+	static char *function                                  = "libwrc_resource_read_value";
+	const char *resource_type_string                       = NULL;
+	int entry_index                                        = 0;
+	int leaf_node_index                                    = 0;
+	int number_of_leaf_nodes                               = 0;
+	int number_of_sub_nodes                                = 0;
+	int result                                             = 0;
+	int sub_node_index                                     = 0;
 
 	if( internal_resource == NULL )
 	{
@@ -254,18 +254,18 @@ int libwrc_resource_read_value(
 
 		return( -1 );
 	}
-	if( internal_resource->resource_values == NULL )
+	if( internal_resource->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource - missing resource values.",
+		 "%s: invalid resource - missing resource node entry.",
 		 function );
 
 		return( -1 );
 	}
-	switch( internal_resource->resource_values->type )
+	switch( internal_resource->resource_node_entry->type )
 	{
 		case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 			resource_type_string = "string";
@@ -348,7 +348,7 @@ int libwrc_resource_read_value(
 			 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 			 "%s: unsupported resource type: 0x%08" PRIx32 ".",
 			 function,
-			 internal_resource->resource_values->type );
+			 internal_resource->resource_node_entry->type );
 
 			goto on_error;
 #endif
@@ -379,11 +379,11 @@ int libwrc_resource_read_value(
 
 		goto on_error;
 	}
-	if( ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE )
-	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION )
-	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_MANIFEST )
-	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_MUI )
-	 || ( internal_resource->resource_values->type == LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE ) )
+	if( ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE )
+	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION )
+	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_MANIFEST )
+	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_MUI )
+	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE ) )
 	{
 		if( number_of_sub_nodes != 1 )
 		{
@@ -420,26 +420,26 @@ int libwrc_resource_read_value(
 		}
 		if( libcdata_tree_node_get_value(
 		     sub_node,
-		     (intptr_t **) &sub_resource_values,
+		     (intptr_t **) &sub_resource_node_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value of sub node: %d.",
+			 "%s: unable to retrieve resource sub node: %d entry.",
 			 function,
 			 sub_node_index );
 
 			goto on_error;
 		}
-		if( sub_resource_values == NULL )
+		if( sub_resource_node_entry == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid sub resource values: %d.",
+			 "%s: invalid resource sub node: %d entry.",
 			 function,
 			 sub_node_index );
 
@@ -481,51 +481,51 @@ int libwrc_resource_read_value(
 			}
 			if( libcdata_tree_node_get_value(
 			     leaf_node,
-			     (intptr_t **) &leaf_resource_values,
+			     (intptr_t **) &leaf_resource_node_entry,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve value of leaf node: %d.",
+				 "%s: unable to retrieve resource leaf node: %d entry.",
 				 function,
 				 leaf_node_index );
 
 				goto on_error;
 			}
-			if( leaf_resource_values == NULL )
+			if( leaf_resource_node_entry == NULL )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: invalid leaf resource values: %d.",
+				 "%s: invalid resource leaf node: %d entry.",
 				 function,
 				 leaf_node_index );
 
 				goto on_error;
 			}
-			if( leaf_resource_values->data_descriptor == NULL )
+			if( leaf_resource_node_entry->data_descriptor == NULL )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: invalid leaf resource values: 0x%08" PRIx32 " - missing data descriptor.",
+				 "%s: invalid resource leaf node: %d entry - missing data descriptor.",
 				 function,
-				 leaf_resource_values->identifier );
+				 leaf_node_index );
 
 				goto on_error;
 			}
-			data_descriptor = leaf_resource_values->data_descriptor;
+			data_descriptor = leaf_resource_node_entry->data_descriptor;
 
-			switch( internal_resource->resource_values->type )
+			switch( internal_resource->resource_node_entry->type )
 			{
 				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					result = libwrc_language_table_get_entry_by_identifier(
 						  (libwrc_language_table_t *) internal_resource->value,
-						  leaf_resource_values->identifier,
+						  leaf_resource_node_entry->identifier,
 						  &existing_language_entry,
 						  error );
 
@@ -548,7 +548,7 @@ int libwrc_resource_read_value(
 					{
 						if( libwrc_language_entry_initialize(
 						     &language_entry,
-						     leaf_resource_values->identifier,
+						     leaf_resource_node_entry->identifier,
 						     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_value_free,
 						     error ) != 1 )
 						{
@@ -568,7 +568,7 @@ int libwrc_resource_read_value(
 				case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
 					if( libwrc_language_entry_initialize(
 					     &language_entry,
-					     leaf_resource_values->identifier,
+					     leaf_resource_node_entry->identifier,
 					     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_value_free,
 					     error ) != 1 )
 					{
@@ -586,7 +586,7 @@ int libwrc_resource_read_value(
 				case LIBWRC_RESOURCE_TYPE_MUI:
 					if( libwrc_language_entry_initialize(
 					     &language_entry,
-					     leaf_resource_values->identifier,
+					     leaf_resource_node_entry->identifier,
 					     (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_mui_values_free,
 					     error ) != 1 )
 					{
@@ -604,7 +604,7 @@ int libwrc_resource_read_value(
 				case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
 					if( libwrc_language_entry_initialize(
 					     &language_entry,
-					     leaf_resource_values->identifier,
+					     leaf_resource_node_entry->identifier,
 					     (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_version_values_free,
 					     error ) != 1 )
 					{
@@ -623,7 +623,7 @@ int libwrc_resource_read_value(
 				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
 					if( libwrc_language_entry_initialize(
 					     &language_entry,
-					     leaf_resource_values->identifier,
+					     leaf_resource_node_entry->identifier,
 					     (int (*)(intptr_t **, libcerror_error_t **)) &libfwevt_manifest_free,
 					     error ) != 1 )
 					{
@@ -639,7 +639,7 @@ int libwrc_resource_read_value(
 					break;
 			}
 #if defined( HAVE_DEBUG_OUTPUT )
-			switch( internal_resource->resource_values->type )
+			switch( internal_resource->resource_node_entry->type )
 			{
 				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					if( libcnotify_verbose != 0 )
@@ -647,10 +647,10 @@ int libwrc_resource_read_value(
 						libcnotify_printf(
 						 "%s: reading string: 0x%08" PRIx32 " for language identifier: 0x%08" PRIx32 " (%s)\n",
 						 function,
-						 sub_resource_values->identifier - 1,
-						 leaf_resource_values->identifier,
+						 sub_resource_node_entry->identifier - 1,
+						 leaf_resource_node_entry->identifier,
 						 libfwnt_locale_identifier_language_tag_get_identifier(
-						  leaf_resource_values->identifier & 0x0000ffffUL ) );
+						  leaf_resource_node_entry->identifier & 0x0000ffffUL ) );
 					}
 					break;
 
@@ -665,22 +665,22 @@ int libwrc_resource_read_value(
 						 "%s: reading %s for language identifier: 0x%08" PRIx32 " (%s)\n",
 						 function,
 						 resource_type_string,
-						 leaf_resource_values->identifier,
+						 leaf_resource_node_entry->identifier,
 						 libfwnt_locale_identifier_language_tag_get_identifier(
-						  leaf_resource_values->identifier & 0x0000ffffUL ) );
+						  leaf_resource_node_entry->identifier & 0x0000ffffUL ) );
 					}
 					break;
 			}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
-			switch( internal_resource->resource_values->type )
+			switch( internal_resource->resource_node_entry->type )
 			{
 				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					result = libwrc_string_values_read(
 					          language_entry,
 					          internal_resource->io_handle,
 					          internal_resource->file_io_handle,
-					          sub_resource_values->identifier - 1,
+					          sub_resource_node_entry->identifier - 1,
 					          data_descriptor,
 					          error );
 					break;
@@ -752,7 +752,7 @@ int libwrc_resource_read_value(
 					break;
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 			}
-			switch( internal_resource->resource_values->type )
+			switch( internal_resource->resource_node_entry->type )
 			{
 				case LIBWRC_RESOURCE_TYPE_STRING_TABLE:
 					if( result != 1 )
@@ -764,8 +764,8 @@ int libwrc_resource_read_value(
 						 "%s: unable to read %s: 0x%08" PRIx32 " for language identifier: 0x%08" PRIx32 ".",
 						 function,
 						 resource_type_string,
-						 sub_resource_values->identifier,
-						 leaf_resource_values->identifier );
+						 sub_resource_node_entry->identifier,
+						 leaf_resource_node_entry->identifier );
 
 						goto on_error;
 					}
@@ -783,7 +783,7 @@ int libwrc_resource_read_value(
 							 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 							 "%s: unable to append messages for language identifier: 0x%08" PRIx32 " to languages array.",
 							 function,
-							 leaf_resource_values->identifier );
+							 leaf_resource_node_entry->identifier );
 
 							goto on_error;
 						}
@@ -806,7 +806,7 @@ int libwrc_resource_read_value(
 						 "%s: unable to read %s for language identifier: 0x%08" PRIx32 ".",
 						 function,
 						 resource_type_string,
-						 leaf_resource_values->identifier );
+						 leaf_resource_node_entry->identifier );
 
 						goto on_error;
 					}
@@ -823,7 +823,7 @@ int libwrc_resource_read_value(
 						 "%s: unable to append %s for language identifier: 0x%08" PRIx32 " to languages array.",
 						 function,
 						 resource_type_string,
-						 leaf_resource_values->identifier );
+						 leaf_resource_node_entry->identifier );
 
 						goto on_error;
 					}
@@ -1005,8 +1005,8 @@ int libwrc_resource_get_identifier(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	if( libwrc_resource_values_get_identifier(
-	     internal_resource->resource_values,
+	if( libwrc_resource_node_entry_get_identifier(
+	     internal_resource->resource_node_entry,
 	     identifier,
 	     error ) != 1 )
 	{
@@ -1048,8 +1048,8 @@ int libwrc_resource_get_utf8_name_size(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	result = libwrc_resource_values_get_utf8_name_size(
-	          internal_resource->resource_values,
+	result = libwrc_resource_node_entry_get_utf8_name_size(
+	          internal_resource->resource_node_entry,
 	          utf8_string_size,
 	          error );
 
@@ -1094,8 +1094,8 @@ int libwrc_resource_get_utf8_name(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	result = libwrc_resource_values_get_utf8_name(
-	          internal_resource->resource_values,
+	result = libwrc_resource_node_entry_get_utf8_name(
+	          internal_resource->resource_node_entry,
 	          utf8_string,
 	          utf8_string_size,
 	          error );
@@ -1140,8 +1140,8 @@ int libwrc_resource_get_utf16_name_size(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	result = libwrc_resource_values_get_utf16_name_size(
-	          internal_resource->resource_values,
+	result = libwrc_resource_node_entry_get_utf16_name_size(
+	          internal_resource->resource_node_entry,
 	          utf16_string_size,
 	          error );
 
@@ -1186,8 +1186,8 @@ int libwrc_resource_get_utf16_name(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	result = libwrc_resource_values_get_utf16_name(
-	          internal_resource->resource_values,
+	result = libwrc_resource_node_entry_get_utf16_name(
+	          internal_resource->resource_node_entry,
 	          utf16_string,
 	          utf16_string_size,
 	          error );
@@ -1230,8 +1230,8 @@ int libwrc_resource_get_type(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	if( libwrc_resource_values_get_type(
-	     internal_resource->resource_values,
+	if( libwrc_resource_node_entry_get_type(
+	     internal_resource->resource_node_entry,
 	     type,
 	     error ) != 1 )
 	{
@@ -1271,13 +1271,13 @@ int libwrc_resource_get_number_of_languages(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	if( internal_resource->resource_values == NULL )
+	if( internal_resource->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource - missing resource values.",
+		 "%s: invalid resource - missing resource node entry.",
 		 function );
 
 		return( -1 );
@@ -1340,13 +1340,13 @@ int libwrc_resource_get_language_identifier(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	if( internal_resource->resource_values == NULL )
+	if( internal_resource->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource - missing resource values.",
+		 "%s: invalid resource - missing resource node entry.",
 		 function );
 
 		return( -1 );
@@ -1414,26 +1414,26 @@ int libwrc_resource_get_value_by_language_identifier(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	if( internal_resource->resource_values == NULL )
+	if( internal_resource->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource - missing resource values.",
+		 "%s: invalid resource - missing resource node entry.",
 		 function );
 
 		return( -1 );
 	}
-	if( internal_resource->resource_values->type != resource_type )
+	if( internal_resource->resource_node_entry->type != resource_type )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported resource type: 0x%08" PRIx32 ".",
+		 "%s: invalid resource - invalid resource node entry - unsupported resource type: 0x%08" PRIx32 ".",
 		 function,
-		 internal_resource->resource_values->type );
+		 internal_resource->resource_node_entry->type );
 
 		return( -1 );
 	}

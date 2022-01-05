@@ -25,7 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "libwrc_data_descriptor.h"
 #include "libwrc_libbfio.h"
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
@@ -81,13 +80,6 @@ int libwrc_io_handle_read_resource_node(
      off64_t file_offset,
      int node_level,
      libcdata_tree_node_t *node,
-     libcerror_error_t **error );
-
-int libwrc_io_handle_read_data_descriptor(
-     libwrc_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     off64_t file_offset,
-     libwrc_data_descriptor_t *data_descriptor,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

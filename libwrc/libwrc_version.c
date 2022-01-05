@@ -30,7 +30,6 @@
 #include "libwrc_libfvalue.h"
 #include "libwrc_libuna.h"
 #include "libwrc_resource.h"
-#include "libwrc_resource_values.h"
 #include "libwrc_version.h"
 #include "libwrc_version_values.h"
 

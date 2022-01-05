@@ -30,7 +30,7 @@
 #include "libwrc_libbfio.h"
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
-#include "libwrc_resource_values.h"
+#include "libwrc_resource_node_entry.h"
 #include "libwrc_types.h"
 
 #if defined( __cplusplus )
@@ -53,9 +53,9 @@ struct libwrc_internal_resource_item
 	 */
 	libcdata_tree_node_t *resource_node;
 
-	/* The resource values
+	/* The resource node entry
 	 */
-	libwrc_resource_values_t *resource_values;
+	libwrc_resource_node_entry_t *resource_node_entry;
 
 	/* The current data offset
 	 */

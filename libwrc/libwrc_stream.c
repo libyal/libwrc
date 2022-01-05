@@ -35,7 +35,7 @@
 #include "libwrc_libcnotify.h"
 #include "libwrc_libuna.h"
 #include "libwrc_resource.h"
-#include "libwrc_resource_values.h"
+#include "libwrc_resource_node_entry.h"
 #include "libwrc_stream.h"
 
 /* Creates a stream
@@ -759,7 +759,7 @@ int libwrc_stream_close(
 	}
 	if( libcdata_tree_node_free(
 	     &( internal_stream->resources_root_node ),
-	     (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_values_free,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_node_entry_free,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1238,12 +1238,12 @@ int libwrc_stream_get_resource_by_identifier(
      libwrc_resource_t **resource,
      libcerror_error_t **error )
 {
-	libcdata_tree_node_t *resource_node       = NULL;
-	libwrc_internal_stream_t *internal_stream = NULL;
-	libwrc_resource_values_t *resource_values = NULL;
-	static char *function                     = "libwrc_stream_get_resource_by_identifier";
-	int number_of_resources                   = 0;
-	int resource_index                        = 0;
+	libcdata_tree_node_t *resource_node               = NULL;
+	libwrc_internal_stream_t *internal_stream         = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry = NULL;
+	static char *function                             = "libwrc_stream_get_resource_by_identifier";
+	int number_of_resources                           = 0;
+	int resource_index                                = 0;
 
 	if( stream == NULL )
 	{
@@ -1317,32 +1317,32 @@ int libwrc_stream_get_resource_by_identifier(
 		{
 			if( libcdata_tree_node_get_value(
 			     resource_node,
-			     (intptr_t **) &resource_values,
+			     (intptr_t **) &resource_node_entry,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve value of resource node: %d.",
+				 "%s: unable to retrieve resource node: %d entry.",
 				 function,
 				 resource_index );
 
 				return( -1 );
 			}
-			if( resource_values == NULL )
+			if( resource_node_entry == NULL )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: missing resource values: %d.",
+				 "%s: missing resource node: %d entry.",
 				 function,
 				 resource_index );
 
 				return( -1 );
 			}
-			if( identifier == resource_values->identifier )
+			if( identifier == resource_node_entry->identifier )
 			{
 				if( libwrc_resource_initialize(
 				     resource,
@@ -1391,12 +1391,12 @@ int libwrc_stream_get_resource_by_type(
      libwrc_resource_t **resource,
      libcerror_error_t **error )
 {
-	libcdata_tree_node_t *resource_node       = NULL;
-	libwrc_internal_stream_t *internal_stream = NULL;
-	libwrc_resource_values_t *resource_values = NULL;
-	static char *function                     = "libwrc_stream_get_resource_by_type";
-	int number_of_resources                   = 0;
-	int resource_index                        = 0;
+	libcdata_tree_node_t *resource_node               = NULL;
+	libwrc_internal_stream_t *internal_stream         = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry = NULL;
+	static char *function                             = "libwrc_stream_get_resource_by_type";
+	int number_of_resources                           = 0;
+	int resource_index                                = 0;
 
 	if( stream == NULL )
 	{
@@ -1468,32 +1468,32 @@ int libwrc_stream_get_resource_by_type(
 	{
 		if( libcdata_tree_node_get_value(
 		     resource_node,
-		     (intptr_t **) &resource_values,
+		     (intptr_t **) &resource_node_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value of resource node: %d.",
+			 "%s: unable to retrieve resource node: %d entry.",
 			 function,
 			 resource_index );
 
 			return( -1 );
 		}
-		if( resource_values == NULL )
+		if( resource_node_entry == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing resource values: %d.",
+			 "%s: missing resource node: %d entry.",
 			 function,
 			 resource_index );
 
 			return( -1 );
 		}
-		if( type == resource_values->type )
+		if( type == resource_node_entry->type )
 		{
 			if( libwrc_resource_initialize(
 			     resource,
@@ -1542,13 +1542,13 @@ int libwrc_stream_get_resource_by_utf8_name(
      libwrc_resource_t **resource,
      libcerror_error_t **error )
 {
-	libcdata_tree_node_t *resource_node       = NULL;
-	libwrc_internal_stream_t *internal_stream = NULL;
-	libwrc_resource_values_t *resource_values = NULL;
-	static char *function                     = "libwrc_stream_get_resource_by_type";
-	int number_of_resources                   = 0;
-	int resource_index                        = 0;
-	int result                                = 0;
+	libcdata_tree_node_t *resource_node               = NULL;
+	libwrc_internal_stream_t *internal_stream         = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry = NULL;
+	static char *function                             = "libwrc_stream_get_resource_by_type";
+	int number_of_resources                           = 0;
+	int resource_index                                = 0;
+	int result                                        = 0;
 
 	if( stream == NULL )
 	{
@@ -1620,38 +1620,38 @@ int libwrc_stream_get_resource_by_utf8_name(
 	{
 		if( libcdata_tree_node_get_value(
 		     resource_node,
-		     (intptr_t **) &resource_values,
+		     (intptr_t **) &resource_node_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value of resource node: %d.",
+			 "%s: unable to retrieve resource node: %d entry.",
 			 function,
 			 resource_index );
 
 			return( -1 );
 		}
-		if( resource_values == NULL )
+		if( resource_node_entry == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing resource values: %d.",
+			 "%s: missing resource node: %d entry.",
 			 function,
 			 resource_index );
 
 			return( -1 );
 		}
-		if( resource_values->name_string_size > 0 )
+		if( resource_node_entry->name_string_size > 0 )
 		{
 			result = libuna_utf8_string_compare_with_utf16_stream(
 			          utf8_string,
 			          utf8_string_length + 1,
-			          resource_values->name_string,
-			          resource_values->name_string_size,
+			          resource_node_entry->name_string,
+			          resource_node_entry->name_string_size,
 			          LIBUNA_ENDIAN_LITTLE,
 			          error );
 
@@ -1717,13 +1717,13 @@ int libwrc_stream_get_resource_by_utf16_name(
      libwrc_resource_t **resource,
      libcerror_error_t **error )
 {
-	libcdata_tree_node_t *resource_node       = NULL;
-	libwrc_internal_stream_t *internal_stream = NULL;
-	libwrc_resource_values_t *resource_values = NULL;
-	static char *function                     = "libwrc_stream_get_resource_by_type";
-	int number_of_resources                   = 0;
-	int resource_index                        = 0;
-	int result                                = 0;
+	libcdata_tree_node_t *resource_node               = NULL;
+	libwrc_internal_stream_t *internal_stream         = NULL;
+	libwrc_resource_node_entry_t *resource_node_entry = NULL;
+	static char *function                             = "libwrc_stream_get_resource_by_type";
+	int number_of_resources                           = 0;
+	int resource_index                                = 0;
+	int result                                        = 0;
 
 	if( stream == NULL )
 	{
@@ -1795,38 +1795,38 @@ int libwrc_stream_get_resource_by_utf16_name(
 	{
 		if( libcdata_tree_node_get_value(
 		     resource_node,
-		     (intptr_t **) &resource_values,
+		     (intptr_t **) &resource_node_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value of resource node: %d.",
+			 "%s: unable to retrieve resource node: %d entry.",
 			 function,
 			 resource_index );
 
 			return( -1 );
 		}
-		if( resource_values == NULL )
+		if( resource_node_entry == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing resource values: %d.",
+			 "%s: missing resource node: %d entry.",
 			 function,
 			 resource_index );
 
 			return( -1 );
 		}
-		if( resource_values->name_string_size > 0 )
+		if( resource_node_entry->name_string_size > 0 )
 		{
 			result = libuna_utf16_string_compare_with_utf16_stream(
 			          utf16_string,
 			          utf16_string_length + 1,
-			          resource_values->name_string,
-			          resource_values->name_string_size,
+			          resource_node_entry->name_string,
+			          resource_node_entry->name_string_size,
 			          LIBUNA_ENDIAN_LITTLE,
 			          error );
 

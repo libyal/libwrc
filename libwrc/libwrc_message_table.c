@@ -29,7 +29,7 @@
 #include "libwrc_libfvalue.h"
 #include "libwrc_message_table.h"
 #include "libwrc_resource.h"
-#include "libwrc_resource_values.h"
+#include "libwrc_resource_node_entry.h"
 
 /* Retrieves the number of messages
  * Returns 1 if successful or -1 on error
@@ -56,26 +56,26 @@ int libwrc_message_table_get_number_of_messages(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	if( internal_resource->resource_values == NULL )
+	if( internal_resource->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource - missing resource values.",
+		 "%s: invalid resource - missing resource node entry.",
 		 function );
 
 		return( -1 );
 	}
-	if( internal_resource->resource_values->identifier != LIBWRC_RESOURCE_IDENTIFIER_MESSAGE_TABLE )
+	if( internal_resource->resource_node_entry->identifier != LIBWRC_RESOURCE_IDENTIFIER_MESSAGE_TABLE )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported resource type: 0x%08" PRIx32 ".",
+		 "%s: invalid resource - invalid resource node entry - unsupported resource type: 0x%08" PRIx32 ".",
 		 function,
-		 internal_resource->resource_values->identifier );
+		 internal_resource->resource_node_entry->identifier );
 
 		return( -1 );
 	}
@@ -235,26 +235,26 @@ int libwrc_message_table_get_index_by_identifier(
 	}
 	internal_resource = (libwrc_internal_resource_t *) resource;
 
-	if( internal_resource->resource_values == NULL )
+	if( internal_resource->resource_node_entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid resource - missing resource values.",
+		 "%s: invalid resource - missing resource node entry.",
 		 function );
 
 		return( -1 );
 	}
-	if( internal_resource->resource_values->identifier != LIBWRC_RESOURCE_IDENTIFIER_MESSAGE_TABLE )
+	if( internal_resource->resource_node_entry->identifier != LIBWRC_RESOURCE_IDENTIFIER_MESSAGE_TABLE )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported resource type: 0x%08" PRIx32 ".",
+		 "%s: invalid resource - missing resource node entry - unsupported resource type: 0x%08" PRIx32 ".",
 		 function,
-		 internal_resource->resource_values->identifier );
+		 internal_resource->resource_node_entry->identifier );
 
 		return( -1 );
 	}

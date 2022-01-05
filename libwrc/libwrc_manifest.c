@@ -31,7 +31,6 @@
 #include "libwrc_libfvalue.h"
 #include "libwrc_manifest.h"
 #include "libwrc_resource.h"
-#include "libwrc_resource_values.h"
 
 /* Retrieves the size of a specific UTF-8 formatted string
  * Returns 1 if successful or -1 on error
