@@ -41,7 +41,6 @@ DPKG_FILES = \
 	dpkg/rules \
 	dpkg/libwrc.install \
 	dpkg/libwrc-dev.install \
-	dpkg/libwrc-python.install \
 	dpkg/libwrc-python3.install \
 	dpkg/libwrc-tools.install \
 	dpkg/source/format
