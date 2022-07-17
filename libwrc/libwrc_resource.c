@@ -32,7 +32,6 @@
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
 #include "libwrc_libfvalue.h"
-#include "libwrc_libfwevt.h"
 #include "libwrc_libfwnt.h"
 #include "libwrc_manifest_values.h"
 #include "libwrc_message_table_values.h"
@@ -42,7 +41,6 @@
 #include "libwrc_resource_node_entry.h"
 #include "libwrc_string_values.h"
 #include "libwrc_version_values.h"
-#include "libwrc_wevt_template_values.h"
 
 /* Creates a resource
  * Make sure the value resource is referencing, is set to NULL
@@ -322,18 +320,6 @@ int libwrc_resource_read_value(
 
 			break;
 
-/* TODO deprecate */
-		case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
-			resource_type_string = "event template";
-
-			result = libwrc_language_table_initialize(
-			          (libwrc_language_table_t **) &( internal_resource->value ),
-			          error );
-
-			internal_resource->free_value = (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_language_table_free;
-
-			break;
-
 		default:
 #if defined( HAVE_DEBUG_OUTPUT )
 			resource_type_string = "UNKNOWN";
@@ -382,8 +368,7 @@ int libwrc_resource_read_value(
 	if( ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE )
 	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION )
 	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_MANIFEST )
-	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_MUI )
-	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE ) )
+	 || ( internal_resource->resource_node_entry->type == LIBWRC_RESOURCE_TYPE_MUI ) )
 	{
 		if( number_of_sub_nodes != 1 )
 		{
@@ -618,25 +603,6 @@ int libwrc_resource_read_value(
 						goto on_error;
 					}
 					break;
-
-/* TODO deprecate */
-				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
-					if( libwrc_language_entry_initialize(
-					     &language_entry,
-					     leaf_resource_node_entry->identifier,
-					     (int (*)(intptr_t **, libcerror_error_t **)) &libfwevt_manifest_free,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-						 "%s: unable to create event template values.",
-						 function );
-
-						goto on_error;
-					}
-					break;
 			}
 #if defined( HAVE_DEBUG_OUTPUT )
 			switch( internal_resource->resource_node_entry->type )
@@ -658,7 +624,6 @@ int libwrc_resource_read_value(
 				case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
 				case LIBWRC_RESOURCE_TYPE_MUI:
 				case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
-				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
 					if( libcnotify_verbose != 0 )
 					{
 						libcnotify_printf(
@@ -714,16 +679,6 @@ int libwrc_resource_read_value(
 
 				case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
 					result = libwrc_version_values_read(
-					          language_entry,
-					          internal_resource->io_handle,
-					          internal_resource->file_io_handle,
-					          data_descriptor,
-					          error );
-					break;
-
-/* TODO deprecate */
-				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
-					result = libwrc_wevt_template_values_read(
 					          language_entry,
 					          internal_resource->io_handle,
 					          internal_resource->file_io_handle,
@@ -796,7 +751,6 @@ int libwrc_resource_read_value(
 				case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
 				case LIBWRC_RESOURCE_TYPE_MUI:
 				case LIBWRC_RESOURCE_TYPE_VERSION_INFORMATION:
-				case LIBWRC_RESOURCE_TYPE_WEVT_TEMPLATE:
 					if( result != 1 )
 					{
 						libcerror_error_set(

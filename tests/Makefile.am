@@ -1,8 +1,11 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
 	@LIBCSPLIT_CPPFLAGS@ \
@@ -15,8 +18,8 @@ AM_CPPFLAGS = \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
-	@LIBFWEVT_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@ \
 	@LIBWRC_DLL_IMPORT@
 
 if HAVE_PYTHON_TESTS
@@ -65,16 +68,7 @@ check_PROGRAMS = \
 	wrc_test_support \
 	wrc_test_table_entry \
 	wrc_test_version_information_resource \
-	wrc_test_version_values \
-	wrc_test_wevt_channel \
-	wrc_test_wevt_event \
-	wrc_test_wevt_keyword \
-	wrc_test_wevt_level \
-	wrc_test_wevt_map \
-	wrc_test_wevt_opcode \
-	wrc_test_wevt_provider \
-	wrc_test_wevt_task \
-	wrc_test_wevt_template_definition
+	wrc_test_version_values
 
 wrc_test_data_descriptor_SOURCES = \
 	wrc_test_data_descriptor.c \
@@ -358,114 +352,6 @@ wrc_test_version_values_SOURCES = \
 	wrc_test_version_values.c
 
 wrc_test_version_values_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_channel_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_channel.c
-
-wrc_test_wevt_channel_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_event_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_event.c
-
-wrc_test_wevt_event_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_keyword_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_keyword.c
-
-wrc_test_wevt_keyword_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_level_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_level.c
-
-wrc_test_wevt_level_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_map_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_map.c
-
-wrc_test_wevt_map_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_opcode_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_opcode.c
-
-wrc_test_wevt_opcode_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_provider_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_provider.c
-
-wrc_test_wevt_provider_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_task_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_task.c
-
-wrc_test_wevt_task_LDADD = \
-	../libwrc/libwrc.la \
-	@LIBCERROR_LIBADD@
-
-wrc_test_wevt_template_definition_SOURCES = \
-	wrc_test_libcerror.h \
-	wrc_test_libwrc.h \
-	wrc_test_macros.h \
-	wrc_test_memory.c wrc_test_memory.h \
-	wrc_test_unused.h \
-	wrc_test_wevt_template_definition.c
-
-wrc_test_wevt_template_definition_LDADD = \
 	../libwrc/libwrc.la \
 	@LIBCERROR_LIBADD@
 

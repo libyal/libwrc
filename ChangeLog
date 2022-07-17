@@ -3,7 +3,6 @@ TODO:
 
 * deprecate and remove
   - libwrc_stream_get_resource
-  - WEVT_TEMPLATE resource
   - message table values
   - string values
   - version values

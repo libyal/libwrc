@@ -22,7 +22,6 @@ coverage:
     - "libfdatetime/*"
     - "libfguid/*"
     - "libfvalue/*"
-    - "libfwevt/*"
     - "libfwnt/*"
     - "libuna/*"
     - "tests/*"

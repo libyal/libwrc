@@ -209,15 +209,6 @@ typedef intptr_t libwrc_resource_item_t;
 typedef intptr_t libwrc_stream_t;
 typedef intptr_t libwrc_string_table_resource_t;
 typedef intptr_t libwrc_version_information_resource_t;
-typedef intptr_t libwrc_wevt_channel_t;
-typedef intptr_t libwrc_wevt_event_t;
-typedef intptr_t libwrc_wevt_keyword_t;
-typedef intptr_t libwrc_wevt_level_t;
-typedef intptr_t libwrc_wevt_map_t;
-typedef intptr_t libwrc_wevt_opcode_t;
-typedef intptr_t libwrc_wevt_provider_t;
-typedef intptr_t libwrc_wevt_task_t;
-typedef intptr_t libwrc_wevt_template_definition_t;
 
 #ifdef __cplusplus
 }

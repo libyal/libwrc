@@ -42,15 +42,6 @@ typedef struct libwrc_resource_item {}			libwrc_resource_item_t;
 typedef struct libwrc_stream {}				libwrc_stream_t;
 typedef struct libwrc_string_table_resource {}		libwrc_string_table_resource_t;
 typedef struct libwrc_version_information_resource {}	libwrc_version_information_resource_t;
-typedef struct libwrc_wevt_channel {}			libwrc_wevt_channel_t;
-typedef struct libwrc_wevt_event {}			libwrc_wevt_event_t;
-typedef struct libwrc_wevt_keyword {}			libwrc_wevt_keyword_t;
-typedef struct libwrc_wevt_level {}			libwrc_wevt_level_t;
-typedef struct libwrc_wevt_map {}			libwrc_wevt_map_t;
-typedef struct libwrc_wevt_opcode {}			libwrc_wevt_opcode_t;
-typedef struct libwrc_wevt_provider {}			libwrc_wevt_provider_t;
-typedef struct libwrc_wevt_task {}			libwrc_wevt_task_t;
-typedef struct libwrc_wevt_template_definition {}	libwrc_wevt_template_definition_t;
 
 #else
 typedef intptr_t libwrc_manifest_resource_t;
@@ -61,15 +52,6 @@ typedef intptr_t libwrc_resource_item_t;
 typedef intptr_t libwrc_stream_t;
 typedef intptr_t libwrc_string_table_resource_t;
 typedef intptr_t libwrc_version_information_resource_t;
-typedef intptr_t libwrc_wevt_channel_t;
-typedef intptr_t libwrc_wevt_event_t;
-typedef intptr_t libwrc_wevt_keyword_t;
-typedef intptr_t libwrc_wevt_level_t;
-typedef intptr_t libwrc_wevt_map_t;
-typedef intptr_t libwrc_wevt_opcode_t;
-typedef intptr_t libwrc_wevt_provider_t;
-typedef intptr_t libwrc_wevt_task_t;
-typedef intptr_t libwrc_wevt_template_definition_t;
 
 #endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 

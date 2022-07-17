@@ -16,7 +16,6 @@ AM_CPPFLAGS = \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
-	@LIBFWEVT_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBWRC_DLL_EXPORT@
@@ -43,7 +42,6 @@ libwrc_la_SOURCES = \
 	libwrc_libfdata.h \
 	libwrc_libfguid.h \
 	libwrc_libfvalue.h \
-	libwrc_libfwevt.h \
 	libwrc_libfwnt.h \
 	libwrc_libuna.h \
 	libwrc_manifest.c libwrc_manifest.h \
@@ -71,17 +69,6 @@ libwrc_la_SOURCES = \
 	libwrc_version.c libwrc_version.h \
 	libwrc_version_information_resource.c libwrc_version_information_resource.h \
 	libwrc_version_values.c libwrc_version_values.h \
-	libwrc_wevt_channel.c libwrc_wevt_channel.h \
-	libwrc_wevt_event.c libwrc_wevt_event.h \
-	libwrc_wevt_keyword.c libwrc_wevt_keyword.h \
-	libwrc_wevt_level.c libwrc_wevt_level.h \
-	libwrc_wevt_map.c libwrc_wevt_map.h \
-	libwrc_wevt_opcode.c libwrc_wevt_opcode.h \
-	libwrc_wevt_provider.c libwrc_wevt_provider.h \
-	libwrc_wevt_task.c libwrc_wevt_task.h \
-	libwrc_wevt_template.c libwrc_wevt_template.h \
-	libwrc_wevt_template_definition.c libwrc_wevt_template_definition.h \
-	libwrc_wevt_template_values.c libwrc_wevt_template_values.h \
 	wrc_data_descriptor.h \
 	wrc_message_table_resource.h \
 	wrc_mui_resource.h \
@@ -104,7 +91,6 @@ libwrc_la_LIBADD = \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
 	@LIBFVALUE_LIBADD@ \
-	@LIBFWEVT_LIBADD@ \
 	@LIBFWNT_LIBADD@ \
 	@PTHREAD_LIBADD@
 
