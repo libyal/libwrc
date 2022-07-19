@@ -28,7 +28,6 @@
 
 #include "pywrc_error.h"
 #include "pywrc_integer.h"
-#include "pywrc_language_identifiers.h"
 #include "pywrc_libcerror.h"
 #include "pywrc_libwrc.h"
 #include "pywrc_python.h"
@@ -55,21 +54,7 @@ PyMethodDef pywrc_resource_object_methods[] = {
 	  "\n"
 	  "Retrieves the name." },
 
-	/* Functions to access the language identifiers */
-
-	{ "get_number_of_languages",
-	  (PyCFunction) pywrc_resource_get_number_of_languages,
-	  METH_NOARGS,
-	  "get_number_of_languages() -> Integer\n"
-	  "\n"
-	  "Retrieves the number of languages." },
-
-	{ "get_language_identifier",
-	  (PyCFunction) pywrc_resource_get_language_identifier,
-	  METH_VARARGS | METH_KEYWORDS,
-	  "get_language_identifier(language_identifier_index) -> Integer or None\n"
-	  "\n"
-	  "Retrieves a specific language identifier." },
+	/* Functions to access the resource items */
 
 	{ "get_number_of_items",
 	  (PyCFunction) pywrc_resource_get_number_of_items,
@@ -101,18 +86,6 @@ PyGetSetDef pywrc_resource_object_get_set_definitions[] = {
 	  (getter) pywrc_resource_get_name,
 	  (setter) 0,
 	  "The name.",
-	  NULL },
-
-	{ "number_of_languages",
-	  (getter) pywrc_resource_get_number_of_languages,
-	  (setter) 0,
-	  "The number of languages.",
-	  NULL },
-
-	{ "language_identifiers",
-	  (getter) pywrc_resource_get_language_identifiers,
-	  (setter) 0,
-	  "The language identifiers",
 	  NULL },
 
 	{ "number_of_items",
@@ -230,7 +203,6 @@ PyTypeObject pywrc_resource_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pywrc_resource_new(
-           PyTypeObject *type_object,
            libwrc_resource_t *resource,
            PyObject *parent_object )
 {
@@ -250,7 +222,7 @@ PyObject *pywrc_resource_new(
 	 */
 	pywrc_resource = PyObject_New(
 	                  struct pywrc_resource,
-	                  type_object );
+	                  &pywrc_resource_type_object );
 
 	if( pywrc_resource == NULL )
 	{
@@ -550,223 +522,6 @@ on_error:
 		 utf8_string );
 	}
 	return( NULL );
-}
-
-/* Retrieves the number of languages
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pywrc_resource_get_number_of_languages(
-           pywrc_resource_t *pywrc_resource,
-           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
-{
-	PyObject *integer_object = NULL;
-	libcerror_error_t *error = NULL;
-	static char *function    = "pywrc_resource_get_number_of_languages";
-	int number_of_languages  = 0;
-	int result               = 0;
-
-	PYWRC_UNREFERENCED_PARAMETER( arguments )
-
-	if( PyErr_WarnEx(
-	     PyExc_DeprecationWarning,
-	     "Call to deprecated function: get_number_of_languages",
-	     1 ) < 0 )
-	{
-		return( NULL );
-	}
-	if( pywrc_resource == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid resource.",
-		 function );
-
-		return( NULL );
-	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libwrc_resource_get_number_of_languages(
-	          pywrc_resource->resource,
-	          &number_of_languages,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
-	{
-		pywrc_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to retrieve number of languages.",
-		 function );
-
-		libcerror_error_free(
-		 &error );
-
-		return( NULL );
-	}
-#if PY_MAJOR_VERSION >= 3
-	integer_object = PyLong_FromLong(
-	                  (long) number_of_languages );
-#else
-	integer_object = PyInt_FromLong(
-	                  (long) number_of_languages );
-#endif
-	return( integer_object );
-}
-
-/* Retrieves a specific language identifier by index
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pywrc_resource_get_language_identifier_by_index(
-           pywrc_resource_t *pywrc_resource,
-           int language_identifier_index )
-{
-	libcerror_error_t *error     = NULL;
-	PyObject *integer_object     = NULL;
-	static char *function        = "pywrc_resource_get_language_identifier_by_index";
-	uint32_t language_identifier = 0;
-	int result                   = 0;
-
-	if( pywrc_resource == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid resource.",
-		 function );
-
-		return( NULL );
-	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libwrc_resource_get_language_identifier(
-	          pywrc_resource->resource,
-	          language_identifier_index,
-	          &language_identifier,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
-	{
-		pywrc_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to retrieve language identifier: %d.",
-		 function,
-		 language_identifier_index );
-
-		libcerror_error_free(
-		 &error );
-
-		return( NULL );
-	}
-	integer_object = pywrc_integer_unsigned_new_from_64bit(
-	                  (uint64_t) language_identifier );
-
-	return( integer_object );
-}
-
-/* Retrieves a specific language identifier
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pywrc_resource_get_language_identifier(
-           pywrc_resource_t *pywrc_resource,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	static char *keyword_list[]   = { "language_identifier_index", NULL };
-	int language_identifier_index = 0;
-
-	if( PyErr_WarnEx(
-	     PyExc_DeprecationWarning,
-	     "Call to deprecated function: get_language_identifier",
-	     1 ) < 0 )
-	{
-		return( NULL );
-	}
-	if( PyArg_ParseTupleAndKeywords(
-	     arguments,
-	     keywords,
-	     "i",
-	     keyword_list,
-	     &language_identifier_index ) == 0 )
-	{
-		return( NULL );
-	}
-	return( pywrc_resource_get_language_identifier_by_index(
-	         pywrc_resource,
-	         language_identifier_index ) );
-}
-
-/* Retrieves a language identifiers sequence and iterator object for the language identifiers
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pywrc_resource_get_language_identifiers(
-           pywrc_resource_t *pywrc_resource,
-           PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
-{
-	libcerror_error_t *error              = NULL;
-	PyObject *language_identifiers_object = NULL;
-	static char *function                 = "pywrc_resource_get_language_identifiers";
-	int number_of_languages               = 0;
-	int result                            = 0;
-
-	PYWRC_UNREFERENCED_PARAMETER( arguments )
-
-	if( PyErr_WarnEx(
-	     PyExc_DeprecationWarning,
-	     "Call to deprecated function: get_language_identifiers",
-	     1 ) < 0 )
-	{
-		return( NULL );
-	}
-	if( pywrc_resource == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid resource.",
-		 function );
-
-		return( NULL );
-	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libwrc_resource_get_number_of_languages(
-	          pywrc_resource->resource,
-	          &number_of_languages,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
-	{
-		pywrc_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to retrieve number of languages.",
-		 function );
-
-		libcerror_error_free(
-		 &error );
-
-		return( NULL );
-	}
-	language_identifiers_object = pywrc_language_identifiers_new(
-	                               pywrc_resource,
-	                               &pywrc_resource_get_language_identifier_by_index,
-	                               number_of_languages );
-
-	if( language_identifiers_object == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to create language identifiers object.",
-		 function );
-
-		return( NULL );
-	}
-	return( language_identifiers_object );
 }
 
 /* Retrieves the number of resource items

@@ -690,16 +690,16 @@ PyObject *pywrc_message_table_resource_get_string_by_message_identifier(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *string_object          = NULL;
-	libcerror_error_t *error         = NULL;
-	uint8_t *string                  = NULL;
-	const char *errors               = NULL;
-	static char *function            = "pywrc_message_table_resource_get_string_by_message_identifier";
-	static char *keyword_list[]      = { "message_identifier", NULL };
-	unsigned long message_identifier = 0;
-	size_t string_size               = 0;
-	int message_index                = 0;
-	int result                       = 0;
+	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	uint8_t *string             = NULL;
+	const char *errors          = NULL;
+	static char *function       = "pywrc_message_table_resource_get_string_by_message_identifier";
+	static char *keyword_list[] = { "message_identifier", NULL };
+	size_t string_size          = 0;
+	uint32_t message_identifier = 0;
+	int message_index           = 0;
+	int result                  = 0;
 
 	if( pywrc_message_table_resource == NULL )
 	{
@@ -723,7 +723,7 @@ PyObject *pywrc_message_table_resource_get_string_by_message_identifier(
 
 	result = libwrc_message_table_resource_get_index_by_identifier(
 	          pywrc_message_table_resource->message_table_resource,
-	          (uint32_t) message_identifier,
+	          message_identifier,
 	          &message_index,
 	          &error );
 

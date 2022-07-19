@@ -190,27 +190,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pywrc\pywrc_language_identifiers.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pywrc\pywrc_manifest.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pywrc\pywrc_manifest_resource.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\pywrc\pywrc_message_table.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pywrc\pywrc_message_table_resource.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pywrc\pywrc_mui.c"
 				>
 			</File>
 			<File
@@ -238,15 +222,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pywrc\pywrc_string.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pywrc\pywrc_string_table_resource.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pywrc\pywrc_version.c"
 				>
 			</File>
 			<File
@@ -280,10 +256,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pywrc\pywrc_language_identifiers.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pywrc\pywrc_libbfio.h"
 				>
 			</File>
@@ -300,23 +272,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pywrc\pywrc_manifest.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pywrc\pywrc_manifest_resource.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\pywrc\pywrc_message_table.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pywrc\pywrc_message_table_resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pywrc\pywrc_mui.h"
 				>
 			</File>
 			<File
@@ -348,19 +308,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pywrc\pywrc_string.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\pywrc\pywrc_string_table_resource.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\pywrc\pywrc_unused.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pywrc\pywrc_version.h"
 				>
 			</File>
 			<File

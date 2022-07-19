@@ -53,7 +53,6 @@ extern PyMethodDef pywrc_resource_object_methods[];
 extern PyTypeObject pywrc_resource_type_object;
 
 PyObject *pywrc_resource_new(
-           PyTypeObject *type_object,
            libwrc_resource_t *resource,
            PyObject *parent_object );
 
@@ -68,23 +67,6 @@ PyObject *pywrc_resource_get_identifier(
            PyObject *arguments );
 
 PyObject *pywrc_resource_get_name(
-           pywrc_resource_t *pywrc_resource,
-           PyObject *arguments );
-
-PyObject *pywrc_resource_get_number_of_languages(
-           pywrc_resource_t *pywrc_resource,
-           PyObject *arguments );
-
-PyObject *pywrc_resource_get_language_identifier_by_index(
-           pywrc_resource_t *pywrc_resource,
-           int language_identifier_index );
-
-PyObject *pywrc_resource_get_language_identifier(
-           pywrc_resource_t *pywrc_resource,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pywrc_resource_get_language_identifiers(
            pywrc_resource_t *pywrc_resource,
            PyObject *arguments );
 

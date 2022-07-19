@@ -658,16 +658,16 @@ PyObject *pywrc_string_table_resource_get_string_by_string_identifier(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *string_object         = NULL;
-	libcerror_error_t *error        = NULL;
-	uint8_t *string                 = NULL;
-	const char *errors              = NULL;
-	static char *function           = "pywrc_string_table_resource_get_string_by_string_identifier";
-	static char *keyword_list[]     = { "string_identifier", NULL };
-	unsigned long string_identifier = 0;
-	size_t string_size              = 0;
-	int result                      = 0;
-	int string_index                = 0;
+	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	uint8_t *string             = NULL;
+	const char *errors          = NULL;
+	static char *function       = "pywrc_string_table_resource_get_string_by_string_identifier";
+	static char *keyword_list[] = { "string_identifier", NULL };
+	size_t string_size          = 0;
+	uint32_t string_identifier  = 0;
+	int result                  = 0;
+	int string_index            = 0;
 
 	if( pywrc_string_table_resource == NULL )
 	{
@@ -691,7 +691,7 @@ PyObject *pywrc_string_table_resource_get_string_by_string_identifier(
 
 	result = libwrc_string_table_resource_get_index_by_identifier(
 	          pywrc_string_table_resource->string_table_resource,
-	          (uint32_t) string_identifier,
+	          string_identifier,
 	          &string_index,
 	          &error );
 

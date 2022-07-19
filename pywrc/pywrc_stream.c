@@ -35,16 +35,11 @@
 #include "pywrc_libcerror.h"
 #include "pywrc_libclocale.h"
 #include "pywrc_libwrc.h"
-#include "pywrc_manifest.h"
-#include "pywrc_message_table.h"
-#include "pywrc_mui.h"
 #include "pywrc_python.h"
 #include "pywrc_resource.h"
 #include "pywrc_resources.h"
 #include "pywrc_stream.h"
-#include "pywrc_string.h"
 #include "pywrc_unused.h"
-#include "pywrc_version.h"
 
 #if !defined( LIBWRC_HAVE_BFIO )
 
@@ -1344,9 +1339,7 @@ PyObject *pywrc_stream_get_resource_by_index(
 	libcerror_error_t *error    = NULL;
 	libwrc_resource_t *resource = NULL;
 	PyObject *resource_object   = NULL;
-	PyTypeObject *type_object   = NULL;
 	static char *function       = "pywrc_stream_get_resource_by_index";
-	int resource_type           = 0;
 	int result                  = 0;
 
 	if( pywrc_stream == NULL )
@@ -1382,57 +1375,7 @@ PyObject *pywrc_stream_get_resource_by_index(
 
 		goto on_error;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libwrc_resource_get_type(
-	          resource,
-	          &resource_type,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
-	{
-		pywrc_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to retrieve resource: %d type.",
-		 function,
-		 resource_index );
-
-		libcerror_error_free(
-		 &error );
-
-		goto on_error;
-	}
-	switch( resource_type )
-	{
-		case LIBWRC_RESOURCE_TYPE_MANIFEST:
-			type_object = &pywrc_manifest_type_object;
-			break;
-
-		case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
-			type_object = &pywrc_message_table_type_object;
-			break;
-
-		case LIBWRC_RESOURCE_TYPE_MUI:
-			type_object = &pywrc_mui_type_object;
-			break;
-
-		case LIBWRC_RESOURCE_TYPE_STRING:
-			type_object = &pywrc_string_type_object;
-			break;
-
-		case LIBWRC_RESOURCE_TYPE_VERSION:
-			type_object = &pywrc_version_type_object;
-			break;
-
-		default:
-			type_object = &pywrc_resource_type_object;
-			break;
-	}
 	resource_object = pywrc_resource_new(
-	                   type_object,
 	                   resource,
 	                   pywrc_stream );
 
@@ -1556,15 +1499,13 @@ PyObject *pywrc_stream_get_resource_by_identifier(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *resource_object         = NULL;
-	PyTypeObject *type_object         = NULL;
-	libcerror_error_t *error          = NULL;
-	libwrc_resource_t *resource       = NULL;
-	static char *function             = "pywrc_stream_get_resource_by_identifier";
-	static char *keyword_list[]       = { "resource_identifier", NULL };
-	unsigned long resource_identifier = 0;
-	int resource_type                 = 0;
-	int result                        = 0;
+	libcerror_error_t *error     = NULL;
+	libwrc_resource_t *resource  = NULL;
+	PyObject *resource_object    = NULL;
+	static char *keyword_list[]  = { "resource_identifier", NULL };
+	static char *function        = "pywrc_stream_get_resource_by_identifier";
+	uint32_t resource_identifier = 0;
+	int result                   = 0;
 
 	if( pywrc_stream == NULL )
 	{
@@ -1615,53 +1556,7 @@ PyObject *pywrc_stream_get_resource_by_identifier(
 
 		return( Py_None );
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libwrc_resource_get_type(
-	          resource,
-	          &resource_type,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
-	{
-		pywrc_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to retrieve resource: %" PRIu32 " type.",
-		 function,
-		 (uint32_t) resource_identifier );
-
-		libcerror_error_free(
-		 &error );
-
-		goto on_error;
-	}
-	switch( resource_type )
-	{
-		case LIBWRC_RESOURCE_TYPE_MANIFEST:
-			type_object = &pywrc_manifest_type_object;
-			break;
-
-		case LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE:
-			type_object = &pywrc_message_table_type_object;
-			break;
-
-		case LIBWRC_RESOURCE_TYPE_STRING:
-			type_object = &pywrc_string_type_object;
-			break;
-
-		case LIBWRC_RESOURCE_TYPE_VERSION:
-			type_object = &pywrc_version_type_object;
-			break;
-
-		default:
-			type_object = &pywrc_resource_type_object;
-			break;
-	}
 	resource_object = pywrc_resource_new(
-	                   type_object,
 	                   resource,
 	                   (PyObject *) pywrc_stream );
 
@@ -1697,12 +1592,10 @@ PyObject *pywrc_stream_get_resource_by_name(
 	libcerror_error_t *error     = NULL;
 	libwrc_resource_t *resource  = NULL;
 	PyObject *resource_object    = NULL;
-	PyTypeObject *type_object    = NULL;
 	char *resource_name          = 0;
 	static char *keyword_list[]  = { "resource_name", NULL };
 	static char *function        = "pywrc_stream_get_resource_by_name";
 	size_t resource_name_length  = 0;
-	int resource_type            = 0;
 	int result                   = 0;
 
 	if( pywrc_stream == NULL )
@@ -1758,41 +1651,7 @@ PyObject *pywrc_stream_get_resource_by_name(
 
 		return( Py_None );
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libwrc_resource_get_type(
-	          resource,
-	          &resource_type,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
-	{
-		pywrc_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to retrieve resource: %s type.",
-		 function,
-		 resource_name );
-
-		libcerror_error_free(
-		 &error );
-
-		goto on_error;
-	}
-	switch( resource_type )
-	{
-		case LIBWRC_RESOURCE_TYPE_MUI:
-			type_object = &pywrc_mui_type_object;
-			break;
-
-		default:
-			type_object = &pywrc_resource_type_object;
-			break;
-	}
 	resource_object = pywrc_resource_new(
-	                   type_object,
 	                   resource,
 	                   (PyObject *) pywrc_stream );
 
