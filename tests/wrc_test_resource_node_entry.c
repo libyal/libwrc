@@ -1005,7 +1005,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int wrc_test_resource_node_entry_get_utf8_name(
-     libwrc_message_table_resource_t *message_table_resource )
+     libwrc_resource_node_entry_t *resource_node_entry )
 {
 	uint8_t utf8_string[ 384 ];
 
@@ -1015,7 +1015,7 @@ int wrc_test_resource_node_entry_get_utf8_name(
 	/* Test regular cases
 	 */
 	result = libwrc_resource_node_entry_get_utf8_name(
-	          message_table_resource,
+	          resource_node_entry,
 	          utf8_string,
 	          384,
 	          &error );
@@ -1052,7 +1052,7 @@ int wrc_test_resource_node_entry_get_utf8_name(
 	 &error );
 
 	result = libwrc_resource_node_entry_get_utf8_name(
-	          message_table_resource,
+	          resource_node_entry,
 	          NULL,
 	          384,
 	          &error );
@@ -1070,7 +1070,7 @@ int wrc_test_resource_node_entry_get_utf8_name(
 	 &error );
 
 	result = libwrc_resource_node_entry_get_utf8_name(
-	          message_table_resource,
+	          resource_node_entry,
 	          utf8_string,
 	          0,
 	          &error );
@@ -1088,7 +1088,7 @@ int wrc_test_resource_node_entry_get_utf8_name(
 	 &error );
 
 	result = libwrc_resource_node_entry_get_utf8_name(
-	          message_table_resource,
+	          resource_node_entry,
 	          utf8_string,
 	          (size_t) SSIZE_MAX + 1,
 	          &error );
@@ -1198,7 +1198,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int wrc_test_resource_node_entry_get_utf16_name(
-     libwrc_message_table_resource_t *message_table_resource )
+     libwrc_resource_node_entry_t *resource_node_entry )
 {
 	uint16_t utf16_string[ 384 ];
 
@@ -1208,7 +1208,7 @@ int wrc_test_resource_node_entry_get_utf16_name(
 	/* Test regular cases
 	 */
 	result = libwrc_resource_node_entry_get_utf16_name(
-	          message_table_resource,
+	          resource_node_entry,
 	          utf16_string,
 	          384,
 	          &error );
@@ -1245,7 +1245,7 @@ int wrc_test_resource_node_entry_get_utf16_name(
 	 &error );
 
 	result = libwrc_resource_node_entry_get_utf16_name(
-	          message_table_resource,
+	          resource_node_entry,
 	          NULL,
 	          384,
 	          &error );
@@ -1263,7 +1263,7 @@ int wrc_test_resource_node_entry_get_utf16_name(
 	 &error );
 
 	result = libwrc_resource_node_entry_get_utf16_name(
-	          message_table_resource,
+	          resource_node_entry,
 	          utf16_string,
 	          0,
 	          &error );
@@ -1281,7 +1281,7 @@ int wrc_test_resource_node_entry_get_utf16_name(
 	 &error );
 
 	result = libwrc_resource_node_entry_get_utf16_name(
-	          message_table_resource,
+	          resource_node_entry,
 	          utf16_string,
 	          (size_t) SSIZE_MAX + 1,
 	          &error );

@@ -513,7 +513,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int wrc_test_table_entry_get_utf8_string(
-     libwrc_message_table_resource_t *message_table_resource )
+     libwrc_table_entry_t *table_entry )
 {
 	uint8_t utf8_string[ 384 ];
 
@@ -523,7 +523,7 @@ int wrc_test_table_entry_get_utf8_string(
 	/* Test regular cases
 	 */
 	result = libwrc_table_entry_get_utf8_string(
-	          message_table_resource,
+	          table_entry,
 	          utf8_string,
 	          384,
 	          &error );
@@ -560,7 +560,7 @@ int wrc_test_table_entry_get_utf8_string(
 	 &error );
 
 	result = libwrc_table_entry_get_utf8_string(
-	          message_table_resource,
+	          table_entry,
 	          NULL,
 	          384,
 	          &error );
@@ -578,7 +578,7 @@ int wrc_test_table_entry_get_utf8_string(
 	 &error );
 
 	result = libwrc_table_entry_get_utf8_string(
-	          message_table_resource,
+	          table_entry,
 	          utf8_string,
 	          0,
 	          &error );
@@ -596,7 +596,7 @@ int wrc_test_table_entry_get_utf8_string(
 	 &error );
 
 	result = libwrc_table_entry_get_utf8_string(
-	          message_table_resource,
+	          table_entry,
 	          utf8_string,
 	          (size_t) SSIZE_MAX + 1,
 	          &error );
@@ -706,7 +706,7 @@ on_error:
  * Returns 1 if successful or 0 if not
  */
 int wrc_test_table_entry_get_utf16_string(
-     libwrc_message_table_resource_t *message_table_resource )
+     libwrc_table_entry_t *table_entry )
 {
 	uint16_t utf16_string[ 384 ];
 
@@ -716,7 +716,7 @@ int wrc_test_table_entry_get_utf16_string(
 	/* Test regular cases
 	 */
 	result = libwrc_table_entry_get_utf16_string(
-	          message_table_resource,
+	          table_entry,
 	          utf16_string,
 	          384,
 	          &error );
@@ -753,7 +753,7 @@ int wrc_test_table_entry_get_utf16_string(
 	 &error );
 
 	result = libwrc_table_entry_get_utf16_string(
-	          message_table_resource,
+	          table_entry,
 	          NULL,
 	          384,
 	          &error );
@@ -771,7 +771,7 @@ int wrc_test_table_entry_get_utf16_string(
 	 &error );
 
 	result = libwrc_table_entry_get_utf16_string(
-	          message_table_resource,
+	          table_entry,
 	          utf16_string,
 	          0,
 	          &error );
@@ -789,7 +789,7 @@ int wrc_test_table_entry_get_utf16_string(
 	 &error );
 
 	result = libwrc_table_entry_get_utf16_string(
-	          message_table_resource,
+	          table_entry,
 	          utf16_string,
 	          (size_t) SSIZE_MAX + 1,
 	          &error );
