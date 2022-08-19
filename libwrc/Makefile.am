@@ -58,6 +58,7 @@ libwrc_la_SOURCES = \
 	libwrc_resource_item.c libwrc_resource_item.h \
 	libwrc_resource_node_entry.c libwrc_resource_node_entry.h \
 	libwrc_resource_node_header.c libwrc_resource_node_header.h \
+	libwrc_resource_node_tree.c libwrc_resource_node_tree.h \
 	libwrc_stream.c libwrc_stream.h \
 	libwrc_support.c libwrc_support.h \
 	libwrc_string.c libwrc_string.h \

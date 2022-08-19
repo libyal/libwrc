@@ -1,5 +1,5 @@
 /*
- * Input/Output (IO) handle functions
+ * Resource node tree functions
  *
  * Copyright (C) 2011-2022, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,56 +19,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWRC_IO_HANDLE_H )
-#define _LIBWRC_IO_HANDLE_H
+#if !defined( _LIBWRC_RESOURCE_NODE_TREE_H )
+#define _LIBWRC_RESOURCE_NODE_TREE_H
 
 #include <common.h>
 #include <types.h>
 
+#include "libwrc_io_handle.h"
+#include "libwrc_libbfio.h"
+#include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-extern const char *wrc_mz_signature;
-
-typedef struct libwrc_io_handle libwrc_io_handle_t;
-
-struct libwrc_io_handle
-{
-	/* The virtual address
-	 */
-	uint32_t virtual_address;
-
-	/* The stream size
-	 */
-	size64_t stream_size;
-
-	/* The codepage of the extended ASCII strings
-	 */
-	int ascii_codepage;
-
-	/* Value to indicate if abort was signalled
-	 */
-	int abort;
-};
-
-int libwrc_io_handle_initialize(
-     libwrc_io_handle_t **io_handle,
-     libcerror_error_t **error );
-
-int libwrc_io_handle_free(
-     libwrc_io_handle_t **io_handle,
-     libcerror_error_t **error );
-
-int libwrc_io_handle_clear(
+int libwrc_resource_node_tree_read_node(
+     libcdata_tree_node_t *node,
      libwrc_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     off64_t file_offset,
+     int node_level,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBWRC_IO_HANDLE_H ) */
+#endif /* !defined( _LIBWRC_RESOURCE_NODE_TREE_H ) */
 

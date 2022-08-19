@@ -254,6 +254,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_resource_node_tree.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_stream.c"
 				>
 			</File>
@@ -429,6 +433,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_resource_node_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwrc\libwrc_resource_node_tree.h"
 				>
 			</File>
 			<File

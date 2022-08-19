@@ -36,6 +36,7 @@
 #include "libwrc_libuna.h"
 #include "libwrc_resource.h"
 #include "libwrc_resource_node_entry.h"
+#include "libwrc_resource_node_tree.h"
 #include "libwrc_stream.h"
 
 /* Creates a stream
@@ -619,7 +620,7 @@ int libwrc_stream_open_file_io_handle(
 		}
 		internal_stream->file_io_handle_opened_in_library = 1;
 	}
-	if( libwrc_stream_open_read(
+	if( libwrc_internal_stream_open_read(
 	     internal_stream,
 	     file_io_handle,
 	     error ) != 1 )
@@ -777,12 +778,12 @@ int libwrc_stream_close(
 /* Opens a stream for reading
  * Returns 1 if successful or -1 on error
  */
-int libwrc_stream_open_read(
+int libwrc_internal_stream_open_read(
      libwrc_internal_stream_t *internal_stream,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libwrc_stream_open_read";
+	static char *function = "libwrc_internal_stream_open_read";
 
 	if( internal_stream == NULL )
 	{
@@ -812,29 +813,68 @@ int libwrc_stream_open_read(
 	}
 	internal_stream->io_handle->virtual_address = internal_stream->virtual_address;
 
+	if( libbfio_handle_get_size(
+	     file_io_handle,
+	     &( internal_stream->io_handle->stream_size ),
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to retrieve stream size.",
+		 function );
+
+		goto on_error;
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "Reading resource nodes:\n" );
+		 "Reading resource node tree:\n" );
 	}
 #endif
-	if( libwrc_io_handle_read_resource_nodes(
+	if( libcdata_tree_node_initialize(
+	     &( internal_stream->resources_root_node ),
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create resources root node.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_node_tree_read_node(
+	     internal_stream->resources_root_node,
 	     internal_stream->io_handle,
 	     file_io_handle,
-	     &( internal_stream->resources_root_node ),
+	     0,
+	     1,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read resource nodes.",
+		 "%s: unable to read resources root node.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	return( 1 );
+
+on_error:
+	if( internal_stream->resources_root_node != NULL )
+	{
+		libcdata_tree_node_free(
+		 &( internal_stream->resources_root_node ),
+		 (int (*)(intptr_t **, libcerror_error_t **)) &libwrc_resource_node_entry_free,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Retrieves the stream ASCII codepage

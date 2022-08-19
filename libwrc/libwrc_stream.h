@@ -110,7 +110,7 @@ int libwrc_stream_close(
      libwrc_stream_t *stream,
      libcerror_error_t **error );
 
-int libwrc_stream_open_read(
+int libwrc_internal_stream_open_read(
      libwrc_internal_stream_t *internal_stream,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );

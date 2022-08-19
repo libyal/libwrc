@@ -27,6 +27,7 @@
 #include "libwrc_data_descriptor.h"
 #include "libwrc_debug.h"
 #include "libwrc_definitions.h"
+#include "libwrc_libbfio.h"
 #include "libwrc_libcdata.h"
 #include "libwrc_libcerror.h"
 #include "libwrc_libcnotify.h"
