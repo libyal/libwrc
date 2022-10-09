@@ -1,22 +1,11 @@
 TODO:
 * escape special characters in string table and message table output
 
-* deprecate and remove
-  - libwrc_stream_get_resource
-  - message table values
-  - string values
-  - version values
-
 * pywrc:
   - MUI check output of pywrc_mui_get_main_name amd pywrc_mui_get_mui_name
   - add version type support (complete pywrc_version.c)
   - add iterator objects for a message table of a specific language
   - add iterator objects for strings of a specific language
-* code clean up:
-  - libwrc_string_get_number_of_strings
-  - libwrc_string_get_index_by_identifier
-  - libwrc_message_table_get_number_of_messages
-  - libwrc_message_table_get_index_by_identifier
 * MUI
   - match muirct output
 * VERSION

@@ -198,10 +198,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_manifest.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwrc\libwrc_manifest_resource.c"
 				>
 			</File>
@@ -210,19 +206,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_message_table.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwrc\libwrc_message_table_resource.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_message_table_values.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_mui.c"
 				>
 			</File>
 			<File
@@ -262,10 +250,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_string.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwrc\libwrc_string_table_resource.c"
 				>
 			</File>
@@ -279,10 +263,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_table_entry.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_version.c"
 				>
 			</File>
 			<File
@@ -380,10 +360,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_manifest.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwrc\libwrc_manifest_resource.h"
 				>
 			</File>
@@ -392,19 +368,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_message_table.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwrc\libwrc_message_table_resource.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_message_table_values.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_mui.h"
 				>
 			</File>
 			<File
@@ -444,10 +412,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_string.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwrc\libwrc_string_table_resource.h"
 				>
 			</File>
@@ -469,10 +433,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_unused.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_version.h"
 				>
 			</File>
 			<File

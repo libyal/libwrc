@@ -44,13 +44,10 @@ libwrc_la_SOURCES = \
 	libwrc_libfvalue.h \
 	libwrc_libfwnt.h \
 	libwrc_libuna.h \
-	libwrc_manifest.c libwrc_manifest.h \
 	libwrc_manifest_resource.c libwrc_manifest_resource.h \
 	libwrc_manifest_values.c libwrc_manifest_values.h \
-	libwrc_message_table.c libwrc_message_table.h \
 	libwrc_message_table_resource.c libwrc_message_table_resource.h \
 	libwrc_message_table_values.c libwrc_message_table_values.h \
-	libwrc_mui.c libwrc_mui.h \
 	libwrc_mui_resource.c libwrc_mui_resource.h \
 	libwrc_mui_values.c libwrc_mui_values.h \
 	libwrc_notify.c libwrc_notify.h \
@@ -61,13 +58,11 @@ libwrc_la_SOURCES = \
 	libwrc_resource_node_tree.c libwrc_resource_node_tree.h \
 	libwrc_stream.c libwrc_stream.h \
 	libwrc_support.c libwrc_support.h \
-	libwrc_string.c libwrc_string.h \
 	libwrc_string_table_resource.c libwrc_string_table_resource.h \
 	libwrc_string_values.c libwrc_string_values.h \
 	libwrc_table_entry.c libwrc_table_entry.h \
 	libwrc_types.h \
 	libwrc_unused.h \
-	libwrc_version.c libwrc_version.h \
 	libwrc_version_information_resource.c libwrc_version_information_resource.h \
 	libwrc_version_values.c libwrc_version_values.h \
 	wrc_data_descriptor.h \

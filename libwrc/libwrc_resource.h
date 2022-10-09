@@ -129,19 +129,6 @@ int libwrc_resource_get_type(
      int *type,
      libcerror_error_t **error );
 
-LIBWRC_EXTERN \
-int libwrc_resource_get_number_of_languages(
-     libwrc_resource_t *resource,
-     int *number_of_languages,
-     libcerror_error_t **error );
-
-LIBWRC_EXTERN \
-int libwrc_resource_get_language_identifier(
-     libwrc_resource_t *resource,
-     int language_index,
-     uint32_t *language_identifier,
-     libcerror_error_t **error );
-
 int libwrc_resource_get_value_by_language_identifier(
      libwrc_resource_t *resource,
      int resource_type,

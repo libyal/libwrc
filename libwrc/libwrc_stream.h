@@ -146,13 +146,6 @@ int libwrc_stream_get_number_of_resources(
      libcerror_error_t **error );
 
 LIBWRC_EXTERN \
-int libwrc_stream_get_resource(
-     libwrc_stream_t *stream,
-     int resource_index,
-     libwrc_resource_t **resource,
-     libcerror_error_t **error );
-
-LIBWRC_EXTERN \
 int libwrc_stream_get_resource_by_index(
      libwrc_stream_t *stream,
      int resource_index,
