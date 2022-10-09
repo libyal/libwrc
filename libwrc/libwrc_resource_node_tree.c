@@ -158,8 +158,9 @@ int libwrc_resource_node_tree_read_node(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create resource node entry.",
-			 function );
+			 "%s: unable to create resource node entry: %d.",
+			 function,
+			 entry_index );
 
 			goto on_error;
 		}
@@ -174,8 +175,9 @@ int libwrc_resource_node_tree_read_node(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read resource node entry at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 "%s: unable to read resource node entry: %d at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 			 function,
+			 entry_index,
 			 file_offset,
 			 file_offset );
 
@@ -194,8 +196,22 @@ int libwrc_resource_node_tree_read_node(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read resource node name.",
-			 function );
+			 "%s: unable to read resource node entry: %d name.",
+			 function,
+			 entry_index );
+
+			goto on_error;
+		}
+		if( ( resource_node_entry->offset == 0 )
+		 || ( ( resource_node_entry->offset && 0x80000000UL ) >= io_handle->stream_size ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid resource node entry: %d - offset value out of bounds.",
+			 function,
+			 entry_index );
 
 			goto on_error;
 		}
@@ -467,7 +483,7 @@ int libwrc_resource_node_tree_read_node(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-				 "%s: invalid data descriptor: %d - virtual address out of bounds.",
+				 "%s: invalid data descriptor: %d - virtual address value out of bounds.",
 				 function,
 				 sub_node_index );
 
@@ -479,7 +495,7 @@ int libwrc_resource_node_tree_read_node(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-				 "%s: invalid data descriptor: %d - size out of bounds.",
+				 "%s: invalid data descriptor: %d - size value out of bounds.",
 				 function,
 				 sub_node_index );
 

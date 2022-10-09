@@ -208,7 +208,7 @@ int libwrc_data_descriptor_read_data(
 		 data_descriptor->virtual_address );
 
 		libcnotify_printf(
-		 "%s: size\t\t\t\t: %" PRIu32 "\n",
+		 "%s: size\t\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 data_descriptor->size );
 
