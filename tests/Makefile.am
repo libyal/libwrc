@@ -36,6 +36,7 @@ check_SCRIPTS = \
 	pywrc_test_manifest_resource.py \
 	pywrc_test_message_table_resource.py \
 	pywrc_test_mui_resource.py \
+	pywrc_test_stream.py \
 	pywrc_test_string_table_resource.py \
 	pywrc_test_support.py \
 	pywrc_test_version_information_resource.py \
