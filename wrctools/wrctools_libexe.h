@@ -31,6 +31,7 @@
 #include <libexe_definitions.h>
 #include <libexe_file.h>
 #include <libexe_section.h>
+#include <libexe_support.h>
 #include <libexe_types.h>
 
 #else
@@ -44,7 +45,7 @@
 
 #include <libexe.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBEXE ) */
 
-#endif
+#endif /* !defined( _WRCTOOLS_LIBEXE_H ) */
 

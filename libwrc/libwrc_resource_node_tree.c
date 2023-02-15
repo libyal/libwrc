@@ -58,8 +58,10 @@ int libwrc_resource_node_tree_read_node(
 	libwrc_resource_node_entry_t *sub_resource_node_entry = NULL;
 	libwrc_resource_node_header_t *resource_node_header   = NULL;
 	static char *function                                 = "libwrc_resource_node_tree_read_node";
+	off64_t resource_node_entry_data_offset               = 0;
 	uint32_t entry_index                                  = 0;
 	uint32_t number_of_entries                            = 0;
+	uint32_t resource_node_entry_offset                   = 0;
 	int number_of_sub_nodes                               = 0;
 	int resource_node_entry_index                         = 0;
 	int result                                            = 0;
@@ -146,6 +148,19 @@ int libwrc_resource_node_tree_read_node(
 
 		goto on_error;
 	}
+	resource_node_entry_data_offset = sizeof( wrc_resource_node_header_t ) + ( number_of_entries * sizeof( wrc_resource_node_entry_t ) );
+
+	if( (size64_t) resource_node_entry_data_offset > io_handle->stream_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid number of entries value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
 	for( entry_index = 0;
 	     entry_index < number_of_entries;
 	     entry_index++ )
@@ -202,8 +217,12 @@ int libwrc_resource_node_tree_read_node(
 
 			goto on_error;
 		}
-		if( ( resource_node_entry->offset == 0 )
-		 || ( ( resource_node_entry->offset && 0x80000000UL ) >= io_handle->stream_size ) )
+		resource_node_entry_offset = resource_node_entry->offset & 0x7fffffffUL;
+
+		/* Check the bounds here to fail fast on corrupt data
+		 */
+		if( ( resource_node_entry_offset < resource_node_entry_data_offset )
+		 || ( resource_node_entry_offset >= io_handle->stream_size ) )
 		{
 			libcerror_error_set(
 			 error,
@@ -421,11 +440,13 @@ int libwrc_resource_node_tree_read_node(
 		}
 		if( ( sub_resource_node_entry->offset & 0x80000000UL ) != 0 )
 		{
+			resource_node_entry_offset = sub_resource_node_entry->offset & 0x7fffffffUL;
+
 			if( libwrc_resource_node_tree_read_node(
 			     sub_node,
 			     io_handle,
 			     file_io_handle,
-			     (off64_t) ( sub_resource_node_entry->offset & 0x7fffffffUL ),
+			     (off64_t) resource_node_entry_offset,
 			     node_level + 1,
 			     error ) != 1 )
 			{
@@ -436,8 +457,8 @@ int libwrc_resource_node_tree_read_node(
 				 "%s: unable to read sub resource node: %d at offset: %" PRIu32 " (0x%08" PRIx32 ").",
 				 function,
 				 sub_node_index,
-				 sub_resource_node_entry->offset,
-				 sub_resource_node_entry->offset );
+				 resource_node_entry_offset,
+				 resource_node_entry_offset );
 
 				goto on_error;
 			}

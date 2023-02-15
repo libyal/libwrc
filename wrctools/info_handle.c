@@ -389,6 +389,7 @@ int info_handle_open_input(
 {
 	static char *function    = "info_handle_open_input";
 	uint32_t virtual_address = 0;
+	int has_exe_signature    = 0;
 	int result               = 0;
 
 	if( info_handle == NULL )
@@ -403,48 +404,74 @@ int info_handle_open_input(
 		return( -1 );
 	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libexe_file_open_wide(
-	     info_handle->input_exe_file,
-	     filename,
-	     LIBEXE_OPEN_READ,
-	     error ) != 1 )
-#else
-	if( libexe_file_open(
-	     info_handle->input_exe_file,
-	     filename,
-	     LIBEXE_OPEN_READ,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open input EXE file.",
-		 function );
-
-		goto on_error;
-	}
-	result = libexe_file_get_section_by_name(
-	          info_handle->input_exe_file,
-	          ".rsrc",
-	          5,
-	          &( info_handle->resource_section ),
+	result = libexe_check_file_signature_wide(
+	          filename,
 	          error );
-
+#else
+	result = libexe_check_file_signature(
+	          filename,
+	          error );
+#endif
 	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve resource section.",
+		 LIBCERROR_RUNTIME_ERROR_GENERIC,
+		 "%s: unable to determine if input file is an EXE file.",
 		 function );
 
 		goto on_error;
 	}
-	else if( result != 0 )
+	has_exe_signature = result;
+
+	if( has_exe_signature != 0 )
 	{
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libexe_file_open_wide(
+		     info_handle->input_exe_file,
+		     filename,
+		     LIBEXE_OPEN_READ,
+		     error ) != 1 )
+#else
+		if( libexe_file_open(
+		     info_handle->input_exe_file,
+		     filename,
+		     LIBEXE_OPEN_READ,
+		     error ) != 1 )
+#endif
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open input EXE file.",
+			 function );
+
+			goto on_error;
+		}
+		result = libexe_file_get_section_by_name(
+		          info_handle->input_exe_file,
+		          ".rsrc",
+		          5,
+		          &( info_handle->resource_section ),
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource section.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
 		if( libexe_section_get_virtual_address(
 		     info_handle->resource_section,
 		     &virtual_address,
@@ -473,20 +500,28 @@ int info_handle_open_input(
 
 			goto on_error;
 		}
-		if( libwrc_stream_set_virtual_address(
-		     info_handle->input_resource_stream,
-		     virtual_address,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set input resource stream virtual adress.",
-			 function );
+	}
+	else
+	{
+		/* TODO determine virtual address */
+		/* TODO create resource_section_file_io_handle */
+	}
+	if( libwrc_stream_set_virtual_address(
+	     info_handle->input_resource_stream,
+	     virtual_address,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set input resource stream virtual adress.",
+		 function );
 
-			goto on_error;
-		}
+		goto on_error;
+	}
+	if( has_exe_signature != 0 )
+	{
 		if( libwrc_stream_open_file_io_handle(
 		     info_handle->input_resource_stream,
 		     info_handle->resource_section_file_io_handle,
@@ -498,6 +533,32 @@ int info_handle_open_input(
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open input resource stream.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	else
+	{
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libwrc_stream_open_wide(
+		     info_handle->input_resource_stream,
+		     filename,
+		     LIBWRC_OPEN_READ,
+		     error ) != 1 )
+#else
+		if( libwrc_stream_open(
+		     info_handle->input_resource_stream,
+		     filename,
+		     LIBWRC_OPEN_READ,
+		     error ) != 1 )
+#endif
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open input WRC file.",
 			 function );
 
 			goto on_error;
@@ -518,10 +579,12 @@ on_error:
 		 &( info_handle->resource_section ),
 		 NULL );
 	}
-	libexe_file_close(
-	 info_handle->input_exe_file,
-	 NULL );
-
+	if( has_exe_signature != 0 )
+	{
+		libexe_file_close(
+		 info_handle->input_exe_file,
+		 NULL );
+	}
 	return( -1 );
 }
 

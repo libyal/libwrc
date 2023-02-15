@@ -192,7 +192,7 @@ int libwrc_resource_node_entry_read_data(
 
 		return( -1 );
 	}
-	if( ( data_size < 8 )
+	if( ( data_size < sizeof( wrc_resource_node_entry_t ) )
 	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
@@ -212,7 +212,7 @@ int libwrc_resource_node_entry_read_data(
 		 function );
 		libcnotify_print_data(
 		 data,
-		 8,
+		 sizeof( wrc_resource_node_entry_t ),
 		 0 );
 	}
 #endif
