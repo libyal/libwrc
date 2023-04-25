@@ -1,6 +1,6 @@
 # Tests library functions and types.
 #
-# Version: 20200427
+# Version: 20230410
 
 $ExitSuccess = 0
 $ExitFailure = 1
@@ -8,7 +8,7 @@ $ExitIgnore = 77
 
 $LibraryTests = "data_descriptor error io_handle language_entry language_table manifest_resource message_table_resource mui_resource mui_values notify resource resource_item resource_node_entry resource_node_header string_table_resource support table_entry version_information_resource version_values"
 $LibraryTestsWithInput = "stream"
-$OptionSets = ""
+$OptionSets = "virtual_address"
 
 $InputGlob = "*"
 
@@ -16,11 +16,11 @@ Function GetTestExecutablesDirectory
 {
 	$TestExecutablesDirectory = ""
 
-	ForEach (${VSDirectory} in "msvscpp vs2008 vs2010 vs2012 vs2013 vs2015 vs2017 vs2019" -split " ")
+	ForEach (${VSDirectory} in ("msvscpp", "vs2008", "vs2010", "vs2012", "vs2013", "vs2015", "vs2017", "vs2019", "vs2022"))
 	{
-		ForEach (${VSConfiguration} in "Release VSDebug" -split " ")
+		ForEach (${VSConfiguration} in ("Release", "VSDebug"))
 		{
-			ForEach (${VSPlatform} in "Win32 x64" -split " ")
+			ForEach (${VSPlatform} in ("Win32", "x64"))
 			{
 				$TestExecutablesDirectory = "..\${VSDirectory}\${VSConfiguration}\${VSPlatform}"
 
