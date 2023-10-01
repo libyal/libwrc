@@ -79,7 +79,6 @@ PyObject *pywrc_get_version(
            PyObject *self PYWRC_ATTRIBUTE_UNUSED,
            PyObject *arguments PYWRC_ATTRIBUTE_UNUSED )
 {
-	const char *errors           = NULL;
 	const char *version_string   = NULL;
 	size_t version_string_length = 0;
 
@@ -102,7 +101,7 @@ PyObject *pywrc_get_version(
 	return( PyUnicode_DecodeUTF8(
 	         version_string,
 	         (Py_ssize_t) version_string_length,
-	         errors ) );
+	         NULL ) );
 }
 
 /* Creates a new stream object and opens it

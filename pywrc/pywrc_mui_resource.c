@@ -494,7 +494,6 @@ PyObject *pywrc_mui_resource_get_main_name(
 	PyObject *string_object  = NULL;
 	libcerror_error_t *error = NULL;
 	uint8_t *main_name       = NULL;
-	const char *errors       = NULL;
 	static char *function    = "pywrc_mui_resource_get_main_name";
 	size_t main_name_size    = 0;
 	int result               = 0;
@@ -546,7 +545,7 @@ PyObject *pywrc_mui_resource_get_main_name(
 	if( main_name == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create main name.",
 		 function );
 
@@ -582,7 +581,7 @@ PyObject *pywrc_mui_resource_get_main_name(
 	string_object = PyUnicode_DecodeUTF8(
 			 (char *) main_name,
 			 (Py_ssize_t) main_name_size - 1,
-			 errors );
+			 NULL );
 
 	PyMem_Free(
 	 main_name );
@@ -608,7 +607,6 @@ PyObject *pywrc_mui_resource_get_mui_name(
 	PyObject *string_object  = NULL;
 	libcerror_error_t *error = NULL;
 	uint8_t *mui_name        = NULL;
-	const char *errors       = NULL;
 	static char *function    = "pywrc_mui_resource_get_mui_name";
 	size_t mui_name_size     = 0;
 	int result               = 0;
@@ -660,7 +658,7 @@ PyObject *pywrc_mui_resource_get_mui_name(
 	if( mui_name == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create MUI name.",
 		 function );
 
@@ -696,7 +694,7 @@ PyObject *pywrc_mui_resource_get_mui_name(
 	string_object = PyUnicode_DecodeUTF8(
 			 (char *) mui_name,
 			 (Py_ssize_t) mui_name_size - 1,
-			 errors );
+			 NULL );
 
 	PyMem_Free(
 	 mui_name );
@@ -722,7 +720,6 @@ PyObject *pywrc_mui_resource_get_language(
 	PyObject *string_object  = NULL;
 	libcerror_error_t *error = NULL;
 	uint8_t *language        = NULL;
-	const char *errors       = NULL;
 	static char *function    = "pywrc_mui_resource_get_language";
 	size_t language_size     = 0;
 	int result               = 0;
@@ -774,7 +771,7 @@ PyObject *pywrc_mui_resource_get_language(
 	if( language == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create language.",
 		 function );
 
@@ -810,7 +807,7 @@ PyObject *pywrc_mui_resource_get_language(
 	string_object = PyUnicode_DecodeUTF8(
 			 (char *) language,
 			 (Py_ssize_t) language_size - 1,
-			 errors );
+			 NULL );
 
 	PyMem_Free(
 	 language );
@@ -836,7 +833,6 @@ PyObject *pywrc_mui_resource_get_fallback_language(
 	PyObject *string_object       = NULL;
 	libcerror_error_t *error      = NULL;
 	uint8_t *fallback_language    = NULL;
-	const char *errors            = NULL;
 	static char *function         = "pywrc_mui_resource_get_fallback_language";
 	size_t fallback_language_size = 0;
 	int result                    = 0;
@@ -888,7 +884,7 @@ PyObject *pywrc_mui_resource_get_fallback_language(
 	if( fallback_language == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create fallback language.",
 		 function );
 
@@ -924,7 +920,7 @@ PyObject *pywrc_mui_resource_get_fallback_language(
 	string_object = PyUnicode_DecodeUTF8(
 			 (char *) fallback_language,
 			 (Py_ssize_t) fallback_language_size - 1,
-			 errors );
+			 NULL );
 
 	PyMem_Free(
 	 fallback_language );

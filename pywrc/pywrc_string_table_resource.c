@@ -541,7 +541,6 @@ PyObject *pywrc_string_table_resource_get_string(
 	PyObject *string_object     = NULL;
 	libcerror_error_t *error    = NULL;
 	uint8_t *string             = NULL;
-	const char *errors          = NULL;
 	static char *function       = "pywrc_string_table_resource_get_string";
 	static char *keyword_list[] = { "string_index", NULL };
 	size_t string_size          = 0;
@@ -596,7 +595,7 @@ PyObject *pywrc_string_table_resource_get_string(
 	if( string == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create string.",
 		 function );
 
@@ -634,7 +633,7 @@ PyObject *pywrc_string_table_resource_get_string(
 	string_object = PyUnicode_DecodeUTF8(
 			 (char *) string,
 			 (Py_ssize_t) string_size - 1,
-			 errors );
+			 NULL );
 
 	PyMem_Free(
 	 string );
@@ -661,7 +660,6 @@ PyObject *pywrc_string_table_resource_get_string_by_string_identifier(
 	PyObject *string_object     = NULL;
 	libcerror_error_t *error    = NULL;
 	uint8_t *string             = NULL;
-	const char *errors          = NULL;
 	static char *function       = "pywrc_string_table_resource_get_string_by_string_identifier";
 	static char *keyword_list[] = { "string_identifier", NULL };
 	size_t string_size          = 0;
@@ -747,7 +745,7 @@ PyObject *pywrc_string_table_resource_get_string_by_string_identifier(
 	if( string == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create string.",
 		 function );
 
@@ -785,7 +783,7 @@ PyObject *pywrc_string_table_resource_get_string_by_string_identifier(
 	string_object = PyUnicode_DecodeUTF8(
 			 (char *) string,
 			 (Py_ssize_t) string_size - 1,
-			 errors );
+			 NULL );
 
 	PyMem_Free(
 	 string );

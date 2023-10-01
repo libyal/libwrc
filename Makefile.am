@@ -52,6 +52,9 @@ PKGCONFIG_FILES = \
 	libwrc.pc.in
 
 SETUP_PY_FILES = \
+	pyproject.toml \
+	setup.cfg \
+	setup.cfg.in \
 	setup.py
 
 SPEC_FILES = \
