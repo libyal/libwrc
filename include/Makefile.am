@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libwrc.h
-	/bin/rm -f libwrc/definitions.h
-	/bin/rm -f libwrc/features.h
-	/bin/rm -f libwrc/types.h
-	/bin/rm -f Makefile
+	-rm -f libwrc.h
+	-rm -f libwrc/definitions.h
+	-rm -f libwrc/features.h
+	-rm -f libwrc/types.h
+	-rm -f Makefile
 

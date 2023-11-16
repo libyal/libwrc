@@ -40,7 +40,7 @@ void (*wrctools_signal_signal_handler)( wrctools_signal_t ) = NULL;
 /* Signal handler for Ctrl+C or Ctrl+Break signals
  */
 BOOL WINAPI wrctools_signal_handler(
-             unsigned long signal )
+             wrctools_signal_t signal )
 {
 	static char *function = "wrctools_signal_handler";
 
@@ -112,7 +112,7 @@ int wrctools_signal_attach(
 	wrctools_signal_signal_handler = signal_handler;
 
 	if( SetConsoleCtrlHandler(
-	     wrctools_signal_handler,
+	     (PHANDLER_ROUTINE) wrctools_signal_handler,
 	     TRUE ) == 0 )
 	{
 		libcerror_error_set(
@@ -179,7 +179,7 @@ int wrctools_signal_detach(
 	static char *function = "wrctools_signal_detach";
 
 	if( SetConsoleCtrlHandler(
-	     wrctools_signal_handler,
+	     (PHANDLER_ROUTINE) wrctools_signal_handler,
 	     FALSE ) == 0 )
 	{
 		libcerror_error_set(

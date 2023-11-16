@@ -70,8 +70,8 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 clean-local:
-	/bin/rm -f pywrc*.[ch]
+	-rm -f pywrc*.[ch]
 
 distclean: clean
-	/bin/rm -f Makefile
+	-rm -f Makefile
 
