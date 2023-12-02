@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20230926
+# Version: 20231119
 
 # Generic auto-generated build files
 *~
@@ -127,7 +127,6 @@ stamp-h[1-9]
 /libwrc.spec
 /libwrc/libwrc.rc
 /libwrc/libwrc_definitions.h
-/pywrc-python[23]/*.[ch]
 /setup.cfg
 /wrctools/*.exe
 /wrctools/wrcinfo

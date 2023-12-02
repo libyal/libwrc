@@ -23,8 +23,6 @@ SUBDIRS = \
 	libexe \
 	wrctools \
 	pywrc \
-	pywrc-python2 \
-	pywrc-python3 \
 	po \
 	manuals \
 	tests \
