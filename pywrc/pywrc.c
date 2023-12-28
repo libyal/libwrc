@@ -484,23 +484,6 @@ PyMODINIT_FUNC initpywrc(
 	 "version_information_resource",
 	 (PyObject *) &pywrc_version_information_resource_type_object );
 
-	/* Setup the version information resource type object
-	 */
-	pywrc_version_information_resource_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pywrc_version_information_resource_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pywrc_version_information_resource_type_object );
-
-	PyModule_AddObject(
-	 module,
-	 "version_information_resource",
-	 (PyObject *) &pywrc_version_information_resource_type_object );
-
 	PyGILState_Release(
 	 gil_state );
 

@@ -1510,13 +1510,13 @@ PyObject *pywrc_stream_get_resource_by_identifier(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error     = NULL;
-	libwrc_resource_t *resource  = NULL;
-	PyObject *resource_object    = NULL;
-	static char *keyword_list[]  = { "resource_identifier", NULL };
-	static char *function        = "pywrc_stream_get_resource_by_identifier";
-	uint32_t resource_identifier = 0;
-	int result                   = 0;
+	libcerror_error_t *error          = NULL;
+	libwrc_resource_t *resource       = NULL;
+	PyObject *resource_object         = NULL;
+	static char *keyword_list[]       = { "resource_identifier", NULL };
+	static char *function             = "pywrc_stream_get_resource_by_identifier";
+	unsigned long resource_identifier = 0;
+	int result                        = 0;
 
 	if( pywrc_stream == NULL )
 	{
