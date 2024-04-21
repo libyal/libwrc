@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libwrc/features.h.in \
 	libwrc/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libwrc.h \
+	libwrc/definitions.h \
+	libwrc/features.h \
+	libwrc/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libwrc.h
-	-rm -f libwrc/definitions.h
-	-rm -f libwrc/features.h
-	-rm -f libwrc/types.h
-	-rm -f Makefile
 

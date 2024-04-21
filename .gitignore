@@ -132,6 +132,7 @@ stamp-h[1-9]
 /wrctools/wrcinfo
 /tests/*.exe
 /tests/input
+/tests/notify_stream.log
 /tests/tmp*
 /tests/wrc_test_data_descriptor
 /tests/wrc_test_error

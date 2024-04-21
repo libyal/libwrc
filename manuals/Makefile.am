@@ -6,9 +6,7 @@ EXTRA_DIST = \
 	wrcinfo.1 \
 	libwrc.3
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 
