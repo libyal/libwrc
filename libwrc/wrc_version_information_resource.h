@@ -1,7 +1,7 @@
 /*
  * The Windows RC version information (VERSIONINFO) resource
  *
- * Copyright (C) 2011-2024, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2025, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *

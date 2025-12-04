@@ -1,6 +1,6 @@
 dnl Checks for required headers and functions
 dnl
-dnl Version: 20200716
+dnl Version: 20240601
 
 dnl Function to detect if libwrc dependencies are available
 AC_DEFUN([AX_LIBWRC_CHECK_LOCAL],
