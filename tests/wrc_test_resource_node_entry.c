@@ -1,7 +1,7 @@
 /*
  * Library resource_node_entry type test program
  *
- * Copyright (C) 2009-2021, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2026, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
