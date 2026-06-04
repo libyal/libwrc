@@ -31,14 +31,17 @@
  */
 #if defined( LIBWRC_DLL_EXPORT )
 #define LIBWRC_EXTERN __declspec(dllexport)
+#define LIBWRC_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBWRC_DLL_IMPORT )
-#define LIBWRC_EXTERN extern __declspec(dllimport)
+#define LIBWRC_EXTERN __declspec(dllimport)
+#define LIBWRC_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBWRC_EXTERN extern
+#define LIBWRC_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBWRC_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBWRC_EXTERN_H ) */
 

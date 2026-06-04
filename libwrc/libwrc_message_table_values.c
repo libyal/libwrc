@@ -464,10 +464,9 @@ int libwrc_message_table_values_read(
 				libcnotify_printf(
 				 "\n" );
 			}
-#endif
 			message_table_string_resource_data += message_table_string_size;
 			message_table_string_offset        += message_table_string_size;
-
+#endif
 			if( libwrc_language_entry_append_value(
 			     language_entry,
 			     &value_index,

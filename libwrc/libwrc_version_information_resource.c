@@ -153,17 +153,20 @@ ssize_t libwrc_internal_version_information_resource_read_string_file_informatio
          size_t data_offset,
          libcerror_error_t **error )
 {
-	const uint8_t *value_identifier_string = NULL;
 	static char *function                  = "libwrc_internal_version_information_resource_read_string_file_information";
 	size_t alignment_padding_size          = 0;
 	size_t calculated_value_data_size      = 0;
 	size_t data_start_offset               = 0;
-	size_t trailing_data_size              = 0;
-	size_t value_identifier_string_size    = 0;
 	ssize_t read_count                     = 0;
 	uint16_t string_data_size              = 0;
-	uint16_t value_data_size               = 0;
 	uint16_t value_data_type               = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	const uint8_t *value_identifier_string = NULL;
+	size_t value_identifier_string_size    = 0;
+	size_t trailing_data_size              = 0;
+	uint16_t value_data_size               = 0;
+#endif
 
 	if( internal_version_information_resource == NULL )
 	{
@@ -251,10 +254,11 @@ ssize_t libwrc_internal_version_information_resource_read_string_file_informatio
 
 			return( -1 );
 		}
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint16_little_endian(
 		 &( data[ data_offset ] ),
 		 value_data_size );
-
+#endif
 		data_offset += 2;
 
 		byte_stream_copy_to_uint16_little_endian(
@@ -276,14 +280,14 @@ ssize_t libwrc_internal_version_information_resource_read_string_file_informatio
 			 function,
 			 value_data_type );
 		}
-#endif
 		value_identifier_string      = &( data[ data_offset ] );
 		value_identifier_string_size = 0;
-
+#endif
 		while( ( data_offset + 2 ) < data_size )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			value_identifier_string_size += 2;
-
+#endif
 			if( ( data[ data_offset ] == 0 )
 			 && ( data[ data_offset + 1 ] == 0 ) )
 			{
@@ -363,9 +367,9 @@ ssize_t libwrc_internal_version_information_resource_read_string_file_informatio
 
 		if( calculated_value_data_size < string_data_size )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			trailing_data_size = string_data_size - trailing_data_size;
 
-#if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
@@ -376,8 +380,8 @@ ssize_t libwrc_internal_version_information_resource_read_string_file_informatio
 				 trailing_data_size,
 				 0 );
 			}
-#endif
 			data_offset += trailing_data_size;
+#endif
 		}
 	}
 	return( (ssize_t) string_data_size );
@@ -393,17 +397,20 @@ ssize_t libwrc_internal_version_information_resource_read_string_table(
          size_t data_offset,
          libcerror_error_t **error )
 {
-	const uint8_t *value_identifier_string = NULL;
 	static char *function                  = "libwrc_internal_version_information_resource_read_string_table";
 	size_t alignment_padding_size          = 0;
 	size_t calculated_value_data_size      = 0;
 	size_t data_start_offset               = 0;
-	size_t trailing_data_size              = 0;
-	size_t value_identifier_string_size    = 0;
 	ssize_t read_count                     = 0;
 	uint16_t string_data_size              = 0;
 	uint16_t value_data_size               = 0;
 	uint16_t value_data_type               = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	const uint8_t *value_identifier_string = NULL;
+	size_t trailing_data_size              = 0;
+	size_t value_identifier_string_size    = 0;
+#endif
 
 	if( internal_version_information_resource == NULL )
 	{
@@ -516,14 +523,14 @@ ssize_t libwrc_internal_version_information_resource_read_string_table(
 			 function,
 			 value_data_type );
 		}
-#endif
 		value_identifier_string      = &( data[ data_offset ] );
 		value_identifier_string_size = 0;
-
+#endif
 		while( ( data_offset + 2 ) < data_size )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			value_identifier_string_size += 2;
-
+#endif
 			if( ( data[ data_offset ] == 0 )
 			 && ( data[ data_offset + 1 ] == 0 ) )
 			{
@@ -660,9 +667,9 @@ ssize_t libwrc_internal_version_information_resource_read_string_table(
 
 		if( calculated_value_data_size < string_data_size )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			trailing_data_size = string_data_size - calculated_value_data_size;
 
-#if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
@@ -673,8 +680,8 @@ ssize_t libwrc_internal_version_information_resource_read_string_table(
 				 trailing_data_size,
 				 0 );
 			}
-#endif
 			data_offset += trailing_data_size;
+#endif
 		}
 	}
 	return( (ssize_t) string_data_size );
@@ -691,16 +698,16 @@ ssize_t libwrc_internal_version_information_resource_read_string(
          libcerror_error_t **error )
 {
 	static char *function         = "libwrc_internal_version_information_resource_read_string";
-	size_t alignment_padding_size = 0;
-	size_t value_string_size      = 0;
 	uint16_t string_data_size     = 0;
-	uint16_t value_data_size      = 0;
-	uint16_t value_data_type      = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
+	size_t alignment_padding_size = 0;
 	size_t data_start_offset      = 0;
 	size_t trailing_data_size     = 0;
 	size_t value_string_offset    = 0;
+	size_t value_string_size      = 0;
+	uint16_t value_data_size      = 0;
+	uint16_t value_data_type      = 0;
 #endif
 
 	if( internal_version_information_resource == NULL )
@@ -791,16 +798,18 @@ ssize_t libwrc_internal_version_information_resource_read_string(
 
 			return( -1 );
 		}
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint16_little_endian(
 		 &( data[ data_offset ] ),
 		 value_data_size );
-
+#endif
 		data_offset += 2;
 
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint16_little_endian(
 		 &( data[ data_offset ] ),
 		 value_data_type );
-
+#endif
 		data_offset += 2;
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -821,14 +830,13 @@ ssize_t libwrc_internal_version_information_resource_read_string(
 /* TODO handle value_data_type != 1 */
 #if defined( HAVE_DEBUG_OUTPUT )
 		value_string_offset = data_offset;
-#endif
-
 		value_string_size = 0;
-
+#endif
 		while( ( data_offset + 2 ) < data_size )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			value_string_size += 2;
-
+#endif
 			if( ( data[ data_offset ] == 0 )
 			 && ( data[ data_offset + 1 ] == 0 ) )
 			{
@@ -853,6 +861,7 @@ ssize_t libwrc_internal_version_information_resource_read_string(
 /* TODO convert string */
 		if( ( data_offset % 4 ) != 0 )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			if( alignment_padding_size > ( data_size - data_offset ) )
 			{
 				libcerror_error_set(
@@ -866,7 +875,6 @@ ssize_t libwrc_internal_version_information_resource_read_string(
 			}
 			alignment_padding_size = 4 - ( data_offset % 4 );
 
-#if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
@@ -877,8 +885,8 @@ ssize_t libwrc_internal_version_information_resource_read_string(
 				 alignment_padding_size,
 				 0 );
 			}
-#endif
 			data_offset += alignment_padding_size;
+#endif
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		value_string_offset = data_offset;
@@ -946,15 +954,15 @@ ssize_t libwrc_internal_version_information_resource_read_variable_file_informat
 	static char *function         = "libwrc_internal_version_information_resource_read_variable_file_information";
 	size_t alignment_padding_size = 0;
 	size_t data_start_offset      = 0;
-	size_t value_string_size      = 0;
 	ssize_t read_count            = 0;
 	uint16_t string_data_size     = 0;
-	uint16_t value_data_size      = 0;
-	uint16_t value_data_type      = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	size_t trailing_data_size     = 0;
 	size_t value_string_offset    = 0;
+	size_t value_string_size      = 0;
+	uint16_t value_data_size      = 0;
+	uint16_t value_data_type      = 0;
 #endif
 
 	if( internal_version_information_resource == NULL )
@@ -1043,16 +1051,18 @@ ssize_t libwrc_internal_version_information_resource_read_variable_file_informat
 
 			return( -1 );
 		}
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint16_little_endian(
 		 &( data[ data_offset ] ),
 		 value_data_size );
-
+#endif
 		data_offset += 2;
 
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint16_little_endian(
 		 &( data[ data_offset ] ),
 		 value_data_type );
-
+#endif
 		data_offset += 2;
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -1073,14 +1083,13 @@ ssize_t libwrc_internal_version_information_resource_read_variable_file_informat
 /* TODO handle value_data_type != 1 */
 #if defined( HAVE_DEBUG_OUTPUT )
 		value_string_offset = data_offset;
-#endif
-
 		value_string_size  = 0;
-
+#endif
 		while( ( data_offset + 2 ) < data_size )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			value_string_size += 2;
-
+#endif
 			if( ( data[ data_offset ] == 0 )
 			 && ( data[ data_offset + 1 ] == 0 ) )
 			{
@@ -1192,16 +1201,16 @@ ssize_t libwrc_internal_version_information_resource_read_variable(
          libcerror_error_t **error )
 {
 	static char *function         = "libwrc_internal_version_information_resource_read_variable";
-	size_t alignment_padding_size = 0;
-	size_t value_string_size      = 0;
 	uint16_t string_data_size     = 0;
-	uint16_t value_data_size      = 0;
-	uint16_t value_data_type      = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
+	size_t alignment_padding_size = 0;
 	size_t data_start_offset      = 0;
 	size_t trailing_data_size     = 0;
 	size_t value_string_offset    = 0;
+	size_t value_string_size      = 0;
+	uint16_t value_data_size      = 0;
+	uint16_t value_data_type      = 0;
 #endif
 
 	if( internal_version_information_resource == NULL )
@@ -1292,16 +1301,18 @@ ssize_t libwrc_internal_version_information_resource_read_variable(
 
 			return( -1 );
 		}
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint16_little_endian(
 		 &( data[ data_offset ] ),
 		 value_data_size );
-
+#endif
 		data_offset += 2;
 
+#if defined( HAVE_DEBUG_OUTPUT )
 		byte_stream_copy_to_uint16_little_endian(
 		 &( data[ data_offset ] ),
 		 value_data_type );
-
+#endif
 		data_offset += 2;
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -1322,14 +1333,13 @@ ssize_t libwrc_internal_version_information_resource_read_variable(
 /* TODO handle value_data_type != 1 */
 #if defined( HAVE_DEBUG_OUTPUT )
 		value_string_offset = data_offset;
-#endif
-
 		value_string_size = 0;
-
+#endif
 		while( ( data_offset + 2 ) < data_size )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			value_string_size += 2;
-
+#endif
 			if( ( data[ data_offset ] == 0 )
 			 && ( data[ data_offset + 1 ] == 0 ) )
 			{
@@ -1354,6 +1364,7 @@ ssize_t libwrc_internal_version_information_resource_read_variable(
 /* TODO convert string */
 		if( ( data_offset % 4 ) != 0 )
 		{
+#if defined( HAVE_DEBUG_OUTPUT )
 			alignment_padding_size = 4 - ( data_offset % 4 );
 
 			if( alignment_padding_size > ( data_size - data_offset ) )
@@ -1367,7 +1378,6 @@ ssize_t libwrc_internal_version_information_resource_read_variable(
 
 				return( -1 );
 			}
-#if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
@@ -1378,8 +1388,8 @@ ssize_t libwrc_internal_version_information_resource_read_variable(
 				 alignment_padding_size,
 				 0 );
 			}
-#endif
 			data_offset += alignment_padding_size;
+#endif
 		}
 /* TODO */
 
@@ -1423,9 +1433,11 @@ int libwrc_version_information_resource_read(
 	size_t value_identifier_string_size                                                   = 0;
 	ssize_t read_count                                                                    = 0;
 	uint32_t value_32bit                                                                  = 0;
-	uint16_t resource_data_size                                                           = 0;
 	uint16_t value_data_size                                                              = 0;
-	uint16_t value_data_type                                                              = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint16_t value_16bit                                                                  = 0;
+#endif
 
 	if( version_information_resource == NULL )
 	{
@@ -1475,35 +1487,34 @@ int libwrc_version_information_resource_read(
 		 0 );
 	}
 #endif
-	byte_stream_copy_to_uint16_little_endian(
-	 ( (wrc_version_value_header_t *) data )->size,
-	 resource_data_size );
 
 	byte_stream_copy_to_uint16_little_endian(
 	 ( (wrc_version_value_header_t *) data )->value_data_size,
 	 value_data_size );
 
-	byte_stream_copy_to_uint16_little_endian(
-	 ( (wrc_version_value_header_t *) data )->value_data_type,
-	 value_data_type );
-
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (wrc_version_value_header_t *) data )->size,
+		 value_16bit );
 		libcnotify_printf(
 		 "%s: size\t\t\t\t: %" PRIu16 "\n",
 		 function,
-		 resource_data_size );
+		 value_16bit );
 
 		libcnotify_printf(
 		 "%s: value data size\t\t: %" PRIu16 "\n",
 		 function,
 		 value_data_size );
 
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (wrc_version_value_header_t *) data )->value_data_type,
+		 value_16bit );
 		libcnotify_printf(
 		 "%s: value data type\t\t: %" PRIu16 "\n",
 		 function,
-		 value_data_type );
+		 value_16bit );
 
 		libcnotify_printf(
 		 "\n" );
