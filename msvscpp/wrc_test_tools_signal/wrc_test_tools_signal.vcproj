@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="wrc_test_data_descriptor"
-	ProjectGUID="{A47D3208-48A6-432D-8706-55F74F05D182}"
-	RootNamespace="wrc_test_data_descriptor"
+	Name="wrc_test_tools_signal"
+	ProjectGUID="{08B2C256-74DB-4D8D-8039-50A81C40A988}"
+	RootNamespace="wrc_test_tools_signal"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,15 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\wrc_test_data_descriptor.c"
+				RelativePath="..\..\tests\wrc_test_tools_signal.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\wrc_test_functions.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\wrc_test_memory.c"
+				RelativePath="..\..\wrctools\wrctools_signal.c"
 				>
 			</File>
 		</Filter>
@@ -194,19 +190,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tests\wrc_test_functions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\wrc_test_libbfio.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\wrc_test_libcerror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\wrc_test_libwrc.h"
 				>
 			</File>
 			<File
@@ -214,11 +198,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\wrc_test_memory.h"
+				RelativePath="..\..\tests\wrc_test_unused.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\wrc_test_unused.h"
+				RelativePath="..\..\wrctools\wrctools_signal.h"
 				>
 			</File>
 		</Filter>

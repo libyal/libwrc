@@ -2,8 +2,8 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libwrc],
-  [20260609],
-  [joachim.metz@gmail.com])
+  [20260611],
+  [https://github.com/libyal/libwrc/issues])
 
 AC_CONFIG_SRCDIR(
   [include/libwrc.h.in])
@@ -12,6 +12,8 @@ AM_INIT_AUTOMAKE([gnu 1.6 tar-ustar])
 AM_EXTRA_RECURSIVE_TARGETS([sources splint])
 
 AC_CONFIG_MACRO_DIR([m4])
+
+AC_CONFIG_TESTDIR([tests])
 
 dnl Check for host type
 AC_CANONICAL_HOST
@@ -226,6 +228,8 @@ AC_CONFIG_FILES([libwrc/libwrc.rc])
 AC_CONFIG_FILES([libwrc.pc])
 AC_CONFIG_FILES([libwrc.spec])
 AC_CONFIG_FILES([pyproject.toml])
+dnl Generate test configuration files
+AC_CONFIG_FILES([tests/atlocal])
 dnl Generate a source configuration file
 AC_CONFIG_HEADERS([common/config.h])
 

@@ -36,6 +36,9 @@ MSVSCPP_FILES = \
 	wrc_test_string_table_resource/wrc_test_string_table_resource.vcproj \
 	wrc_test_support/wrc_test_support.vcproj \
 	wrc_test_table_entry/wrc_test_table_entry.vcproj \
+	wrc_test_tools_info_handle/wrc_test_tools_info_handle.vcproj \
+	wrc_test_tools_output/wrc_test_tools_output.vcproj \
+	wrc_test_tools_signal/wrc_test_tools_signal.vcproj \
 	wrc_test_version_information_resource/wrc_test_version_information_resource.vcproj \
 	wrc_test_version_values/wrc_test_version_values.vcproj \
 	wrcinfo/wrcinfo.vcproj \
