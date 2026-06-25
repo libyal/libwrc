@@ -1,6 +1,5 @@
 /*
- * Shows information obtained from a Windows Resource (RC) stream
- * of the .rsrc section of a MZ, PE/COFF executable
+ * Shows information obtained from a Windows Resource (RC) stream of the .rsrc section of a MZ, PE/COFF executable.
  *
  * Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -22,7 +21,6 @@
 
 #include <common.h>
 #include <file_stream.h>
-#include <memory.h>
 #include <system_string.h>
 #include <types.h>
 
@@ -60,34 +58,6 @@ enum WRCINFO_MODES
 
 info_handle_t *wrcinfo_info_handle = NULL;
 int wrcinfo_abort                  = 0;
-
-/* Prints the executable usage information
- */
-void usage_fprint(
-      FILE *stream )
-{
-	if( stream == NULL )
-	{
-		return;
-	}
-	fprintf( stream, "Use wrcinfo to determine information about a Windows\n"
-	                 "Resource (RC) streams in the .rsrc section of a PE/COFF\n"
-	                 "executable.\n\n" );
-
-	fprintf( stream, "Usage: wrcinfo [ -c codepage ] [ -hHvV ] source\n\n" );
-
-	fprintf( stream, "\tsource: the source file containing the stream\n\n" );
-
-	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-874,\n"
-	                 "\t        windows-932, windows-936, windows-949, windows-950,\n"
-	                 "\t        windows-1250, windows-1251, windows-1252 (default),\n"
-	                 "\t        windows-1253, windows-1254, windows-1255, windows-1256\n"
-	                 "\t        windows-1257 or windows-1258\n" );
-	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-H:     shows the resource hierarchy\n" );
-	fprintf( stream, "\t-v:     verbose output to stderr\n" );
-	fprintf( stream, "\t-V:     print version\n" );
-}
 
 /* Signal handler for wrcinfo
  */
@@ -141,14 +111,28 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error                  = NULL;
-	system_character_t *option_ascii_codepage = NULL;
-	system_character_t *source                = NULL;
-	char *program                             = "wrcinfo";
-	system_integer_t option                   = 0;
-	int option_mode                           = WRCINFO_MODE_OVERVIEW;
-	int result                                = 0;
-	int verbose                               = 0;
+	const char *description = \
+		"Use wrcinfo to determine information about a Windows Resource (RC) stream of the .rsrc section of a MZ, PE/COFF executable.";
+
+	wrctools_option_t options[ ] = {
+		{ 'c', "codepage", "codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258" },
+		{ 'h', NULL, "shows this help" },
+		{ 'H', NULL, "shows the resource hierarchy" },
+		{ 'v', NULL, "verbose output to stderr" },
+		{ 'V', NULL, "print version" },
+		{ 0, "source", "the source file" },
+	};
+	system_character_t options_string[ 32 ];
+
+	libwrc_error_t *error               = NULL;
+	system_character_t *option_codepage = NULL;
+	system_character_t *source          = NULL;
+	char *program                       = "wrcinfo";
+	system_integer_t option             = 0;
+	int number_of_options               = (int) ( sizeof( options ) / sizeof( wrctools_option_t ) );
+	int option_mode                     = WRCINFO_MODE_OVERVIEW;
+	int result                          = 0;
+	int verbose                         = 0;
 
 #if defined( __MINGW32__ ) && defined( HAVE_MINGW_BINMODE )
 	_setmode( _fileno( stdout ), _O_BINARY );
@@ -177,7 +161,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -185,10 +169,22 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
+	if( wrctools_getopt_get_options_string(
+	     options,
+	     number_of_options,
+	     options_string,
+	     32 ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to determine options string.\n" );
+
+		goto on_error;
+	}
 	while( ( option = wrctools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "c:hHvV" ) ) ) != (system_integer_t) -1 )
+	                   options_string ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -199,19 +195,22 @@ int main( int argc, char * const argv[] )
 				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
-				usage_fprint(
-				 stdout );
+				wrctools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_FAILURE );
 
-			case (system_integer_t) 'c':
-				option_ascii_codepage = optarg;
-
-				break;
-
 			case (system_integer_t) 'h':
-				usage_fprint(
-				 stdout );
+				wrctools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_SUCCESS );
 
@@ -238,8 +237,12 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Missing source file.\n" );
 
-		usage_fprint(
-		 stdout );
+		wrctools_getopt_usage_fprint(
+		 stdout,
+		 program,
+		 description,
+		 options,
+		 number_of_options );
 
 		return( EXIT_FAILURE );
 	}
@@ -263,11 +266,11 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( option_ascii_codepage != NULL )
+	if( option_codepage != NULL )
 	{
 		result = info_handle_set_ascii_codepage(
 		          wrcinfo_info_handle,
-		          option_ascii_codepage,
+		          option_codepage,
 		          &error );
 
 		if( result == -1 )

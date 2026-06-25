@@ -3,8 +3,7 @@ man_MANS = \
 	libwrc.3
 
 EXTRA_DIST = \
-	wrcinfo.1 \
-	libwrc.3
+	$(man_MANS)
 
 DISTCLEANFILES = \
 	Makefile \

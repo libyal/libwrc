@@ -1,19 +1,19 @@
-.Dd December 30, 2021
-.Dt wrcinfo
-.Os libwrc
+.Dd June 25, 2026
+.Dt WRCINFO 1
+.Os
 .Sh NAME
 .Nm wrcinfo
-.Nd determines information about a Windows Resource (RC) streams
-in the .rsrc section of a MZ, PE/COFF executable
+.Nd determines information about a Windows Resource (RC) stream of the .rsrc \
+section of a MZ, PE/COFF executable
 .Sh SYNOPSIS
 .Nm wrcinfo
-.Op Fl hHvV
 .Op Fl c Ar codepage
+.Op Fl hHvV
 .Ar source
 .Sh DESCRIPTION
 .Nm wrcinfo
-is a utility to determine information about a Windows Resource (RC) streams
-in the .rsrc section of a MZ, PE/COFF executable
+is a utility to determine information about a Windows Resource (RC) stream of \
+the .rsrc section of a MZ, PE/COFF executable
 .Pp
 .Nm wrcinfo
 is part of the
@@ -28,7 +28,10 @@ is the source file.
 The options are as follows:
 .Bl -tag -width Ds
 .It Fl c Ar codepage
-specify the codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
+codepage of ASCII strings, options: ascii, windows-874, windows-932, \
+windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 \
+(default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 \
+or windows-1258
 .It Fl h
 shows this help
 .It Fl H
@@ -45,7 +48,7 @@ None
 .Sh EXAMPLES
 .Bd -literal
 # wrcinfo adtschema.dll
-wrcinfo 20211230
+wrcinfo 20260625
 .sp
 Windows Resource (RC) information:
 .sp
@@ -82,19 +85,19 @@ Message-table resource:
 	identifier		: 0x70003000
 	data			: Security State Change
 .sp
-.Dl ...
-.sp
 .Ed
 .Sh DIAGNOSTICS
-Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Errors, verbose and debug output are printed to stderr when verbose output \
+\-v is enabled.
 Verbose and debug output are only printed when enabled at compilation.
+.Sh AUTHORS
+.An Joachim Metz <joachim.metz@gmail.com>
 .Sh BUGS
-Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://github.com/libyal/libwrc/
-.Sh AUTHOR
-These man pages were written by Joachim Metz.
+Please report bugs of any kind on the project issue tracker: \
+https://github.com/libyal/libwrc/issues
 .Sh COPYRIGHT
 Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>.
-This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-.Sh SEE ALSO
-.Xr wrcexport 1
+.sp
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A \
+PARTICULAR PURPOSE.
