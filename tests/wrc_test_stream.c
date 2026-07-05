@@ -43,7 +43,7 @@
 
 #if !defined( LIBWRC_HAVE_BFIO )
 
-extern \
+LIBWRC_EXTERN \
 int libwrc_stream_open_file_io_handle(
      libwrc_stream_t *stream,
      libbfio_handle_t *file_io_handle,
