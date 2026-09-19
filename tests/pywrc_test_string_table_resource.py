@@ -25,58 +25,62 @@ import pywrc
 
 
 class StringTableResourceTypeTests(unittest.TestCase):
-  """Tests the string_table_resource type."""
+    """Tests the string_table_resource type."""
 
-  _TEST_DATA = bytes(bytearray([
-	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x00, 0x00, 0x00, 0x00, 0x09, 0x00, 0x4d, 0x00, 0x79, 0x00, 0x20, 0x00,
-      0x73, 0x00, 0x74, 0x00, 0x72, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x67, 0x00,
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x00, 0x00]))
+    # fmt: off
 
-  def test_copy_from_byte_stream(self):
-    """Tests the copy_from_byte_stream function."""
-    string_table_resource = pywrc.string_table_resource()
-    string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
+    _TEST_DATA = bytes(bytearray([
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x09, 0x00, 0x4d, 0x00, 0x79, 0x00, 0x20, 0x00,
+        0x73, 0x00, 0x74, 0x00, 0x72, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x67, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00]))
 
-    with self.assertRaises(TypeError):
-      string_table_resource.copy_from_byte_stream(None, 63)
+    # fmt: on
 
-    with self.assertRaises(IOError):
-      string_table_resource.copy_from_byte_stream(b'', 63)
+    def test_copy_from_byte_stream(self):
+        """Tests the copy_from_byte_stream function."""
+        string_table_resource = pywrc.string_table_resource()
+        string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
 
-  def test_get_number_of_strings(self):
-    """Tests the get_number_of_strings function."""
-    string_table_resource = pywrc.string_table_resource()
-    string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
+        with self.assertRaises(TypeError):
+            string_table_resource.copy_from_byte_stream(None, 63)
 
-    number_of_strings = string_table_resource.get_number_of_strings()
-    self.assertEqual(number_of_strings, 1)
+        with self.assertRaises(IOError):
+            string_table_resource.copy_from_byte_stream(b"", 63)
 
-  def test_get_string_identifier(self):
-    """Tests the get_string_identifier function."""
-    string_table_resource = pywrc.string_table_resource()
-    string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
+    def test_get_number_of_strings(self):
+        """Tests the get_number_of_strings function."""
+        string_table_resource = pywrc.string_table_resource()
+        string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
 
-    string_identifier = string_table_resource.get_string_identifier(0)
-    self.assertEqual(string_identifier, 0x000003e8)
+        number_of_strings = string_table_resource.get_number_of_strings()
+        self.assertEqual(number_of_strings, 1)
 
-  def test_get_string(self):
-    """Tests the get_string function."""
-    string_table_resource = pywrc.string_table_resource()
-    string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
+    def test_get_string_identifier(self):
+        """Tests the get_string_identifier function."""
+        string_table_resource = pywrc.string_table_resource()
+        string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
 
-    string = string_table_resource.get_string(0)
-    self.assertEqual(string, 'My string')
+        string_identifier = string_table_resource.get_string_identifier(0)
+        self.assertEqual(string_identifier, 0x000003E8)
 
-  def test_get_string_by_string_identifier(self):
-    """Tests the get_string_by_string_identifier function."""
-    string_table_resource = pywrc.string_table_resource()
-    string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
+    def test_get_string(self):
+        """Tests the get_string function."""
+        string_table_resource = pywrc.string_table_resource()
+        string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
 
-    string = string_table_resource.get_string_by_string_identifier(0x000003e8)
-    self.assertEqual(string, 'My string')
+        string = string_table_resource.get_string(0)
+        self.assertEqual(string, "My string")
+
+    def test_get_string_by_string_identifier(self):
+        """Tests the get_string_by_string_identifier function."""
+        string_table_resource = pywrc.string_table_resource()
+        string_table_resource.copy_from_byte_stream(self._TEST_DATA, 63)
+
+        string = string_table_resource.get_string_by_string_identifier(0x000003E8)
+        self.assertEqual(string, "My string")
 
 
 if __name__ == "__main__":
-  unittest.main(verbosity=2)
+    unittest.main(verbosity=2)
