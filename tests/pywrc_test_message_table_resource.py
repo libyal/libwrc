@@ -25,67 +25,72 @@ import pywrc
 
 
 class MessageTableResourceTypeTests(unittest.TestCase):
-  """Tests the message_table_resource type."""
+    """Tests the message_table_resource type."""
 
-  _TEST_DATA = bytes(bytearray([
-      0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00,
-      0x1c, 0x00, 0x00, 0x00, 0xe8, 0x03, 0x00, 0x00, 0xe8, 0x03, 0x00, 0x00,
-      0x54, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x43, 0x61, 0x74, 0x65,
-      0x67, 0x6f, 0x72, 0x79, 0x0d, 0x0a, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00,
-      0x4d, 0x79, 0x20, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x20, 0x77,
-      0x69, 0x74, 0x68, 0x20, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x65, 0x74, 0x65,
-      0x72, 0x73, 0x20, 0x25, 0x31, 0x20, 0x25, 0x32, 0x2e, 0x0d, 0x0a, 0x00,
-      0x24, 0x00, 0x00, 0x00, 0x4d, 0x79, 0x20, 0x6d, 0x65, 0x73, 0x73, 0x61,
-      0x67, 0x65, 0x20, 0x77, 0x69, 0x74, 0x68, 0x6f, 0x75, 0x74, 0x20, 0x70,
-      0x61, 0x72, 0x61, 0x6d, 0x65, 0x74, 0x65, 0x72, 0x73, 0x0d, 0x0a, 0x00]))
+    # fmt: off
 
-  def test_copy_from_byte_stream(self):
-    """Tests the copy_from_byte_stream function."""
-    message_table_resource = pywrc.message_table_resource()
-    message_table_resource.copy_from_byte_stream(self._TEST_DATA)
+    _TEST_DATA = bytes(bytearray([
+        0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00,
+        0x1c, 0x00, 0x00, 0x00, 0xe8, 0x03, 0x00, 0x00, 0xe8, 0x03, 0x00, 0x00,
+        0x54, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x43, 0x61, 0x74, 0x65,
+        0x67, 0x6f, 0x72, 0x79, 0x0d, 0x0a, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00,
+        0x4d, 0x79, 0x20, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x20, 0x77,
+        0x69, 0x74, 0x68, 0x20, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x65, 0x74, 0x65,
+        0x72, 0x73, 0x20, 0x25, 0x31, 0x20, 0x25, 0x32, 0x2e, 0x0d, 0x0a, 0x00,
+        0x24, 0x00, 0x00, 0x00, 0x4d, 0x79, 0x20, 0x6d, 0x65, 0x73, 0x73, 0x61,
+        0x67, 0x65, 0x20, 0x77, 0x69, 0x74, 0x68, 0x6f, 0x75, 0x74, 0x20, 0x70,
+        0x61, 0x72, 0x61, 0x6d, 0x65, 0x74, 0x65, 0x72, 0x73, 0x0d, 0x0a, 0x00]))
 
-    with self.assertRaises(TypeError):
-      message_table_resource.copy_from_byte_stream(None)
+    # fmt: on
 
-    with self.assertRaises(IOError):
-      message_table_resource.copy_from_byte_stream(b'')
+    def test_copy_from_byte_stream(self):
+        """Tests the copy_from_byte_stream function."""
+        message_table_resource = pywrc.message_table_resource()
+        message_table_resource.copy_from_byte_stream(self._TEST_DATA)
 
-    with self.assertRaises(RuntimeError):
-      message_table_resource.copy_from_byte_stream(
-          self._TEST_DATA, codepage='bogus')
+        with self.assertRaises(TypeError):
+            message_table_resource.copy_from_byte_stream(None)
 
-  def test_get_number_of_messages(self):
-    """Tests the get_number_of_messages function."""
-    message_table_resource = pywrc.message_table_resource()
-    message_table_resource.copy_from_byte_stream(self._TEST_DATA)
+        with self.assertRaises(IOError):
+            message_table_resource.copy_from_byte_stream(b"")
 
-    number_of_messages = message_table_resource.get_number_of_messages()
-    self.assertEqual(number_of_messages, 3)
+        with self.assertRaises(RuntimeError):
+            message_table_resource.copy_from_byte_stream(
+                self._TEST_DATA, codepage="bogus"
+            )
 
-  def test_get_message_identifier(self):
-    """Tests the get_message_identifier function."""
-    message_table_resource = pywrc.message_table_resource()
-    message_table_resource.copy_from_byte_stream(self._TEST_DATA)
+    def test_get_number_of_messages(self):
+        """Tests the get_number_of_messages function."""
+        message_table_resource = pywrc.message_table_resource()
+        message_table_resource.copy_from_byte_stream(self._TEST_DATA)
 
-    message_identifier = message_table_resource.get_message_identifier(2)
-    self.assertEqual(message_identifier, 0x000003e8)
+        number_of_messages = message_table_resource.get_number_of_messages()
+        self.assertEqual(number_of_messages, 3)
 
-  def test_get_string(self):
-    """Tests the get_string function."""
-    message_table_resource = pywrc.message_table_resource()
-    message_table_resource.copy_from_byte_stream(self._TEST_DATA)
+    def test_get_message_identifier(self):
+        """Tests the get_message_identifier function."""
+        message_table_resource = pywrc.message_table_resource()
+        message_table_resource.copy_from_byte_stream(self._TEST_DATA)
 
-    string = message_table_resource.get_string(2)
-    self.assertEqual(string, 'My message without parameters\r\n')
+        message_identifier = message_table_resource.get_message_identifier(2)
+        self.assertEqual(message_identifier, 0x000003E8)
 
-  def test_get_string_by_message_identifier(self):
-    """Tests the get_string_by_message_identifier function."""
-    message_table_resource = pywrc.message_table_resource()
-    message_table_resource.copy_from_byte_stream(self._TEST_DATA)
+    def test_get_string(self):
+        """Tests the get_string function."""
+        message_table_resource = pywrc.message_table_resource()
+        message_table_resource.copy_from_byte_stream(self._TEST_DATA)
 
-    string = message_table_resource.get_string_by_message_identifier(0x000003e8)
-    self.assertEqual(string, 'My message without parameters\r\n')
+        string = message_table_resource.get_string(2)
+        self.assertEqual(string, "My message without parameters\r\n")
+
+    def test_get_string_by_message_identifier(self):
+        """Tests the get_string_by_message_identifier function."""
+        message_table_resource = pywrc.message_table_resource()
+        message_table_resource.copy_from_byte_stream(self._TEST_DATA)
+
+        string = message_table_resource.get_string_by_message_identifier(0x000003E8)
+        self.assertEqual(string, "My message without parameters\r\n")
 
 
 if __name__ == "__main__":
-  unittest.main(verbosity=2)
+    unittest.main(verbosity=2)
