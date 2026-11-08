@@ -32,7 +32,15 @@ int LLVMFuzzerTestOneInput(
      const uint8_t *data,
      size_t size )
 {
+	uint8_t utf8_string[ 384 ];
+	uint16_t utf16_string[ 192 ];
+
 	libwrc_string_table_resource_t *string_table_resource = NULL;
+	size_t utf8_string_size                               = 0;
+	size_t utf16_string_size                              = 0;
+	uint32_t string_identifier                            = 0;
+	int string_index                                      = 0;
+	int number_of_strings                                 = 0;
 
 	if( libwrc_string_table_resource_initialize(
 	     &string_table_resource,
@@ -40,13 +48,67 @@ int LLVMFuzzerTestOneInput(
 	{
 		return( 0 );
 	}
-	libwrc_string_table_resource_read(
-	 string_table_resource,
-	 data,
-	 size,
-	 1,
-	 NULL );
-
+	if( libwrc_string_table_resource_read(
+	     string_table_resource,
+	     data,
+	     size,
+	     1,
+	     NULL ) == 1 )
+	{
+		if( libwrc_string_table_resource_get_number_of_strings(
+	            string_table_resource,
+	            &number_of_strings,
+	            NULL ) == 1 )
+		{
+			if( number_of_strings > 0 )
+			{
+				if( libwrc_string_table_resource_get_identifier(
+	                    string_table_resource,
+	                    0,
+	                    &string_identifier,
+	                    NULL ) == 1 )
+				{
+					libwrc_string_table_resource_get_index_by_identifier(
+					 string_table_resource,
+					 string_identifier,
+					 &string_index,
+					 NULL );
+				}
+				if( libwrc_string_table_resource_get_utf8_string_size(
+	                    string_table_resource,
+	                    0,
+	                    &utf8_string_size,
+	                    NULL ) == 1 )
+				{
+					if( utf8_string_size > 0 )
+					{
+						libwrc_string_table_resource_get_utf8_string(
+						 string_table_resource,
+						 0,
+						 utf8_string,
+						 384,
+						 NULL );
+					}
+				}
+				if( libwrc_string_table_resource_get_utf16_string_size(
+	                    string_table_resource,
+	                    0,
+	                    &utf16_string_size,
+	                    NULL ) == 1 )
+				{
+					if( utf16_string_size > 0 )
+					{
+						libwrc_string_table_resource_get_utf16_string(
+						 string_table_resource,
+						 0,
+						 utf16_string,
+						 384,
+						 NULL );
+					}
+				}
+			}
+		}
+	}
 	libwrc_string_table_resource_free(
 	 &string_table_resource,
 	 NULL );
@@ -55,4 +117,3 @@ int LLVMFuzzerTestOneInput(
 }
 
 } /* extern "C" */
-

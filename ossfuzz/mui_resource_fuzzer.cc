@@ -32,7 +32,14 @@ int LLVMFuzzerTestOneInput(
      const uint8_t *data,
      size_t size )
 {
+	uint8_t utf8_string[ 384 ];
+	uint16_t utf16_string[ 192 ];
+
 	libwrc_mui_resource_t *mui_resource = NULL;
+	size_t utf8_string_size             = 0;
+	size_t utf16_string_size            = 0;
+	uint32_t file_type                  = 0;
+	int result                          = 0;
 
 	if( libwrc_mui_resource_initialize(
 	     &mui_resource,
@@ -40,12 +47,89 @@ int LLVMFuzzerTestOneInput(
 	{
 		return( 0 );
 	}
-	libwrc_mui_resource_read(
-	 mui_resource,
-	 data,
-	 size,
-	 NULL );
+	if( libwrc_mui_resource_read(
+	     mui_resource,
+	     data,
+	     size,
+	     NULL ) == 1 )
+	{
+		libwrc_mui_resource_get_file_type(
+		 mui_resource,
+		 &file_type,
+		 NULL );
+		if( libwrc_mui_resource_get_utf8_main_name_size(
+	            mui_resource,
+	            &utf8_string_size,
+	            NULL ) == 1 )
+		{
+			if( utf8_string_size > 0 )
+			{
+				libwrc_mui_resource_get_utf8_main_name(
+				 mui_resource,
+				 utf8_string,
+				 384,
+				 NULL );
+			}
+		}
+		if( libwrc_mui_resource_get_utf8_mui_name_size(
+	            mui_resource,
+	            &utf8_string_size,
+	            NULL ) == 1 )
+		{
+			if( utf8_string_size > 0 )
+			{
+				libwrc_mui_resource_get_utf8_mui_name(
+				 mui_resource,
+				 utf8_string,
+				 384,
+				 NULL );
+			}
+		}
+		if( libwrc_mui_resource_get_utf8_language_size(
+	            mui_resource,
+	            &utf8_string_size,
+	            NULL ) == 1 )
+		{
+			if( utf8_string_size > 0 )
+			{
+				libwrc_mui_resource_get_utf8_language(
+				 mui_resource,
+				 utf8_string,
+				 384,
+				 NULL );
+			}
+		}
+		if( libwrc_mui_resource_get_utf8_fallback_language_size(
+	            mui_resource,
+	            &utf8_string_size,
+	            NULL ) == 1 )
+		{
+			if( utf8_string_size > 0 )
+			{
+				libwrc_mui_resource_get_utf8_fallback_language(
+				 mui_resource,
+				 utf8_string,
+				 384,
+				 NULL );
+			}
+		}
+		result = libwrc_mui_resource_get_utf16_main_name_size(
+		         mui_resource,
+		         &utf16_string_size,
+		         NULL );
 
+		if( result == 1 )
+		{
+			if( utf16_string_size > 0 )
+			{
+				libwrc_mui_resource_get_utf16_main_name(
+				 mui_resource,
+				 utf16_string,
+				 384,
+				 NULL );
+			}
+		}
+	}
 	libwrc_mui_resource_free(
 	 &mui_resource,
 	 NULL );
@@ -54,4 +138,3 @@ int LLVMFuzzerTestOneInput(
 }
 
 } /* extern "C" */
-

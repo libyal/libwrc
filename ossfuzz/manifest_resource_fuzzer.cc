@@ -32,7 +32,12 @@ int LLVMFuzzerTestOneInput(
      const uint8_t *data,
      size_t size )
 {
+	uint8_t utf8_string[ 384 ];
+	uint16_t utf16_string[ 192 ];
+
 	libwrc_manifest_resource_t *manifest_resource = NULL;
+	size_t utf8_string_size                       = 0;
+	size_t utf16_string_size                      = 0;
 
 	if( libwrc_manifest_resource_initialize(
 	     &manifest_resource,
@@ -40,12 +45,41 @@ int LLVMFuzzerTestOneInput(
 	{
 		return( 0 );
 	}
-	libwrc_manifest_resource_read(
-	 manifest_resource,
-	 data,
-	 size,
-	 NULL );
-
+	if( libwrc_manifest_resource_read(
+	     manifest_resource,
+	     data,
+	     size,
+	     NULL ) == 1 )
+	{
+		if( libwrc_manifest_resource_get_utf8_string_size(
+	            manifest_resource,
+	            &utf8_string_size,
+	            NULL ) == 1 )
+		{
+			if( utf8_string_size > 0 )
+			{
+				libwrc_manifest_resource_get_utf8_string(
+					 manifest_resource,
+					 utf8_string,
+					 384,
+					 NULL );
+			}
+		}
+		if( libwrc_manifest_resource_get_utf16_string_size(
+	            manifest_resource,
+	            &utf16_string_size,
+	            NULL ) == 1 )
+		{
+			if( utf16_string_size > 0 )
+			{
+				libwrc_manifest_resource_get_utf16_string(
+					 manifest_resource,
+					 utf16_string,
+					 384,
+					 NULL );
+			}
+		}
+	}
 	libwrc_manifest_resource_free(
 	 &manifest_resource,
 	 NULL );
@@ -54,4 +88,3 @@ int LLVMFuzzerTestOneInput(
 }
 
 } /* extern "C" */
-

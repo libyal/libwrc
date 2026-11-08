@@ -33,6 +33,8 @@ int LLVMFuzzerTestOneInput(
      size_t size )
 {
 	libwrc_version_information_resource_t *version_information_resource = NULL;
+	uint64_t file_version                                               = 0;
+	uint64_t product_version                                            = 0;
 
 	if( libwrc_version_information_resource_initialize(
 	     &version_information_resource,
@@ -40,12 +42,21 @@ int LLVMFuzzerTestOneInput(
 	{
 		return( 0 );
 	}
-	libwrc_version_information_resource_read(
-	 version_information_resource,
-	 data,
-	 size,
-	 NULL );
-
+	if( libwrc_version_information_resource_read(
+	     version_information_resource,
+	     data,
+	     size,
+	     NULL ) == 1 )
+	{
+		libwrc_version_information_resource_get_file_version(
+		 version_information_resource,
+		 &file_version,
+		 NULL );
+		libwrc_version_information_resource_get_product_version(
+		 version_information_resource,
+		 &product_version,
+		 NULL );
+	}
 	libwrc_version_information_resource_free(
 	 &version_information_resource,
 	 NULL );
@@ -54,4 +65,3 @@ int LLVMFuzzerTestOneInput(
 }
 
 } /* extern "C" */
-

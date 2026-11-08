@@ -48,7 +48,12 @@ int LLVMFuzzerTestOneInput(
      size_t size )
 {
 	libbfio_handle_t *file_io_handle = NULL;
+	libwrc_resource_t *resource      = NULL;
 	libwrc_stream_t *stream          = NULL;
+	int ascii_codepage               = 0;
+	int number_of_resources          = 0;
+	int resource_index               = 0;
+	uint32_t virtual_address         = 0;
 
 	if( libbfio_memory_range_initialize(
 	     &file_io_handle,
@@ -76,13 +81,87 @@ int LLVMFuzzerTestOneInput(
 	     LIBWRC_OPEN_READ,
 	     NULL ) != 1 )
 	{
-		goto on_error_libwrc;
+		goto on_error_libwrc_stream;
+	}
+	libwrc_stream_get_ascii_codepage(
+	 stream,
+	 &ascii_codepage,
+	 NULL );
+	libwrc_stream_get_virtual_address(
+	 stream,
+	 &virtual_address,
+	 NULL );
+	if( libwrc_stream_get_number_of_resources(
+	     stream,
+	     &number_of_resources,
+	     NULL ) == 1 )
+	{
+		for( resource_index = 0;
+		     resource_index < number_of_resources;
+		     resource_index++ )
+		{
+			if( libwrc_stream_get_resource_by_index(
+			     stream,
+			     resource_index,
+			     &resource,
+			     NULL ) == 1 )
+			{
+				libwrc_resource_free(
+				 &resource,
+				 NULL );
+			}
+		}
+	}
+	if( libwrc_stream_get_resource_by_identifier(
+	     stream,
+	     LIBWRC_RESOURCE_IDENTIFIER_MANIFEST,
+	     &resource,
+	     NULL ) == 1 )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	if( libwrc_stream_get_resource_by_type(
+	     stream,
+	     LIBWRC_RESOURCE_TYPE_MUI,
+	     &resource,
+	     NULL ) == 1 )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	if( libwrc_stream_get_resource_by_utf8_name(
+	     stream,
+	     (uint8_t *) "MUI",
+	     3,
+	     &resource,
+	     NULL ) == 1 )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	if( libwrc_stream_get_resource_by_utf16_name(
+	     stream,
+	     (uint16_t *) L"MUI",
+	     3,
+	     &resource,
+	     NULL ) == 1 )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
 	}
 	libwrc_stream_close(
 	 stream,
 	 NULL );
 
-on_error_libwrc:
+on_error_libwrc_stream:
+	libwrc_resource_free(
+	 &resource,
+	 NULL );
 	libwrc_stream_free(
 	 &stream,
 	 NULL );
@@ -96,4 +175,3 @@ on_error_libbfio:
 }
 
 } /* extern "C" */
-
